@@ -1,8 +1,8 @@
-.login-content {
+.verification-content {
   --background: #ffffff;
 }
 
-.login-container {
+.verification-container {
   display: flex;
   flex-direction: column;
   padding: 1.5rem;
@@ -10,7 +10,23 @@
   margin: 0 auto;
 }
 
-.login-form {
+.instructions {
+  margin-bottom: 2rem;
+}
+
+.instructions p {
+  font-size: 1rem;
+  color: #333333;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.instructions strong {
+  font-weight: 600;
+  color: #000000;
+}
+
+.verification-form {
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -34,16 +50,17 @@
   --padding-end: 0;
   --padding-top: 0.5rem;
   --padding-bottom: 0.5rem;
-  font-size: 1rem;
+  font-size: 1.5rem;
+  letter-spacing: 0.5rem;
+  text-align: center;
+  font-weight: 600;
 }
 
-.error-text {
-  display: block;
-  margin: 0.5rem 0;
-  font-size: 0.875rem;
+.code-input {
+  text-transform: uppercase;
 }
 
-.login-button {
+.verify-button {
   margin-top: 1rem;
   --background: var(--ion-color-primary);
   --color: #ffffff;
@@ -52,7 +69,7 @@
   font-weight: 500;
 }
 
-.login-button:disabled {
+.verify-button:disabled {
   opacity: 0.5;
 }
 

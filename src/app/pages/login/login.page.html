@@ -1,21 +1,53 @@
-<ion-header>
+<ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>Login</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/onboarding"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Log in</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
-  <ion-item>
-    <ion-label position="floating">Username</ion-label>
-    <ion-input [(ngModel)]="username"></ion-input>
-  </ion-item>
+<ion-content [fullscreen]="true" class="login-content">
+  <div class="login-container">
+    <form (ngSubmit)="login()" class="login-form">
+      <!-- Email Field -->
+      <ion-item class="form-item">
+        <ion-label position="stacked">Email</ion-label>
+        <ion-input
+          type="email"
+          [(ngModel)]="email"
+          name="email"
+          placeholder="luisa@zerena.nl"
+          required
+        ></ion-input>
+      </ion-item>
 
-  <ion-item>
-    <ion-label position="floating">Password</ion-label>
-    <ion-input type="password" [(ngModel)]="password"></ion-input>
-  </ion-item>
+      <!-- Password Field -->
+      <ion-item class="form-item">
+        <ion-label position="stacked">Password</ion-label>
+        <ion-input
+          type="password"
+          [(ngModel)]="password"
+          name="password"
+          placeholder="**********"
+          required
+        ></ion-input>
+      </ion-item>
 
-  <ion-text color="danger" *ngIf="error">{{ error }}</ion-text>
+      <!-- Error Message -->
+      <ion-text color="danger" *ngIf="error" class="error-text">
+        {{ error }}
+      </ion-text>
 
-  <ion-button expand="block" (click)="login()">Login</ion-button>
+      <!-- Login Button -->
+      <ion-button
+        expand="block"
+        type="submit"
+        class="login-button"
+        [disabled]="!email || !password"
+      >
+        Login
+      </ion-button>
+    </form>
+  </div>
 </ion-content>

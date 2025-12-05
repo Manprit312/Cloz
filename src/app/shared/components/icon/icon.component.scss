@@ -1,0 +1,20 @@
+.app-icon {
+  display: inline-block;
+  vertical-align: middle;
+  user-select: none;
+  transition:
+    width 0.2s ease,
+    height 0.2s ease;
+  width: var(--icon-size, 24px);
+  height: var(--icon-size, 24px);
+  /* icon color = text color by default; override via [style.color] */
+  color: var(--icon-color, currentColor);
+  
+  svg {
+    width: 100%;
+    height: 100%;
+    fill: currentColor;
+    stroke: currentColor;
+  }
+}
+

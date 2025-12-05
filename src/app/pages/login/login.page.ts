@@ -9,15 +9,14 @@ import {
   IonLabel,
   IonItem,
   IonButton,
-  IonSelectOption,
   IonInput,
-  IonSelect,
   IonText,
+  IonButtons,
+  IonBackButton,
 } from '@ionic/angular/standalone';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService, UserService } from '@app-core';
-import { UserRole } from '@models/user.model';
 
 @Component({
   selector: 'app-login',
@@ -32,6 +31,8 @@ import { UserRole } from '@models/user.model';
     IonHeader,
     IonTitle,
     IonToolbar,
+    IonButtons,
+    IonBackButton,
     CommonModule,
     FormsModule,
     TranslateModule,
@@ -40,7 +41,7 @@ import { UserRole } from '@models/user.model';
   ],
 })
 export class LoginPage implements OnInit {
-  username = '';
+  email = '';
   password = '';
   error = '';
 
@@ -51,14 +52,18 @@ export class LoginPage implements OnInit {
 
   ngOnInit(): void {
     if (this.authService.isLoggedIn()) {
-      this.router.navigateByUrl('/tabs/home');
+      this.router.navigateByUrl('/tabs/wardrobe');
     }
   }
 
   async login(): Promise<void> {
     this.error = '';
 
-    this.userService.login(this.username, this.password).subscribe({
+    // Use email as username for now (in real app, this would be separate)
+    // Extract username from email for demo
+    const username = this.email.split('@')[0] || this.email;
+    
+    this.userService.login(username, this.password).subscribe({
       next: (user) => {
         this.authService.setUser(user);
         const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
@@ -66,7 +71,9 @@ export class LoginPage implements OnInit {
         if (user.role === 'admin') {
           this.router.navigateByUrl(returnUrl || '/admin');
         } else {
-          this.router.navigateByUrl(returnUrl || '/tabs/home');
+          // For demo: navigate to verification
+          // In real app, check if email is verified before navigating
+          this.router.navigateByUrl('/verification?email=' + encodeURIComponent(this.email));
         }
       },
       error: () => {

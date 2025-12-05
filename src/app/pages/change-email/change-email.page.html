@@ -1,0 +1,46 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/profile"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Change email</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="change-email-content">
+  <div class="change-email-container">
+    <form (ngSubmit)="updateEmail()" class="change-email-form">
+      <!-- Current Email Display -->
+      <div class="current-email-section">
+        <p class="current-email-label">Current email</p>
+        <p class="current-email-value">{{ currentEmail }}</p>
+      </div>
+
+      <!-- New Email Field -->
+      <ion-item class="form-item">
+        <ion-label position="stacked">New email</ion-label>
+        <ion-input
+          type="email"
+          [(ngModel)]="newEmail"
+          name="newEmail"
+          placeholder="luisa@gmail.com"
+          required
+        ></ion-input>
+      </ion-item>
+
+      <!-- Error Message -->
+      <p class="error-text" *ngIf="error">{{ error }}</p>
+
+      <!-- Update Button -->
+      <ion-button
+        expand="block"
+        type="submit"
+        class="update-button"
+        [disabled]="!newEmail || newEmail.trim() === currentEmail"
+      >
+        Update
+      </ion-button>
+    </form>
+  </div>
+</ion-content>
+

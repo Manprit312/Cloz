@@ -1,0 +1,51 @@
+{
+  "$schema": "https://schemas.tokens.studio/tokens.json",
+  "typography": {
+    "fontFamily": {
+      "primary": {
+        "$type": "fontFamily",
+        "$value": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+      }
+    },
+    "fontSize": {
+      "xs": {
+        "$type": "dimension",
+        "$value": "12px"
+      },
+      "sm": {
+        "$type": "dimension",
+        "$value": "14px"
+      },
+      "md": {
+        "$type": "dimension",
+        "$value": "16px"
+      },
+      "lg": {
+        "$type": "dimension",
+        "$value": "20px"
+      },
+      "xl": {
+        "$type": "dimension",
+        "$value": "24px"
+      },
+      "xxl": {
+        "$type": "dimension",
+        "$value": "32px"
+      }
+    },
+    "fontWeight": {
+      "regular": {
+        "$type": "fontWeight",
+        "$value": "400"
+      },
+      "medium": {
+        "$type": "fontWeight",
+        "$value": "500"
+      },
+      "bold": {
+        "$type": "fontWeight",
+        "$value": "700"
+      }
+    }
+  }
+}

@@ -1,0 +1,52 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button
+        [defaultHref]="isEmailChange ? '/tabs/profile' : '/login'"
+      ></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ pageTitle }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="verification-content">
+  <div class="verification-container">
+    <div class="instructions">
+      <p>
+        Please verify your email. We have sent the a 4 digit code to
+        <strong>{{ email || 'your email' }}</strong
+        >.
+      </p>
+    </div>
+
+    <form (ngSubmit)="verify()" class="verification-form">
+      <!-- Code Input -->
+      <ion-item class="form-item">
+        <ion-label position="stacked">Code</ion-label>
+        <ion-input
+          type="text"
+          [(ngModel)]="code"
+          name="code"
+          placeholder="XXXX"
+          maxlength="4"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          (ionInput)="onCodeInput($event)"
+          required
+          class="code-input"
+        ></ion-input>
+      </ion-item>
+
+      <!-- Verify Button -->
+      <ion-button
+        expand="block"
+        type="submit"
+        class="verify-button"
+        [disabled]="code.length !== 4"
+      >
+        Verify
+      </ion-button>
+    </form>
+  </div>
+</ion-content>
+

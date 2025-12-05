@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <!-- 
+    This SVG sprite file will be synced from Figma via GitHub.
+    Icons are exported from Figma as SVG symbols and placed here.
+    
+    Example structure:
+    <symbol id="Wardrobe--line" viewBox="0 0 24 24">
+      <path d="..." fill="none" stroke="currentColor" stroke-width="2"/>
+    </symbol>
+    
+    To sync from Figma:
+    1. Export icons from Figma as SVG
+    2. Convert to sprite format (use Figma plugin or tool)
+    3. Push to GitHub (auto-sync if configured)
+    4. Pull changes: git pull
+  -->
+  
+  <!-- Placeholder icons - Replace with actual Figma exports -->
+  <symbol id="Wardrobe--line" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12 2L4 7V20H20V7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M12 7V20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M4 12H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  
+  <symbol id="Outfits--line" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2"/>
+    <path d="M6 21V19C6 15.6863 8.68629 13 12 13C15.3137 13 18 15.6863 18 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  </symbol>
+  
+  <symbol id="Profile--line" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2"/>
+    <path d="M6 21V19C6 15.6863 8.68629 13 12 13C15.3137 13 18 15.6863 18 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  </symbol>
+</svg>
+

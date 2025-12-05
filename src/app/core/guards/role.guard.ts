@@ -20,7 +20,7 @@ export const roleGuard: CanActivateFn = (route, state) => {
 
   if (!currentRole || !allowedRoles.includes(currentRole)) {
     // User is logged in but not allowed — redirect based on their role
-    const fallbackRoute = currentRole === 'admin' ? '/admin' : '/tabs/home';
+    const fallbackRoute = currentRole === 'admin' ? '/admin' : '/tabs/wardrobe';
     router.navigateByUrl(fallbackRoute);
     return false;
   }

@@ -1,0 +1,63 @@
+.profile-content {
+  --background: #ffffff;
+}
+
+.profile-container {
+  padding: 0;
+}
+
+.profile-fields {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-item {
+  --padding-start: 1rem;
+  --padding-end: 1rem;
+  --min-height: 56px;
+  --border-color: #e0e0e0;
+  --border-width: 0 0 1px 0;
+  --border-style: solid;
+
+  &:last-child {
+    --border-width: 0;
+  }
+
+  ion-label h2 {
+    font-size: 1rem;
+    font-weight: 400;
+    color: #000000;
+    margin: 0;
+  }
+
+  .value-label {
+    font-size: 1rem;
+    color: #666666;
+    text-align: right;
+    margin-right: 0.5rem;
+  }
+}
+
+.chevron-icon {
+  color: #999999;
+  font-size: 1.25rem;
+}
+
+.dark {
+  .profile-content {
+    --background: #121212;
+  }
+
+  .profile-item {
+    --border-color: #333333;
+
+    ion-label h2 {
+      color: #ffffff;
+    }
+
+    .value-label {
+      color: #cccccc;
+    }
+  }
+}
+

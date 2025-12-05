@@ -1,0 +1,66 @@
+.welcome-content {
+  --background: #ffffff;
+}
+
+.welcome-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem 1.5rem;
+  text-align: center;
+}
+
+.icon-container {
+  margin-bottom: 2rem;
+}
+
+.welcome-icon {
+  font-size: 64px;
+  color: var(--ion-color-primary);
+}
+
+.welcome-title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #000000;
+  margin: 0 0 0.5rem 0;
+}
+
+.welcome-subtitle {
+  font-size: 1rem;
+  color: #666666;
+  margin: 0 0 3rem 0;
+}
+
+.buttons-container {
+  width: 100%;
+  max-width: 400px;
+}
+
+.signup-button {
+  margin-bottom: 1rem;
+  --border-color: var(--ion-color-primary);
+  --color: var(--ion-color-primary);
+  --border-width: 2px;
+  --border-style: solid;
+  --border-radius: 8px;
+  height: 48px;
+  font-weight: 500;
+}
+
+.login-button {
+  --background: var(--ion-color-primary);
+  --color: #ffffff;
+  --border-radius: 8px;
+  height: 48px;
+  font-weight: 500;
+}
+
+.or-separator {
+  margin: 1rem 0;
+  color: #999999;
+  font-size: 0.9rem;
+}
+

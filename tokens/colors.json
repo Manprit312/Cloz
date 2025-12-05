@@ -1,0 +1,67 @@
+{
+  "$schema": "https://schemas.tokens.studio/tokens.json",
+  "color": {
+    "primary": {
+      "$type": "color",
+      "$value": "#4e54c8",
+      "rgb": {
+        "$value": "78, 84, 200"
+      },
+      "shade": {
+        "$value": "#4449b1"
+      },
+      "tint": {
+        "$value": "#5f64cb"
+      }
+    },
+    "secondary": {
+      "$type": "color",
+      "$value": "#ff6f61",
+      "rgb": {
+        "$value": "255, 111, 97"
+      },
+      "shade": {
+        "$value": "#e16055"
+      },
+      "tint": {
+        "$value": "#ff7f73"
+      }
+    },
+    "dark": {
+      "primary": {
+        "$type": "color",
+        "$value": "#a0a8f3"
+      },
+      "secondary": {
+        "$type": "color",
+        "$value": "#ff998a"
+      },
+      "background": {
+        "$type": "color",
+        "$value": "#121212"
+      },
+      "text": {
+        "$type": "color",
+        "$value": "#ffffff"
+      }
+    },
+    "semantic": {
+      "error": {
+        "$type": "color",
+        "$value": "#f44336"
+      },
+      "warning": {
+        "$type": "color",
+        "$value": "#ff9800"
+      },
+      "success": {
+        "$type": "color",
+        "$value": "#4caf50"
+      },
+      "info": {
+        "$type": "color",
+        "$value": "#2196f3"
+      }
+    }
+  }
+}

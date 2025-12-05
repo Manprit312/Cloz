@@ -1,0 +1,93 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/onboarding"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Create your account</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="signup-content">
+  <div class="signup-container">
+    <form (ngSubmit)="signup()" class="signup-form">
+      <!-- Name Field -->
+      <ion-item class="form-item">
+        <ion-label position="stacked">Name</ion-label>
+        <ion-input
+          type="text"
+          [(ngModel)]="name"
+          name="name"
+          placeholder="Luisa"
+          required
+        ></ion-input>
+      </ion-item>
+
+      <!-- Email Field -->
+      <ion-item class="form-item">
+        <ion-label position="stacked">Email</ion-label>
+        <ion-input
+          type="email"
+          [(ngModel)]="email"
+          name="email"
+          placeholder="luisa@zerena.nl"
+          required
+        ></ion-input>
+      </ion-item>
+
+      <!-- Password Field -->
+      <ion-item class="form-item">
+        <ion-label position="stacked">Password</ion-label>
+        <ion-input
+          type="password"
+          [(ngModel)]="password"
+          name="password"
+          placeholder="**********"
+          required
+        ></ion-input>
+      </ion-item>
+
+      <!-- Confirm Password Field -->
+      <ion-item class="form-item">
+        <ion-label position="stacked">Confirm password</ion-label>
+        <ion-input
+          type="password"
+          [(ngModel)]="confirmPassword"
+          name="confirmPassword"
+          placeholder="**********"
+          required
+        ></ion-input>
+      </ion-item>
+
+      <!-- Gender Field -->
+      <ion-item class="form-item" button (click)="openGenderSelector()">
+        <ion-label position="stacked">Gender</ion-label>
+        <ion-input
+          [value]="genderDisplayText"
+          readonly
+          placeholder="Select gender"
+        ></ion-input>
+        <ion-icon
+          name="chevron-down-outline"
+          slot="end"
+          class="gender-chevron"
+        ></ion-icon>
+      </ion-item>
+
+      <!-- Error Message -->
+      <ion-text color="danger" *ngIf="error" class="error-text">
+        {{ error }}
+      </ion-text>
+
+      <!-- Signup Button -->
+      <ion-button
+        expand="block"
+        type="submit"
+        class="signup-button"
+        [disabled]="!name || !email || !password || !confirmPassword || !gender"
+      >
+        Sign up
+      </ion-button>
+    </form>
+  </div>
+</ion-content>
+

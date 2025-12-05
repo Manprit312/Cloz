@@ -1,0 +1,23 @@
+/**
+ * Do not edit directly, this file was auto-generated.
+ */
+
+:root {
+  --primary-50: #e0e0ff;
+  --primary-100: #b3b3ff;
+  --primary-500: #4e54c8;
+  --primary-600: #4449b1;
+  --primary-700: #5f64cb;
+  --secondary-500: #ff6f61;
+  --secondary-600: #e16055;
+  --secondary-700: #ff7f73;
+  --dark-primary: #a0a8f3;
+  --dark-secondary: #ff998a;
+  --dark-background: #121212;
+  --dark-text: #ffffff;
+  --xs: 4px;
+  --sm: 4px;
+  --md: 8px;
+  --lg: 12px;
+  --xl: 32px;
+}

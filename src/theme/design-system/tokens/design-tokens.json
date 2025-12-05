@@ -1,0 +1,96 @@
+{
+  "$schema": "https://schemas.tokens.studio/tokens.json",
+  "color": {
+    "primary": {
+      "50": {
+        "value": "#e0e0ff",
+        "type": "color"
+      },
+      "100": {
+        "value": "#b3b3ff",
+        "type": "color"
+      },
+      "500": {
+        "value": "#4e54c8",
+        "type": "color"
+      },
+      "600": {
+        "value": "#4449b1",
+        "type": "color"
+      },
+      "700": {
+        "value": "#5f64cb",
+        "type": "color"
+      }
+    },
+    "secondary": {
+      "500": {
+        "value": "#ff6f61",
+        "type": "color"
+      },
+      "600": {
+        "value": "#e16055",
+        "type": "color"
+      },
+      "700": {
+        "value": "#ff7f73",
+        "type": "color"
+      }
+    },
+    "dark": {
+      "primary": {
+        "value": "#a0a8f3",
+        "type": "color"
+      },
+      "secondary": {
+        "value": "#ff998a",
+        "type": "color"
+      },
+      "background": {
+        "value": "#121212",
+        "type": "color"
+      },
+      "text": {
+        "value": "#ffffff",
+        "type": "color"
+      }
+    }
+  },
+  "spacing": {
+    "xs": {
+      "value": "4px",
+      "type": "dimension"
+    },
+    "sm": {
+      "value": "8px",
+      "type": "dimension"
+    },
+    "md": {
+      "value": "16px",
+      "type": "dimension"
+    },
+    "lg": {
+      "value": "24px",
+      "type": "dimension"
+    },
+    "xl": {
+      "value": "32px",
+      "type": "dimension"
+    }
+  },
+  "radius": {
+    "sm": {
+      "value": "4px",
+      "type": "dimension"
+    },
+    "md": {
+      "value": "8px",
+      "type": "dimension"
+    },
+    "lg": {
+      "value": "12px",
+      "type": "dimension"
+    }
+  }
+}
+

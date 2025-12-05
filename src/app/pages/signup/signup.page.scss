@@ -1,8 +1,8 @@
-.login-content {
+.signup-content {
   --background: #ffffff;
 }
 
-.login-container {
+.signup-container {
   display: flex;
   flex-direction: column;
   padding: 1.5rem;
@@ -10,7 +10,7 @@
   margin: 0 auto;
 }
 
-.login-form {
+.signup-form {
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -37,13 +37,22 @@
   font-size: 1rem;
 }
 
+.form-item[readonly] ion-input {
+  cursor: pointer;
+}
+
+.gender-chevron {
+  color: #999999;
+  font-size: 1.25rem;
+}
+
 .error-text {
   display: block;
   margin: 0.5rem 0;
   font-size: 0.875rem;
 }
 
-.login-button {
+.signup-button {
   margin-top: 1rem;
   --background: var(--ion-color-primary);
   --color: #ffffff;
@@ -52,7 +61,7 @@
   font-weight: 500;
 }
 
-.login-button:disabled {
+.signup-button:disabled {
   opacity: 0.5;
 }
 

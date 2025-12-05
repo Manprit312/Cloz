@@ -7,17 +7,20 @@ export const tabsRoutes: Routes = [
     component: TabsPage,
     children: [
       {
-        path: 'home',
-        loadComponent: () => import('./home/home.page').then((m) => m.HomePage),
+        path: 'wardrobe',
+        loadComponent: () => import('./wardrobe/wardrobe.page').then((m) => m.WardrobePage),
       },
       {
-        path: 'settings',
-        loadComponent: () =>
-          import('./settings/settings.page').then((m) => m.SettingsPage),
+        path: 'outfits',
+        loadComponent: () => import('./outfits/outfits.page').then((m) => m.OutfitsPage),
+      },
+      {
+        path: 'profile',
+        loadComponent: () => import('./profile/profile.page').then((m) => m.ProfilePage),
       },
       {
         path: '',
-        redirectTo: 'home',
+        redirectTo: 'wardrobe',
         pathMatch: 'full',
       },
     ],
