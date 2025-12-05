@@ -1,0 +1,48 @@
+<div class="ring-wrapper" [class.selected]="selected()" (click)="onClick()">
+  <svg
+    [attr.width]="size()"
+    [attr.height]="size()"
+    [attr.viewBox]="'0 0 ' + size() + ' ' + size()"
+  >
+    <!-- Background ring -->
+    <circle
+      [attr.cx]="center()"
+      [attr.cy]="center()"
+      [attr.r]="radius"
+      stroke="#e0e0e0"
+      [attr.stroke-width]="strokeWidth"
+      fill="none"
+    />
+
+    <!-- Progress ring -->
+    <circle
+      [attr.cx]="center()"
+      [attr.cy]="center()"
+      [attr.r]="radius"
+      [attr.stroke]="ringColor()"
+      [attr.stroke-width]="strokeWidth"
+      fill="none"
+      stroke-linecap="round"
+      [attr.stroke-dasharray]="dashArray()"
+      stroke-dashoffset="0"
+      [attr.transform]="'rotate(-90 ' + center() + ' ' + center() + ')'"
+    />
+
+    <!-- Center label (number) -->
+    <text
+      [attr.x]="center()"
+      [attr.y]="center() + 5"
+      text-anchor="middle"
+      font-size="14"
+      [attr.fill]="labelColor()"
+      font-weight="bold"
+    >
+      {{ label() }}
+    </text>
+  </svg>
+
+  <!-- Month below -->
+  <div class="month-label">
+    {{ month() }}
+  </div>
+</div>

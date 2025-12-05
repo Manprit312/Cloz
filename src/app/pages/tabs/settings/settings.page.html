@@ -1,0 +1,29 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>{{'SETTINGS_PAGE.TITLE' | translate}}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">settings</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-select
+    [value]="currentLang"
+    (ionChange)="changeLang($event.detail.value)"
+  >
+    <ion-select-option *ngFor="let lang of availableLangs" [value]="lang.code">
+      {{ lang.label }}
+    </ion-select-option>
+  </ion-select>
+  <ion-item>
+    <ion-label>Dark Mode</ion-label>
+    <ion-toggle
+      slot="end"
+      [checked]="isDark"
+      (ionChange)="toggleDarkMode($event)"
+    ></ion-toggle>
+  </ion-item>
+</ion-content>

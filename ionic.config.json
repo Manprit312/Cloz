@@ -1,0 +1,7 @@
+{
+  "name": "charged",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
