@@ -1,0 +1,117 @@
+{
+  "core": {
+    "x0": {
+      "value": "0",
+      "type": "spacing"
+    },
+    "x1": {
+      "value": "4",
+      "type": "spacing"
+    },
+    "x2": {
+      "value": "8",
+      "type": "spacing"
+    },
+    "x3": {
+      "value": "12",
+      "type": "spacing"
+    },
+    "x4": {
+      "value": "16",
+      "type": "spacing"
+    },
+    "x5": {
+      "value": "20",
+      "type": "spacing"
+    },
+    "x6": {
+      "value": "24",
+      "type": "spacing"
+    },
+    "x7": {
+      "value": "28",
+      "type": "spacing"
+    },
+    "x8": {
+      "value": "32",
+      "type": "spacing"
+    },
+    "x9": {
+      "value": "36",
+      "type": "spacing"
+    },
+    "x10": {
+      "value": "40",
+      "type": "spacing"
+    },
+    "x12": {
+      "value": "48",
+      "type": "spacing"
+    },
+    "x14": {
+      "value": "56",
+      "type": "spacing"
+    },
+    "x16": {
+      "value": "64",
+      "type": "spacing"
+    },
+    "x18": {
+      "value": "72",
+      "type": "spacing"
+    },
+    "x20": {
+      "value": "80",
+      "type": "spacing"
+    },
+    "x250": {
+      "value": "1000",
+      "type": "spacing"
+    }
+  },
+  "semantic": {
+    "gap": {
+      "xs": {
+        "value": "{x1}",
+        "type": "spacing"
+      },
+      "sm": {
+        "value": "{x2}",
+        "type": "spacing"
+      },
+      "md": {
+        "value": "{x4}",
+        "type": "spacing"
+      },
+      "lg": {
+        "value": "{x6}",
+        "type": "spacing"
+      }
+    },
+    "padding": {
+      "xs": {
+        "value": "{gap.sm}",
+        "type": "spacing"
+      },
+      "sm": {
+        "value": "{gap.sm}",
+        "type": "spacing"
+      },
+      "md": {
+        "value": "{x4}",
+        "type": "spacing"
+      },
+      "lg": {
+        "value": "{x6}",
+        "type": "spacing"
+      }
+    }
+  },
+  "$themes": [],
+  "$metadata": {
+    "tokenSetOrder": [
+      "core",
+      "semantic"
+    ]
+  }
+}
