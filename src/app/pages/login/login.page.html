@@ -1,53 +1,60 @@
-<ion-header [translucent]="true">
+<ion-header class="ion-no-border">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/onboarding"></ion-back-button>
+      <ion-button (click)="goBack()" class="back-button">
+        <app-icon name="arrow-left" [size]="24" [color]="'#1860FA'"></app-icon>
+      </ion-button>
     </ion-buttons>
-    <ion-title>Log in</ion-title>
+    <ion-title class="ion-text-center label-bold">Log in</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="login-content">
-  <div class="login-container">
-    <form (ngSubmit)="login()" class="login-form">
+<ion-content [fullscreen]="true">
+  <div class="pad-top-lg pad-v-none-h-md">
+    <form (ngSubmit)="login()" class="column-stack-lg w-full">
       <!-- Email Field -->
-      <ion-item class="form-item">
-        <ion-label position="stacked">Email</ion-label>
-        <ion-input
-          type="email"
-          [(ngModel)]="email"
-          name="email"
-          placeholder="luisa@zerena.nl"
-          required
-        ></ion-input>
-      </ion-item>
+      <div class="column-stack-sm">
+        <label class="label-default">Email</label>
+        <div class="input-border-full">
+          <input
+            type="email"
+            [(ngModel)]="email"
+            name="email"
+            placeholder="your@email.com"
+            required
+          />
+        </div>
+      </div>
 
       <!-- Password Field -->
-      <ion-item class="form-item">
-        <ion-label position="stacked">Password</ion-label>
-        <ion-input
-          type="password"
-          [(ngModel)]="password"
-          name="password"
-          placeholder="**********"
-          required
-        ></ion-input>
-      </ion-item>
+      <div class="column-stack-sm">
+        <label class="label-default">Password</label>
+        <div class="input-border-full">
+          <input
+            type="password"
+            [(ngModel)]="password"
+            name="password"
+            placeholder="********"
+            required
+          />
+        </div>
+      </div>
 
       <!-- Error Message -->
-      <ion-text color="danger" *ngIf="error" class="error-text">
+      <div *ngIf="error" class="text-error">
         {{ error }}
-      </ion-text>
+      </div>
 
       <!-- Login Button -->
-      <ion-button
-        expand="block"
+      <app-button
         type="submit"
-        class="login-button"
+        variant="primary"
+        size="xlarge"
+        [fullWidth]="true"
         [disabled]="!email || !password"
       >
         Login
-      </ion-button>
+      </app-button>
     </form>
   </div>
 </ion-content>

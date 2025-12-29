@@ -1,66 +1,97 @@
-.welcome-content {
-  --background: #ffffff;
-}
+
 
 .welcome-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   min-height: 100vh;
-  padding: 2rem 1.5rem;
+  padding: var(--x8, 32px) var(--x6, 24px);
   text-align: center;
 }
 
 .icon-container {
-  margin-bottom: 2rem;
+  margin-bottom: var(--x8, 32px);
 }
 
-.welcome-icon {
-  font-size: 64px;
-  color: var(--ion-color-primary);
-}
 
 .welcome-title {
-  font-size: 2rem;
-  font-weight: bold;
-  color: #000000;
-  margin: 0 0 0.5rem 0;
+  font-size: var(--font-size-xxl, 32px);
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--ion-text-color);
+  margin: var(--x0, 0) var(--x0, 0) var(--x2, 8px) var(--x0, 0);
 }
 
 .welcome-subtitle {
-  font-size: 1rem;
-  color: #666666;
-  margin: 0 0 3rem 0;
+  font-size: var(--font-size-md, 16px);
+  color: var(--text-color-600);
+  margin: var(--x0, 0) var(--x0, 0) var(--x12, 48px) var(--x0, 0);
 }
 
-.buttons-container {
-  width: 100%;
-  max-width: 400px;
+.dark {
+
+  .welcome-title {
+    color: var(--ion-text-color);
+  }
+  
+  .welcome-subtitle {
+    color: var(--text-color-600);
+  }
 }
+
 
 .signup-button {
-  margin-bottom: 1rem;
+  margin-bottom: var(--gap-md, var(--x4, 16px));
   --border-color: var(--ion-color-primary);
   --color: var(--ion-color-primary);
-  --border-width: 2px;
+  --border-width: 1px;
   --border-style: solid;
-  --border-radius: 8px;
-  height: 48px;
-  font-weight: 500;
+  --border-radius: var(--radius-md, 8px);
+  height: var(--x12, 48px);
+  font-weight: var(--font-weight-medium, 500);
 }
 
 .login-button {
   --background: var(--ion-color-primary);
-  --color: #ffffff;
-  --border-radius: 8px;
-  height: 48px;
-  font-weight: 500;
+  --color: var(--ion-color-primary-contrast);
+  --border-radius: var(--radius-md, 8px);
+  height: var(--x12, 48px);
+  font-weight: var(--font-weight-medium, 500);
 }
 
 .or-separator {
-  margin: 1rem 0;
-  color: #999999;
-  font-size: 0.9rem;
+  position: relative;
+  margin: var(--gap-md, var(--x4, 16px)) var(--x0, 0);
+  text-align: center;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: var(--x0, 0);
+    right: var(--x0, 0);
+    height: 1px;
+    background-color: var(--border-color);
+    z-index: 0;
+  }
+  
+  span {
+    position: relative;
+    display: inline-block;
+    background-color: var(--ion-background-color);
+    padding: var(--x0, 0) var(--x3, 12px);
+    color: var(--ion-text-color);
+    font-size: var(--font-size-sm, 14px);
+    z-index: 1;
+  }
+}
+
+.dark {
+  .or-separator {
+    &::before {
+      background-color: var(--border-color-dark);
+    }
+    
+    span {
+      background-color: var(--ion-background-color);
+      color: var(--ion-text-color);
+    }
+  }
 }
 

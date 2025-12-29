@@ -3,15 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
   IonContent,
-  IonHeader,
-  IonTitle,
-  IonToolbar,
+ 
+
   IonButton,
-  IonIcon,
 } from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
-import { addIcons } from 'ionicons';
-import { shirtOutline } from 'ionicons/icons';
+import { IconComponent } from '../../shared/components/icon/icon.component';
 
 @Component({
   selector: 'app-onboarding',
@@ -20,19 +17,17 @@ import { shirtOutline } from 'ionicons/icons';
   standalone: true,
   imports: [
     IonContent,
-    IonHeader,
-    IonTitle,
-    IonToolbar,
+
+  
+
     IonButton,
-    IonIcon,
+    IconComponent,
     CommonModule,
     FormsModule,
   ],
 })
 export class OnboardingPage implements OnInit {
-  constructor(private router: Router) {
-    addIcons({ shirtOutline });
-  }
+  constructor(private router: Router) {}
 
   ngOnInit() {}
 

@@ -1,0 +1,36 @@
+.garment-list {
+  padding: 0;
+}
+
+.garment-item {
+  --padding-start: var(--padding-md, var(--x4, 16px));
+  --padding-end: var(--padding-md, var(--x4, 16px));
+  --min-height: var(--x20, 80px);
+
+  ion-thumbnail {
+    --size: calc(var(--x4, 16px) * 3.75); // 60px
+    --border-radius: var(--x2, 8px);
+    margin-inline-end: var(--padding-md, var(--x4, 16px));
+
+    img {
+      object-fit: cover;
+      border-radius: var(--x2, 8px);
+    }
+  }
+
+  ion-label {
+    h3 {
+      font-size: var(--font-size-md, 16px);
+      font-weight: var(--font-weight-medium, 500);
+      margin: 0 0 var(--x1, 4px) 0;
+    }
+
+    p {
+      font-size: var(--font-size-sm, 14px);
+      font-weight: var(--font-weight-regular, 400);
+      margin: var(--x1, 4px) 0;
+      color: var(--ion-alert-message-color, #666666);
+    }
+  }
+}
+

@@ -1,0 +1,137 @@
+// Button component styles using design tokens and global utilities
+
+:host {
+  display: inline-block;
+}
+
+button {
+  border: none;
+  outline: none;
+  cursor: pointer;
+  font-family: var(--font-family-primary);
+  font-weight: var(--font-weight-medium);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  border-radius: var(--radius-md);
+  white-space: nowrap;
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+// Base button styles
+.btn {
+  // Default styles
+  position: relative;
+  z-index: 1;
+}
+
+// Variant: Primary (filled blue button with white text)
+.btn-primary {
+  background-color: var(--ion-color-primary) !important;
+  color: var(--ion-color-primary-contrast) !important;
+  border: none !important;
+  
+  &:hover:not(:disabled) {
+    opacity: 0.9;
+    background-color: var(--ion-color-primary) !important;
+  }
+  
+  &:active:not(:disabled) {
+    opacity: 0.8;
+    background-color: var(--ion-color-primary) !important;
+  }
+  
+  &:focus {
+    background-color: var(--ion-color-primary) !important;
+    color: var(--ion-color-primary-contrast) !important;
+  }
+}
+
+// Variant: Secondary (outlined button with blue border and blue text)
+.btn-secondary {
+  background-color: transparent;
+  color: var(--ion-color-primary);
+  border: 1px solid var(--ion-color-primary);
+  
+  &:hover:not(:disabled) {
+    background-color: rgba(var(--ion-color-primary-rgb), 0.1);
+  }
+  
+  &:active:not(:disabled) {
+    background-color: rgba(var(--ion-color-primary-rgb), 0.2);
+  }
+}
+
+// Variant: Tertiary (outlined button with blue border and blue text - same as secondary)
+.btn-tertiary {
+  background-color: transparent;
+  color: var(--ion-color-primary);
+  border: 1px solid var(--ion-color-primary);
+  
+  &:hover:not(:disabled) {
+    background-color: rgba(var(--ion-color-primary-rgb), 0.1);
+  }
+  
+  &:active:not(:disabled) {
+    background-color: rgba(var(--ion-color-primary-rgb), 0.2);
+  }
+}
+
+// Size: Small
+.btn-small {
+  padding: var(--gap-xs) var(--gap-sm);
+  font-size: var(--font-size-sm);
+  line-height: 1.43;
+  min-height: var(--x8);
+}
+
+// Size: Medium
+.btn-medium {
+  padding: var(--gap-sm) var(--gap-md);
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+  min-height: var(--x10);
+}
+
+// Size: Large
+.btn-large {
+  padding: var(--gap-md) var(--gap-lg);
+  font-size: var(--font-size-lg);
+  line-height: 1.4;
+  min-height: var(--x12);
+}
+
+// Size: XLarge
+.btn-xlarge {
+  padding: var(--gap-md) var(--gap-lg);
+  font-size: var(--font-size-lg);
+  line-height: 1.4;
+  min-height: var(--x14);
+}
+
+// Full width
+.btn-full-width {
+  width: 100% !important;
+}
+
+:host.btn-full-width {
+  display: block !important;
+  width: 100% !important;
+}
+
+// Rounded
+.btn-rounded {
+  border-radius: var(--radius-lg);
+}
+
+// Disabled state
+.btn-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}

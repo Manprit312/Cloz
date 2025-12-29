@@ -1,0 +1,49 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-title class="ion-text-center">Select climate fit</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cancel()" fill="clear" class="body1-regular">
+        Cancel
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [scrollY]="true" class="climate-content column-stack-none flex-1">
+  <div class="scrollable-content column-stack-none flex-1">
+    <div class="pad-v-none-h-md">
+      <p class="climate-description body1-regular">
+        For which temperatures is it comfortable to wear this garment?
+      </p>
+    </div>
+
+    <ion-list class="climate-list">
+      <ion-item
+        *ngFor="let option of climateOptions"
+        button
+        lines="full"
+        class="climate-item"
+        (click)="toggleOption(option.value)"
+      >
+        <ion-label>
+          <span class="body1-regular">{{ option.label }}</span>
+        </ion-label>
+        <ion-checkbox
+          slot="end"
+          [checked]="isSelected(option.value)"
+          (ionChange)="toggleOption(option.value)"
+        ></ion-checkbox>
+      </ion-item>
+    </ion-list>
+  </div>
+
+  <div class="modal-footer pad-v-none-h-md row-stack-none justify-between">
+    <ion-button (click)="cancel()" fill="clear" class="body1-regular cancel-button">
+      Cancel
+    </ion-button>
+    <ion-button (click)="confirm()" fill="clear" class="body1-regular confirm-button">
+      Confirm
+    </ion-button>
+  </div>
+</ion-content>
+

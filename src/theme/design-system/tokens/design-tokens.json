@@ -1,96 +1,117 @@
 {
-  "$schema": "https://schemas.tokens.studio/tokens.json",
-  "color": {
-    "primary": {
-      "50": {
-        "value": "#e0e0ff",
-        "type": "color"
+  "core": {
+    "x0": {
+      "value": "0",
+      "type": "spacing"
+    },
+    "x1": {
+      "value": "4",
+      "type": "spacing"
+    },
+    "x2": {
+      "value": "8",
+      "type": "spacing"
+    },
+    "x3": {
+      "value": "12",
+      "type": "spacing"
+    },
+    "x4": {
+      "value": "16",
+      "type": "spacing"
+    },
+    "x5": {
+      "value": "20",
+      "type": "spacing"
+    },
+    "x6": {
+      "value": "24",
+      "type": "spacing"
+    },
+    "x7": {
+      "value": "28",
+      "type": "spacing"
+    },
+    "x8": {
+      "value": "32",
+      "type": "spacing"
+    },
+    "x9": {
+      "value": "36",
+      "type": "spacing"
+    },
+    "x10": {
+      "value": "40",
+      "type": "spacing"
+    },
+    "x12": {
+      "value": "48",
+      "type": "spacing"
+    },
+    "x14": {
+      "value": "56",
+      "type": "spacing"
+    },
+    "x16": {
+      "value": "64",
+      "type": "spacing"
+    },
+    "x18": {
+      "value": "72",
+      "type": "spacing"
+    },
+    "x20": {
+      "value": "80",
+      "type": "spacing"
+    },
+    "x250": {
+      "value": "1000",
+      "type": "spacing"
+    }
+  },
+  "semantic": {
+    "gap": {
+      "xs": {
+        "value": "{x1}",
+        "type": "spacing"
       },
-      "100": {
-        "value": "#b3b3ff",
-        "type": "color"
+      "sm": {
+        "value": "{x2}",
+        "type": "spacing"
       },
-      "500": {
-        "value": "#4e54c8",
-        "type": "color"
+      "md": {
+        "value": "{x4}",
+        "type": "spacing"
       },
-      "600": {
-        "value": "#4449b1",
-        "type": "color"
-      },
-      "700": {
-        "value": "#5f64cb",
-        "type": "color"
+      "lg": {
+        "value": "{x6}",
+        "type": "spacing"
       }
     },
-    "secondary": {
-      "500": {
-        "value": "#ff6f61",
-        "type": "color"
+    "padding": {
+      "xs": {
+        "value": "{gap.sm}",
+        "type": "spacing"
       },
-      "600": {
-        "value": "#e16055",
-        "type": "color"
+      "sm": {
+        "value": "{gap.sm}",
+        "type": "spacing"
       },
-      "700": {
-        "value": "#ff7f73",
-        "type": "color"
-      }
-    },
-    "dark": {
-      "primary": {
-        "value": "#a0a8f3",
-        "type": "color"
+      "md": {
+        "value": "{x4}",
+        "type": "spacing"
       },
-      "secondary": {
-        "value": "#ff998a",
-        "type": "color"
-      },
-      "background": {
-        "value": "#121212",
-        "type": "color"
-      },
-      "text": {
-        "value": "#ffffff",
-        "type": "color"
+      "lg": {
+        "value": "{x6}",
+        "type": "spacing"
       }
     }
   },
-  "spacing": {
-    "xs": {
-      "value": "4px",
-      "type": "dimension"
-    },
-    "sm": {
-      "value": "8px",
-      "type": "dimension"
-    },
-    "md": {
-      "value": "16px",
-      "type": "dimension"
-    },
-    "lg": {
-      "value": "24px",
-      "type": "dimension"
-    },
-    "xl": {
-      "value": "32px",
-      "type": "dimension"
-    }
-  },
-  "radius": {
-    "sm": {
-      "value": "4px",
-      "type": "dimension"
-    },
-    "md": {
-      "value": "8px",
-      "type": "dimension"
-    },
-    "lg": {
-      "value": "12px",
-      "type": "dimension"
-    }
+  "$themes": [],
+  "$metadata": {
+    "tokenSetOrder": [
+      "core",
+      "semantic"
+    ]
   }
 }
-

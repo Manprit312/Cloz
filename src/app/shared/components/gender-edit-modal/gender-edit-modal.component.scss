@@ -1,0 +1,122 @@
+// Gender Edit Modal styles using only design tokens and global utilities
+
+.modal-content-wrapper {
+  padding-bottom: var(--gap-md, var(--x4, 16px));
+}
+
+// Header styles
+ion-header {
+  --background: var(--ion-background-color);
+  
+  ion-toolbar {
+    --background: var(--ion-background-color);
+    --color: var(--ion-text-color);
+    --min-height: var(--x14);
+    --padding-start: var(--padding-md);
+    --padding-end: var(--padding-md);
+    
+    ion-title {
+      font-weight: var(--font-weight-bold);
+      font-size: var(--font-size-lg);
+      line-height: 1.2;
+      text-align: center;
+      color: var(--ion-text-color);
+    }
+  }
+}
+
+.dark {
+  ion-header {
+    --background: var(--ion-background-color);
+    
+    ion-toolbar {
+      --background: var(--ion-background-color);
+      --color: var(--ion-text-color);
+      
+      ion-title {
+        color: var(--ion-text-color);
+      }
+    }
+  }
+}
+
+// List styles - ensure lines touch right edge
+.gender-list {
+  --padding-start: 0;
+  --padding-end: 0;
+  padding: 0;
+  margin-left: 0;
+  margin-right: calc(-1 * var(--padding-md));
+  width: calc(100% + var(--padding-md));
+  margin-bottom: var(--gap-md);
+}
+
+// Item styles
+.gender-item {
+  --padding-end: 0;
+  --min-height: var(--x14);
+  
+  ion-label {
+    span {
+      display: block;
+    }
+  }
+  
+  .gender-option {
+    color: var(--ion-text-color) !important;
+  }
+  
+  .dark & {
+    .gender-option {
+      color: var(--ion-text-color) !important;
+    }
+  }
+  
+  .gender-radio {
+    --color: var(--ion-color-primary);
+    --color-checked: var(--ion-color-primary);
+    opacity: 0;
+    position: absolute;
+  }
+  
+  // Border line: starts from container's left padding, extends to right edge
+  &[lines="full"]::after {
+    left: var(--padding-md);
+    right: 0 !important;
+  }
+  
+  // Content padding - remove duplicate left padding since container provides it
+  .item-inner {
+    padding-left: 0 !important;
+    padding-right: var(--x4);
+  }
+}
+
+// Button container
+.button-container {
+  margin-top: auto;
+  border-top: 1px solid var(--ion-color-step-200);
+  
+  .dark & {
+    border-top-color: var(--ion-color-step-800);
+  }
+  padding-top: var(--gap-md);
+}
+
+.button-row {
+  padding: 0 var(--padding-md);
+}
+
+.cancel-button {
+  --color: var(--ion-color-primary);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-regular);
+  margin: 0;
+}
+
+.confirm-button {
+  --color: var(--ion-color-primary);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+  margin: 0;
+}

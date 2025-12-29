@@ -1,90 +1,94 @@
-<ion-header [translucent]="true">
+<ion-header [translucent]="true" hidden="true">
   <ion-toolbar>
     <ion-title>Profile</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="profile-content">
+<ion-backdrop *ngIf="isModalOpen" [visible]="true" [tappable]="false"></ion-backdrop>
+
+<ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">Profile</ion-title>
+      <ion-title size="large" class="toolbar-title">Profile</ion-title>
     </ion-toolbar>
   </ion-header>
 
-  <div class="profile-container">
-    <!-- Profile Fields -->
-    <div class="profile-fields">
-      <!-- Name -->
-      <ion-item button (click)="editName()" class="profile-item">
-        <ion-label>
-          <h2>Name</h2>
-        </ion-label>
-        <ion-label slot="end" class="value-label">
-          {{ profile().name }}
-        </ion-label>
-        <ion-icon
-          name="chevron-forward-outline"
-          slot="end"
-          class="chevron-icon"
-        ></ion-icon>
-      </ion-item>
-
-      <!-- Gender -->
-      <ion-item button (click)="editGender()" class="profile-item">
-        <ion-label>
-          <h2>Gender</h2>
-        </ion-label>
-        <ion-label slot="end" class="value-label">
-          {{ profile().gender }}
-        </ion-label>
-        <ion-icon
-          name="chevron-forward-outline"
-          slot="end"
-          class="chevron-icon"
-        ></ion-icon>
-      </ion-item>
-
-      <!-- Email -->
-      <ion-item button (click)="editEmail()" class="profile-item">
-        <ion-label>
-          <h2>Email</h2>
-        </ion-label>
-        <ion-label slot="end" class="value-label">
-          {{ profile().email }}
-        </ion-label>
-        <ion-icon
-          name="chevron-forward-outline"
-          slot="end"
-          class="chevron-icon"
-        ></ion-icon>
-      </ion-item>
-
-      <!-- Password -->
-      <ion-item button (click)="changePassword()" class="profile-item">
-        <ion-label>
-          <h2>Password</h2>
-        </ion-label>
-        <ion-label slot="end" class="value-label">
-          {{ getMaskedPassword() }}
-        </ion-label>
-        <ion-icon
-          name="chevron-forward-outline"
-          slot="end"
-          class="chevron-icon"
-        ></ion-icon>
-      </ion-item>
-
-      <!-- Dark Mode -->
-      <ion-item class="profile-item">
-        <ion-label>
-          <h2>Darkmode</h2>
-        </ion-label>
-        <ion-toggle
-          slot="end"
-          [checked]="darkMode()"
-          (ionChange)="toggleDarkMode()"
-        ></ion-toggle>
-      </ion-item>
+  <div class="pad-none-l-md">
+    <!-- Error Message -->
+    <div class="error-banner pad-all-md row-stack-sm items-center" *ngIf="showErrorMessage">
+      <app-icon name="close" [size]="24" [color]="'#ffffff'"></app-icon>
+      <span class="body1-medium">{{ errorMessageText }}</span>
     </div>
+
+    <ion-list [class.pad-top-lg]="!showErrorMessage">
+    <!-- Name -->
+    <ion-item button (click)="editName()" lines="full">
+      <ion-label>
+        <div class="body2-bold">Name</div>
+      </ion-label>
+      <ion-label slot="end" class="ion-text-end  text-color-600">
+        {{ profile().name }}
+      </ion-label>
+     
+      
+    </ion-item>
+
+    <!-- Gender -->
+    <ion-item button (click)="editGender()" lines="full">
+      <ion-label>
+        <div class="body2-bold">Gender</div>
+      </ion-label>
+      <ion-label slot="end" class="ion-text-end  text-color-600">
+        {{ profile().gender }}
+      </ion-label>
+     
+    </ion-item>
+
+    <!-- Email -->
+    <ion-item button (click)="editEmail()" lines="full">
+      <ion-label>
+        <div class="body2-bold">Email</div>
+      </ion-label>
+      <ion-label slot="end" class="ion-text-end  text-color-600">
+        {{ profile().email }}
+      </ion-label>
+     
+    </ion-item>
+
+    <!-- Password -->
+    <ion-item button (click)="changePassword()" lines="full">
+      <ion-label>
+        <div class="body2-bold">Password</div>
+      </ion-label>
+      <ion-label slot="end" class="ion-text-end  text-color-600">
+        {{ getMaskedPassword() }}
+      </ion-label>
+     
+    </ion-item>
+
+    <!-- Dark Mode -->
+    <ion-item lines="none">
+      <ion-label>
+        <div class="body2-bold">Darkmode</div>
+      </ion-label>
+      <ion-toggle
+        slot="end"
+        [checked]="darkMode()"
+        (ionChange)="toggleDarkMode()"
+      ></ion-toggle>
+    </ion-item>
+  </ion-list>
+
+  <!-- Logout Button -->
+  <div class="pad-all-md">
+    <app-button
+  
+      (click)="logout()"
+      variant="tertiary"
+      [fullWidth]="true"
+    >
+      Logout
+    </app-button>
+  </div>
   </div>
 </ion-content>

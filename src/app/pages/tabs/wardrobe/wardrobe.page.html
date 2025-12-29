@@ -1,43 +1,39 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>Wardrobe</ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content [fullscreen]="true" class="wardrobe-content">
+<ion-content [fullscreen]="true">
+  <ion-header [translucent]="true" hidden="true">
+    <ion-toolbar>
+      <ion-title>Wardrobe</ion-title>
+    </ion-toolbar>
+  </ion-header>
   <ion-header collapse="condense">
     <ion-toolbar>
       <ion-title size="large">Wardrobe</ion-title>
     </ion-toolbar>
   </ion-header>
 
-  <div class="wardrobe-container">
+  <div class=" pad-none-l-md">
     <!-- Success Message -->
-    <div class="success-banner" *ngIf="showSuccessMessage">
-      <ion-icon name="checkmark-circle-outline" class="success-icon"></ion-icon>
-      <span>{{ successMessageText }}</span>
+    <div class="success-banner pad-all-md" *ngIf="showSuccessMessage">
+      <app-icon name="checkmark-circle" [size]="24" [color]="'var(--text-primary)'"></app-icon>
+      <span class="body1-medium">{{ successMessageText }}</span>
     </div>
 
     <!-- Category List -->
-    <div class="categories-list">
+    <ion-list [class.pad-top-lg]="!showSuccessMessage" class="wardrobe-list">
       <ion-item
         *ngFor="let category of categories"
         button
         (click)="goToCategory(category.route)"
-        class="category-item"
+        lines="full"
+        class="wardrobe-item"
       >
         <ion-label>
-          <h2>{{ category.name }}</h2>
+          <span class="body2-bold">{{ category.name }}</span>
         </ion-label>
-        <ion-label slot="end" class="count-label">
-          {{ category.count }}
-        </ion-label>
-        <ion-icon
-          name="chevron-forward-outline"
-          slot="end"
-          class="chevron-icon"
-        ></ion-icon>
+        <div slot="end" class="row-stack-sm items-center">
+          <span class="body1-regular text-color-600">{{ category.count }}</span>
+       
+        </div>
       </ion-item>
-    </div>
+    </ion-list>
   </div>
 </ion-content>

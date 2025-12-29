@@ -1,0 +1,130 @@
+<ion-backdrop *ngIf="isModalOpen" [visible]="true" [tappable]="false"></ion-backdrop>
+
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-title class="ion-text-center">{{ isEditMode ? 'Update accessory' : 'Add accessory' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close()" fill="clear" class="body1-regular">
+        Close
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="add-garment-content">
+  <div class="pad-top-lg pad-v-none-h-md add-garment-wrapper">
+    <!-- Error Banner -->
+    <div class="error-banner pad-all-md" *ngIf="showErrorMessage">
+      <app-icon name="close" [size]="24" [color]="'#ffffff'"></app-icon>
+      <span class="body1-medium">{{ errorMessageText }}</span>
+    </div>
+
+    <!-- Image Upload Section -->
+    <div class="column-stack-sm image-section">
+      <label class="label-default">Choose image</label>
+      <div class="image-upload-container">
+        <input
+          type="file"
+          accept="image/*"
+          (change)="onImageSelected($event)"
+          class="file-input"
+          id="image-upload-input"
+        />
+        <div class="image-upload-area" (click)="triggerFileInput()">
+          <div *ngIf="!imageUrl" class="image-placeholder">
+            <app-icon name="image" [size]="48" [color]="'var(--text-color-600, #666666)'"></app-icon>
+          </div>
+          <div *ngIf="imageUrl" class="image-with-button">
+            <img [src]="imageUrl" alt="Garment" class="garment-image" />
+            <app-button
+              variant="tertiary"
+              size="medium"
+              [fullWidth]="false"
+              (click)="triggerFileInput(); $event.stopPropagation()"
+              class="replace-button-inside"
+            >
+              <app-icon name="refresh" [size]="20" [color]="'var(--ion-color-primary)'" class="mr-sm"></app-icon>
+              Replace
+            </app-button>
+          </div>
+        </div>
+        <p *ngIf="!imageUrl" class="image-instruction body1-regular text-color-600">Add a photo of your garment</p>
+        <app-button
+          *ngIf="!imageUrl"
+          variant="primary"
+          size="medium"
+          [fullWidth]="false"
+          (click)="triggerFileInput()"
+          class="upload-button"
+        >
+          Upload image
+          <app-icon name="add" [size]="20" [color]="'var(--ion-color-primary-contrast)'" class="ml-sm"></app-icon>
+        </app-button>
+      </div>
+    </div>
+
+    <!-- Form Fields -->
+    <div class="column-stack-lg">
+      <!-- Subtype -->
+      <div class="column-stack-sm">
+        <label class="label-default">Subtype</label>
+        <div class="input-border-full select-field" (click)="openSubtypeSelection()">
+          <span [class.text-placeholder]="!subtype" class="body1-regular">
+            {{ subtype || 'Select subtype' }}
+          </span>
+          <app-icon name="unfold-more" [size]="20" [color]="'var(--text-color-600)'"></app-icon>
+        </div>
+      </div>
+
+      <!-- Color -->
+      <div class="column-stack-sm">
+        <label class="label-default">Color</label>
+        <div class="input-border-full select-field" (click)="openColorSelection()">
+          <span [class.text-placeholder]="!color" class="body1-regular">
+            {{ color || 'Select color' }}
+          </span>
+          <app-icon name="unfold-more" [size]="20" [color]="'var(--text-color-600)'"></app-icon>
+        </div>
+      </div>
+
+      <!-- Climate Fit -->
+      <div class="column-stack-sm">
+        <label class="label-default">Climate fit</label>
+        <div class="input-border-full select-field" (click)="openClimateFitSelection()">
+          <span [class.text-placeholder]="climateFit.length === 0" class="body1-regular">
+            {{ climateFitDisplay || 'Select climate fit' }}
+          </span>
+          <app-icon name="unfold-more" [size]="20" [color]="'var(--text-color-600)'"></app-icon>
+        </div>
+      </div>
+
+      <!-- Brand -->
+      <div class="column-stack-sm">
+        <label class="label-default">Brand</label>
+        <div class="input-border-full">
+          <input
+            type="text"
+            [(ngModel)]="brand"
+            placeholder="Name brand"
+            class="body1-regular"
+          />
+        </div>
+        <span class="text-color-600 body2-regular optional-text">Optional</span>
+      </div>
+    </div>
+
+    <!-- Add Button -->
+    <div class="button-container">
+      <app-button
+        variant="primary"
+        size="xlarge"
+        [fullWidth]="true"
+        [disabled]="!isFormValid"
+        (click)="addToWardrobe()"
+      >
+        {{ isEditMode ? 'Update wardrobe' : 'Add to wardrobe' }}
+      </app-button>
+    </div>
+  </div>
+</ion-content>
+

@@ -1,0 +1,40 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-title class="ion-text-center">Select color</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cancel()" fill="clear" class="body1-regular">
+        Cancel
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [scrollY]="true">
+  <ion-list class="color-list flex-1">
+      <ion-item
+        *ngFor="let color of colors"
+        button
+        lines="full"
+        class="color-item"
+        (click)="onColorChange(color.value)"
+      >
+        <ion-label>
+          <div class="color-row row-stack-md items-center">
+          <div 
+            *ngIf="color.hex !== 'print'"
+            class="color-swatch" 
+            [style.background-color]="color.hex"
+            [style.border-color]="color.hex === '#FFFFFF' ? '#e0e0e0' : 'transparent'"
+          ></div>
+          <img 
+            *ngIf="color.hex === 'print'"
+            src="assets/images/print.png" 
+            alt="Print pattern"
+            class="print-swatch"
+          />
+            <span class="body1-regular">{{ color.label }}</span>
+          </div>
+        </ion-label>      </ion-item>
+  </ion-list>
+</ion-content>
+

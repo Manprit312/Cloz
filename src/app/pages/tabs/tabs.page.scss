@@ -1,0 +1,42 @@
+// Tabs page styles
+
+ion-tab-bar {
+  --color-selected: var(--ion-color-primary);
+  --color: var(--text-color-600);
+  --background: var(--background-primary);
+}
+
+ion-tab-button {
+  app-icon {
+    color: var(--text-color-600);
+  }
+  
+  &.tab-selected {
+    app-icon {
+      color: var(--ion-color-primary) !important;
+    }
+  }
+  
+  ion-label {
+    color: var(--text-color-600);
+    font-size: var(--font-size-xs);
+  }
+}
+
+.dark {
+  ion-tab-bar {
+    --background: var(--ion-background-color);
+    --color: var(--text-color-600);
+  }
+  
+  ion-tab-button {
+    app-icon {
+      color: var(--text-color-600);
+    }
+    
+    ion-label {
+      color: var(--text-color-600);
+    }
+  }
+}
+

@@ -1,52 +1,58 @@
-<ion-header [translucent]="true">
+<ion-header class="ion-no-border">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button
-        [defaultHref]="isEmailChange ? '/tabs/profile' : '/login'"
-      ></ion-back-button>
+      <ion-button (click)="goBack()" class="back-button">
+        <app-icon name="arrow-left" [size]="24" [color]="'#1860FA'"></app-icon>
+      </ion-button>
     </ion-buttons>
-    <ion-title>{{ pageTitle }}</ion-title>
+    <ion-title class="ion-text-center label-bold">{{ pageTitle }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="verification-content">
-  <div class="verification-container">
-    <div class="instructions">
-      <p>
-        Please verify your email. We have sent the a 4 digit code to
-        <strong>{{ email || 'your email' }}</strong
-        >.
+<ion-content [fullscreen]="true">
+  <div class="pad-top-lg pad-v-none-h-md">
+    <div class="column-stack-md pad-bottom-lg">
+      <h3>Please verify your email</h3>
+      <p class="body1-regular">
+        We have sent a 6 digit code to <strong>{{ email || 'your email' }}</strong>.
       </p>
     </div>
 
-    <form (ngSubmit)="verify()" class="verification-form">
+    <form (ngSubmit)="verify()" class="column-stack-lg w-full">
+      <!-- Error Message -->
+      <div *ngIf="error" class="error-message pad-bottom-md">
+        <p class="body1-regular" style="color: red;">{{ error }}</p>
+      </div>
+
       <!-- Code Input -->
-      <ion-item class="form-item">
-        <ion-label position="stacked">Code</ion-label>
-        <ion-input
-          type="text"
-          [(ngModel)]="code"
-          name="code"
-          placeholder="XXXX"
-          maxlength="4"
-          inputmode="numeric"
-          pattern="[0-9]*"
-          (ionInput)="onCodeInput($event)"
-          required
-          class="code-input"
-        ></ion-input>
-      </ion-item>
+      <div class="column-stack-sm">
+        <label class="label-default">Code</label>
+        <div class="input-border-full">
+          <input
+            type="text"
+            [(ngModel)]="code"
+            name="code"
+            placeholder="XXXXXX"
+            maxlength="6"
+            inputmode="numeric"
+            pattern="[0-9]*"
+            (ionInput)="onCodeInput($event)"
+            required
+            class="code-input"
+          />
+        </div>
+      </div>
 
       <!-- Verify Button -->
-      <ion-button
-        expand="block"
+      <app-button
         type="submit"
-        class="verify-button"
-        [disabled]="code.length !== 4"
+        variant="primary"
+        size="xlarge"
+        [fullWidth]="true"
+        [disabled]="code.length !== 6"
       >
         Verify
-      </ion-button>
+      </app-button>
     </form>
   </div>
 </ion-content>
-

@@ -14,12 +14,19 @@ export class ProfileService {
 
   constructor(private authService: AuthService) {
     // Initialize profile from user data if available
+    this.syncFromAuthService();
+  }
+
+  syncFromAuthService(): void {
     const user = this.authService.user();
-    if (user && !this._profile().email) {
+    if (user) {
+      // Always sync email and username from currentUser
+      // Use username as name if name is not available
+      // Only update gender if it exists in user, otherwise keep existing profile value
       this._profile.update((p) => ({
         ...p,
-        name: user.name || p.name || 'Luisa Monsalve',
         email: user.email || p.email || 'luisa@zerena.nl',
+        name: user.name || (user.username ? user.username : p.name) || 'User',
         gender: user.gender || p.gender || 'Female',
       }));
       this.saveProfile();

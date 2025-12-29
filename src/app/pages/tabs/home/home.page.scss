@@ -1,7 +1,30 @@
-.date-strip {
-  display: flex;
-  gap: 12px;
-  padding: 10px;
-  overflow-x: auto;
-  white-space: nowrap;
+// Header styles
+ion-header {
+  --background: var(--ion-background-color);
+  
+  ion-toolbar {
+    --background: var(--ion-background-color);
+    --color: var(--ion-text-color);
+    
+    ion-title {
+      color: var(--ion-text-color);
+    }
+  }
 }
+
+.dark {
+  ion-header {
+    --background: var(--ion-background-color);
+    
+    ion-toolbar {
+      --background: var(--ion-background-color);
+      --color: var(--ion-text-color);
+      
+      ion-title {
+        color: var(--ion-text-color);
+      }
+    }
+  }
+}
+
+

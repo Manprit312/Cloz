@@ -1,0 +1,57 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start" *ngIf="isProcessing">
+      <ion-button (click)="goBack()">
+        <app-icon name="arrow-left" [size]="24" [color]="'var(--ion-color-primary)'"></app-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="ion-text-center">AI cleanup</ion-title>
+    <ion-buttons slot="end" *ngIf="!isProcessing && hasGeneratedImage">
+      <ion-button (click)="onCancel()" class="cancel-button body1-regular">
+        Cancel
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" *ngIf="item">
+  <div class="ai-cleanup-container column-stack-none h-full">
+    <!-- Full Screen Image -->
+    <div class="image-wrapper items-center justify-center">
+      <img [src]="displayImage" [alt]="item.subtype" class="garment-image-full" />
+      
+      <!-- Loading Overlay -->
+      <div class="loading-overlay column-stack-none items-center justify-center" *ngIf="isProcessing">
+        <ion-spinner name="lines" color="light"></ion-spinner>
+        <p class="loading-text body1-medium">AI is enhancing your photo...</p>
+      </div>
+    </div>
+
+    <!-- Action Buttons - Show only after processing completes -->
+    <div class="actions-bottom column-stack-md" *ngIf="!isProcessing && hasGeneratedImage">
+      <app-button
+        variant="primary"
+        size="large"
+        [fullWidth]="true"
+        (click)="onSetAsImage()"
+        class="set-image-button w-full"
+      >
+        <app-icon name="check" [size]="20" [color]="'var(--ion-color-primary-contrast)'" class="mr-sm"></app-icon>
+        Set as generated image
+      </app-button>
+      
+      <app-button
+        variant="tertiary"
+        size="large"
+        [fullWidth]="true"
+        [disabled]="!canRegenerate"
+        (click)="onRegenerate()"
+        class="regenerate-button w-full"
+      >
+        <app-icon name="refresh" [size]="20" [color]="'var(--ion-color-primary)'" class="mr-sm"></app-icon>
+        {{ regenerateText }}
+      </app-button>
+    </div>
+  </div>
+</ion-content>
+

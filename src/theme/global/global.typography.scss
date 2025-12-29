@@ -1,0 +1,176 @@
+/* Global Typography Styles - Matching charged-ui structure */
+
+/* Typography Utilities Based on Figma Design System */
+
+/* Body 1/Regular */
+.body1-regular {
+  font-family: var(--font-family-primary, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif);
+  font-size: var(--font-size-md, 16px);
+  font-weight: var(--font-weight-regular, 400);
+  line-height: 1.5;
+  letter-spacing: normal;
+}
+
+/* Body 1/Medium */
+.body1-medium {
+  font-family: var(--font-family-primary, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif);
+  font-size: var(--font-size-md, 16px);
+  font-weight: var(--font-weight-medium, 500);
+  line-height: 1.5;
+  letter-spacing: normal;
+}
+
+/* Body 1/Bold */
+.body1-bold {
+  font-family: var(--font-family-primary, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif);
+  font-size: var(--font-size-md, 16px);
+  font-weight: var(--font-weight-bold, 700);
+  line-height: 1.5;
+  letter-spacing: normal;
+}
+
+/* Body 2/Regular */
+.body2-regular {
+  font-family: var(--font-family-primary, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif);
+  font-size: var(--font-size-sm, 14px);
+  font-weight: var(--font-weight-regular, 400) !important;
+  line-height: 1.43;
+  letter-spacing: normal;
+}
+
+/* Body 2/Medium */
+.body2-medium {
+  font-family: var(--font-family-primary, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif);
+  font-size: var(--font-size-sm, 14px);
+  font-weight: var(--font-weight-medium, 500) !important;
+  line-height: 1.43;
+  letter-spacing: normal;
+}
+
+/* Body 2/Bold */
+.body2-bold {
+  font-family: var(--font-family-primary, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif);
+  font-size: var(--font-size-sm, 14px);
+  font-weight: var(--font-weight-bold, 700);
+  line-height: 1.43;
+  letter-spacing: normal;
+}
+
+/* Toolbar / Title */
+.toolbar-title {
+  font-family: var(--font-family-primary, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif);
+  font-size: var(--font-size-xl, 24px);
+  font-weight: var(--font-weight-bold, 700);
+  line-height: 1.2;
+  letter-spacing: normal;
+  margin: 0;
+}
+
+/* Label/Small */
+.label-small {
+  font-family: var(--font-family-primary, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif);
+  font-size: var(--font-size-xs, 12px);
+  font-weight: var(--font-weight-regular, 400);
+  line-height: 1.5;
+  letter-spacing: normal;
+}
+
+/* Label/Default */
+.label-default {
+  font-family: var(--font-family-primary, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif);
+  font-size: var(--font-size-sm, 12px);
+  font-weight: var(--font-weight-regular, 400);
+  line-height: 1.43;
+  letter-spacing: normal;
+}
+
+/* Label/Bold - For bold labels (e.g., profile page) */
+.label-bold {
+  font-family: var(--font-family-primary, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif);
+  font-size: var(--font-size-sm, 14px);
+  font-weight: var(--font-weight-bold, 700) !important;
+  line-height: 1.43;
+  letter-spacing: normal;
+}
+
+/* Legacy Typography Utilities - For backward compatibility */
+.text-toolbar-title {
+  @extend .toolbar-title;
+}
+
+.text-paragraph-bold {
+  @extend .body1-bold;
+}
+
+.text-paragraph-regular {
+  @extend .body1-regular;
+}
+
+.text-small-regular {
+  @extend .body2-regular;
+}
+
+/* Typography for headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-family-primary, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif);
+  margin: 0;
+}
+
+h1 {
+  font-size: var(--font-size-xxl, 32px);
+  font-weight: var(--font-weight-bold, 700);
+  line-height: 1.2;
+}
+
+h2 {
+  font-size: var(--font-size-xl, 24px);
+  font-weight: var(--font-weight-bold, 700);
+  line-height: 1.2;
+}
+
+h3 {
+  font-size: var(--font-size-lg, 20px);
+  font-weight: var(--font-weight-bold, 700);
+  line-height: 1.3;
+}
+
+h4 {
+  font-size: var(--font-size-md, 16px);
+  font-weight: var(--font-weight-bold, 700);
+  line-height: 1.4;
+}
+
+p {
+  margin: 0;
+}
+
+/* Text body utility */
+.text-body {
+  @extend .body1-regular;
+}
+
+/* Color utilities */
+.text-color-600 {
+  color: var(--ion-text-color-step-600, #666666);
+}
+
+.text-placeholder {
+  color: var(--ion-text-color-step-500, #999999);
+}
+
+.text-error {
+  color: var(--ion-color-danger, #eb445a);
+  font-size: var(--font-size-sm, 14px);
+  line-height: 1.43;
+}
+
+.dark {
+  .text-color-600 {
+    color: var(--ion-text-color-step-600, #999999);
+  }
+  
+  .text-placeholder {
+    color: var(--ion-text-color-step-500, #999999);
+  }
+}
+

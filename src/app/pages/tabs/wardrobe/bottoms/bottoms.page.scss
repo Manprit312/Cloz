@@ -1,0 +1,147 @@
+// Bottoms Category Page - using global layout and typography utilities
+
+// Header styles
+ion-header {
+  --background: var(--ion-background-color);
+  
+  ion-toolbar {
+    --background: var(--ion-background-color);
+    --color: var(--ion-text-color);
+    
+    ion-title {
+      color: var(--ion-text-color);
+    }
+  }
+}
+
+.dark {
+  ion-header {
+    --background: var(--ion-background-color);
+    
+    ion-toolbar {
+      --background: var(--ion-background-color);
+      --color: var(--ion-text-color);
+      
+      ion-title {
+        color: var(--ion-text-color);
+      }
+    }
+  }
+}
+
+.subtype-filters {
+  flex-wrap: wrap;
+  margin-bottom: var(--gap-lg, var(--x6, 24px));
+}
+
+.filter-button {
+  flex-shrink: 0;
+}
+
+// Ensure grid aligns with filter buttons - remove any default grid padding
+// Container already has pad-all-md, so grid should have no padding
+.items-grid {
+  --padding-start: var(--x0, 0);
+  --padding-end: var(--x0, 0);
+  padding: var(--x0, 0);
+  
+  // Add gaps between thumbnails using padding on columns
+  ion-col {
+    --padding-start: var(--x0, 0);
+    --padding-end: var(--x0, 0);
+    padding: var(--gap-xs, var(--x1, 4px));
+  }
+}
+
+.garment-item {
+  --padding-start: var(--x0, 0);
+  --padding-end: var(--x0, 0);
+  --inner-padding-end: var(--x0, 0);
+  --inner-padding-start: var(--x0, 0);
+  --background: transparent;
+  --background-activated: transparent;
+  --background-hover: transparent;
+  --background-focused: transparent;
+  margin: var(--x0, 0);
+  border-radius: var(--radius-md, 8px);
+  overflow: hidden;
+  height: 100%;
+  
+  // Remove ripple effect and touch feedback
+  &::part(native) {
+    background: transparent;
+  }
+  
+  // Remove activated state background
+  &.ion-activated {
+    --background: transparent;
+    --background-activated: transparent;
+  }
+  
+  ion-thumbnail {
+    width: 100%;
+    min-width: 100%;
+    height: 0;
+    padding-bottom: 100%; // Creates a 1:1 aspect ratio (square)
+    position: relative;
+    overflow: hidden;
+    
+    img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: var(--radius-md, 8px);
+    }
+  }
+}
+
+.garment-thumbnail {
+  margin: var(--x0, 0);
+}
+
+.garment-carousel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: var(--radius-md, 8px);
+}
+
+.garment-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--radius-md, 8px);
+  display: block;
+}
+
+.carousel-dots {
+  position: absolute;
+  bottom: var(--gap-xs, var(--x1, 4px));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+}
+
+.carousel-dots .dot {
+  width: calc(var(--x1, 4px) * 1.5);
+  height: calc(var(--x1, 4px) * 1.5);
+  border-radius: 50%;
+  background-color: rgba(var(--ion-color-primary-contrast-rgb, 255, 255, 255), 0.5);
+  transition: background-color 0.2s ease;
+  cursor: pointer;
+}
+
+.carousel-dots .dot.active {
+  background-color: rgba(var(--ion-color-primary-contrast-rgb, 255, 255, 255), 1);
+}
+
+ion-fab {
+  margin-bottom: var(--gap-lg, var(--x6, 24px));
+  margin-right: var(--gap-md, var(--x4, 16px));
+}

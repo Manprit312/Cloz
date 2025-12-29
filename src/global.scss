@@ -9,6 +9,15 @@
  * https://ionicframework.com/docs/layout/global-stylesheets
  */
 
+// @use rules must be at the top, before any other rules
+@use './theme/global/global.layout.scss' as layout;
+@use './theme/global/global.typography.scss' as typography;
+@use "./theme/variables.scss" as variables;
+
+// Import Spark Design System (Design Tokens from Figma)
+@import "./theme/design-system/ionic-core.css";
+@import "./theme/design-system/ionic-semantic.css";
+
 /* Core CSS required for Ionic components to work properly */
 @import "@ionic/angular/css/core.css";
 
@@ -36,4 +45,668 @@
 @import "@ionic/angular/css/palettes/dark.class.css";
 /* @import '@ionic/angular/css/palettes/dark.system.css'; */
 
-// @use "./theme/variables.scss" as *;
+/**
+ * Global Design Tokens - Colors, Borders, Text
+ * -----------------------------------------------------
+ * Design tokens for colors, borders, and text that can be used throughout the app
+ */
+:root {
+  /* Border Colors */
+  --border-color: #e0e0e0;
+  --border-color-light: #f0f0f0;
+  --border-color-dark: #333333;
+  
+  /* Text Colors - From Figma Design System */
+  --text-primary: #000000;
+  --text-color-600: #666666;
+  --text-secondary: #666666;
+  --text-placeholder: #999999;
+  
+  /* Background Colors - From Figma Design System */
+  --background-primary: #ffffff;
+  --background-250: #f5f5f5;
+  
+  /* Border Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  
+  /* Typography - From Figma Design System */
+  --font-family-primary: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-md: 16px;
+  --font-size-lg: 20px;
+  --font-size-xl: 24px;
+  --font-size-xxl: 32px;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+}
+
+.dark {
+  --border-color: #333333;
+  --border-color-light: #2a2a2a;
+  --border-color-dark: #444444;
+  
+  --text-primary: #ffffff;
+  --text-color-600: #cccccc;
+  --text-secondary: #cccccc;
+  --text-placeholder: #666666;
+  
+  --background-primary: #121212;
+  --background-250: #1a1a1a;
+}
+
+/**
+ * Global Header Styles
+ * -----------------------------------------------------
+ * Ensure all headers have proper background colors
+ */
+ion-header {
+  --background: var(--background-primary);
+  
+  ion-toolbar {
+    --background: var(--background-primary);
+  }
+}
+
+.dark {
+  ion-header {
+    --background: var(--ion-background-color);
+    
+    ion-toolbar {
+      --background: var(--ion-background-color);
+    }
+  }
+}
+
+/**
+ * Global Alert Styles
+ * -----------------------------------------------------
+ * Ensure alerts respect theme colors and have backdrop blur
+ */
+ion-alert {
+  --background: var(--ion-alert-background);
+  --backdrop-opacity: 0.4;
+  
+  .alert-wrapper {
+    background: var(--ion-alert-background);
+  }
+  
+  .alert-head {
+    color: var(--ion-alert-head-color);
+  }
+  
+  .alert-message {
+    color: var(--ion-alert-message-color);
+  }
+  
+  .alert-button {
+    color: var(--ion-alert-button-color);
+  }
+  
+  .alert-input-wrapper {
+    input {
+      background: var(--ion-alert-input-background);
+      color: var(--ion-alert-input-color);
+    }
+  }
+}
+
+.dark {
+  ion-alert {
+    --background: var(--ion-alert-background);
+    
+    .alert-wrapper {
+      background: var(--ion-alert-background);
+    }
+    
+    .alert-head {
+      color: var(--ion-alert-head-color);
+    }
+    
+    .alert-message {
+      color: var(--ion-alert-message-color);
+    }
+    
+    .alert-button {
+      color: var(--ion-alert-button-color);
+    }
+    
+    .alert-input-wrapper {
+      input {
+        background: var(--ion-alert-input-background);
+        color: var(--ion-alert-input-color);
+      }
+    }
+  }
+}
+
+/**
+ * Global Modal Styles
+ * -----------------------------------------------------
+ * Add backdrop blur to all modals for better visual experience
+ */
+ion-modal {
+  --backdrop-opacity: 0.4;
+}
+
+/**
+ * Backdrop Blur for Alerts and Modals
+ * -----------------------------------------------------
+ * Apply backdrop blur to Ionic overlay backdrops
+ * According to Ionic docs: https://ionicframework.com/docs/api/backdrop
+ * We can style the backdrop by assigning CSS properties directly to ion-backdrop
+ * This applies to:
+ * - Alerts (ion-alert uses ion-backdrop)
+ * - Modals (ion-modal uses ion-backdrop)
+ * - Direct usage of ion-backdrop in templates
+ */
+ion-backdrop {
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  opacity: 0.4;
+}
+
+// Set backdrop opacity for better visual effect on overlays
+ion-alert,
+ion-modal {
+  --backdrop-opacity: 0.4;
+}
+
+/**
+ * Modal Header Styles
+ * -----------------------------------------------------
+ * Custom background colors for modal headers only
+ * Light theme: #f4f4f4
+ * Dark theme: #1a1a1a
+ */
+ion-modal {
+  ion-header {
+    --background: #f4f4f4;
+    
+    ion-toolbar {
+      --background: #f4f4f4;
+    }
+  }
+}
+
+.dark {
+  ion-modal {
+    ion-header {
+      --background: #1a1a1a;
+      
+      ion-toolbar {
+        --background: #1a1a1a;
+      }
+    }
+  }
+}
+
+/**
+ * Ensure Modal Backdrop Covers Full Screen
+ * -----------------------------------------------------
+ * Make sure the backdrop is always visible and covers the entire screen
+ */
+ion-modal {
+  --backdrop-opacity: 0.4;
+  
+  // Ensure backdrop is always visible
+  ion-backdrop {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 0.4 !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 1 !important;
+  }
+}
+
+/**
+ * Google Material Symbols (Rounded) - Global Styles
+ * -----------------------------------------------------
+ * Default styling for Material Symbols icons throughout the app
+ * - Style: Rounded
+ * - Optical Size: 24
+ * - Weight: 400
+ * - Fill: 0
+ */
+.material-symbols-rounded {
+  font-family: 'Material Symbols Rounded';
+  font-weight: 400;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+  
+  // Default Material Symbols settings (Rounded, 24px, weight 400, fill 0)
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
+  
+  // Ensure proper rendering on all platforms
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'liga';
+  text-rendering: optimizeLegibility;
+}
+
+/**
+ * Alignment Utilities
+ * -----------------------------------------------------
+ */
+.items-start {
+  align-items: flex-start;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.items-end {
+  align-items: flex-end;
+}
+
+.items-stretch {
+  align-items: stretch;
+}
+
+/* Margin Utilities */
+.mr-sm {
+  margin-right: var(--gap-sm, var(--x2, 8px));
+}
+
+.justify-start {
+  justify-content: flex-start;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-end {
+  justify-content: flex-end;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.justify-around {
+  justify-content: space-around;
+}
+
+.justify-evenly {
+  justify-content: space-evenly;
+}
+
+/* Flex utilities */
+.flex-1 {
+  flex: 1;
+}
+
+.flex-none {
+  flex: none;
+}
+
+/* Full width/height */
+.w-full {
+  width: 100%;
+}
+
+.h-full {
+  height: 100%;
+}
+
+/* Common layout patterns */
+.container {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 0 var(--x4, 16px);
+}
+
+.container-sm {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 0 var(--x4, 16px);
+}
+
+.container-lg {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 var(--x4, 16px);
+}
+
+/**
+ * Form Input Styles - Global
+ * -----------------------------------------------------
+ */
+input[type="email"],
+input[type="password"],
+input[type="text"],
+input[type="tel"],
+input[type="number"],
+textarea {
+  width: 100%;
+  padding: var(--x2, 8px) 0;
+  font-size: var(--font-size-md, 16px);
+  font-weight: var(--font-weight-regular, 400);
+  font-family: var(--font-family-primary);
+  color: var(--text-primary, #000000);
+  background: transparent;
+  border: none;
+  outline: none;
+  line-height: 1.5;
+  
+  &::placeholder {
+    color: var(--text-placeholder, #999999);
+    opacity: 1;
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+label {
+  font-size: var(--font-size-sm, 14px);
+  font-weight: var(--font-weight-regular, 400);
+  font-family: var(--font-family-primary);
+  color: var(--text-primary, #000000);
+  line-height: 1.43;
+}
+
+/**
+ * Input Border Utilities - Edge-to-edge borders
+ * -----------------------------------------------------
+ * Utility classes for input borders that extend edge-to-edge
+ * Left: increased padding (x4), Right: extends to edge
+ */
+.input-border-full {
+  position: relative;
+  border-bottom: 1px solid var(--border-color, #e0e0e0);
+  
+  // Break out of container padding: left padding (x4), full right edge
+  // Container has x4 padding, border starts at x4 (16px) from screen edge, extends to right edge
+  margin-left: 0; // Start from container's left edge (which is already x4 from screen)
+  margin-right: calc(-1 * var(--x4, 16px)); // Extend to screen's right edge
+  width: calc(100% + var(--x4, 16px)); // Full width including the negative margin
+  
+  &:focus-within {
+    border-bottom-color: var(--ion-color-primary, #1860FA);
+  }
+}
+
+.input-border-full input,
+.input-border-full textarea {
+  padding-right: 0; // No padding on right - input touches right edge
+  border-bottom: none;
+  width: 100%;
+  resize: none;
+  font-family: inherit;
+  font-size: var(--font-size-md, 16px);
+  color: var(--ion-text-color, #000000);
+  background: transparent;
+
+  outline: none;
+}
+
+.input-border-full textarea {
+  min-height: 80px;
+  padding-top: var(--x2, 8px);
+  padding-bottom: var(--x2, 8px);
+}
+
+/**
+ * Button Utilities - Global Button Component Styles
+ * -----------------------------------------------------
+ * Variants: primary, secondary, tertiary
+ * Sizes: small, medium, large, xlarge
+ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--radius-md, 8px);
+  font-family: var(--font-family-primary);
+  font-weight: var(--font-weight-medium, 500);
+  cursor: pointer;
+  transition: background-color 0.2s ease, opacity 0.2s ease, border-color 0.2s ease;
+  text-align: center;
+  white-space: nowrap;
+  
+  &:hover:not(:disabled) {
+    opacity: 0.9;
+  }
+  
+  &:active:not(:disabled) {
+    opacity: 0.8;
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+/* Button Variants */
+.btn-primary {
+  background-color: var(--ion-color-primary, #1860FA);
+  color: var(--ion-color-primary-contrast, #ffffff);
+  
+  &:hover:not(:disabled) {
+    background-color: var(--ion-color-primary-shade, #1860FA);
+  }
+}
+
+.btn-secondary {
+  background-color: var(--ion-color-secondary, #ff6f61);
+  color: var(--ion-color-secondary-contrast, #ffffff);
+  
+  &:hover:not(:disabled) {
+    background-color: var(--ion-color-secondary-shade, #e16055);
+  }
+}
+
+.btn-tertiary {
+  background-color: transparent;
+  color: var(--ion-color-primary, #1860FA);
+  border: 1px solid var(--ion-color-primary, #1860FA);
+  
+  &:hover:not(:disabled) {
+    background-color: rgba(var(--ion-color-primary-rgb, 24, 96, 250), 0.1);
+  }
+}
+
+/* Button Sizes */
+.btn-small {
+  height: 28px;
+  padding: 0 var(--x2, 8px);
+  font-size: var(--font-size-sm, 14px);
+}
+
+.btn-medium {
+  height: 40px;
+  padding: 0 var(--x4, 16px);
+  font-size: var(--font-size-md, 16px);
+}
+
+.btn-large {
+  height: 48px;
+  padding: 0 var(--x4, 16px);
+  font-size: var(--font-size-md, 16px);
+}
+
+.btn-xlarge {
+  height: 56px;
+  padding: 0 var(--x6, 24px);
+  font-size: var(--font-size-lg, 20px);
+}
+
+/* Button Modifiers */
+.btn-full-width {
+  width: 100%;
+}
+
+.btn-rounded {
+  border-radius: var(--radius-lg, 12px);
+}
+
+.btn-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
+/**
+ * Profile List Item Styles - Matching Figma Design
+ * -----------------------------------------------------
+ */
+ion-list {
+  ion-item {
+    --min-height: 56px;
+    --padding-start: var(--x4, 16px);
+    --padding-end: var(--x4, 16px); // Normal padding on right for content
+    --inner-padding-start: 0; // Remove left padding from item-inner
+    --inner-padding-end: var(--x4, 16px);
+    --border-color: var(--border-color, #e0e0e0);
+    --background: transparent;
+    --border-width: 0; // Hide Ionic's default border
+    position: relative;
+    
+    // Custom border line only: starts with increased left padding (x4), extends to right edge
+    // Content padding remains normal, only the border line breaks out
+    &[lines="full"]::after {
+      content: '';
+      position: absolute;
+      left: var(--x4, 16px);
+      right: 0;
+      bottom: 0;
+      height: 1px;
+      background-color: var(--border-color, #e0e0e0);
+      z-index: 1;
+    }
+    
+    &[lines="none"]::after {
+      display: none;
+    }
+    
+    // Override item-inner padding to match border line
+    .item-inner {
+      padding-left: var(--x4, 16px);
+    }
+    
+    ion-label {
+      h2 {
+        font-family: var(--font-family-primary);
+        font-size: var(--font-size-sm, 14px);
+        // Don't override font-weight - let typography classes handle it
+        color: var(--text-primary, #000000);
+        margin: 0;
+        line-height: 1.43;
+      }
+      
+      &.text-color-600 {
+        color: var(--text-color-600, #666666);
+      }
+    }
+  }
+}
+
+/**
+ * Dark Mode Styles
+ * -----------------------------------------------------
+ */
+.dark {
+  input[type="email"],
+  input[type="password"],
+  input[type="text"],
+  input[type="tel"],
+  input[type="number"],
+  textarea {
+    color: var(--text-primary, #ffffff);
+    
+    &::placeholder {
+      color: var(--text-placeholder, #666666);
+    }
+  }
+  
+  label {
+    color: var(--text-primary, #ffffff);
+  }
+  
+  .input-border-full {
+    border-bottom-color: var(--border-color, #333333);
+    
+    &:focus-within {
+      border-bottom-color: var(--ion-color-primary, #1860FA);
+    }
+  }
+  
+  ion-list ion-item {
+    --border-color: var(--border-color-dark, #333333);
+    
+    ion-label h2 {
+      color: var(--text-primary, #ffffff);
+    }
+  }
+}
+
+/**
+ * Toast Styles - Matching login success banner position
+ * -----------------------------------------------------
+ */
+.success-toast {
+  --background: var(--ion-color-success);
+  --color: var(--text-primary);
+  text-align: center;
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-md);
+  font-family: var(--font-family-primary);
+  border-radius: var(--radius-md);
+  // Position below header - header height (--x14) + top padding (--gap-lg) + safe area
+  top: calc(var(--x14) + var(--gap-lg) + env(safe-area-inset-top));
+  // Match banner horizontal margins
+  left: var(--padding-md);
+  right: var(--padding-md);
+  width: auto;
+  margin: 0;
+  
+  &::part(message) {
+    color: var(--text-primary);
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-md);
+    font-family: var(--font-family-primary);
+  }
+}
+
+.dark {
+  .success-toast {
+    --background: var(--ion-color-success);
+    --color: var(--ion-color-primary-contrast);
+    
+    &::part(message) {
+      color: var(--ion-color-primary-contrast);
+    }
+  }
+}

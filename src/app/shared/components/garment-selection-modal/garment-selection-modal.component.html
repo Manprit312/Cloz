@@ -1,0 +1,35 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-title class="ion-text-center">{{ getModalTitle() }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cancel()" fill="clear" class="body1-regular">
+        Cancel
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [scrollY]="true">
+  <ion-list class="garment-list">
+    <ion-item
+      *ngFor="let garment of garments"
+      button
+      lines="full"
+      class="garment-item"
+      (click)="onGarmentSelect(garment)"
+    >
+      <ion-thumbnail slot="start">
+        <img [src]="getCurrentImage(garment)" [alt]="garment.subtype" />
+      </ion-thumbnail>
+      <ion-label>
+        <h3 class="body1-medium">{{ garment.subtype }}</h3>
+        <p class="body2-regular" *ngIf="garment.color">{{ garment.color }}</p>
+        <p class="body2-regular" *ngIf="garment.brand">{{ garment.brand }}</p>
+        <p class="body2-regular" *ngIf="garment.createdAt" style="color: var(--text-color-500, #999999);">
+          Added: {{ garment.createdAt }}
+        </p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>
+

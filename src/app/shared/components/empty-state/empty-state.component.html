@@ -1,0 +1,24 @@
+<div class="empty-state column-stack-none items-center justify-center">
+  <div class="empty-state-icon row-stack-none items-center justify-center">
+    <app-icon [name]="icon" [size]="iconSize" [color]="iconColor"></app-icon>
+  </div>
+  
+  <h3 class="empty-state-title">{{ title }}</h3>
+  
+  <p class="empty-state-description body1-regular">{{ description }}</p>
+  
+  <div class="empty-state-button" *ngIf="showButton">
+    <app-button
+      variant="primary"
+      size="large"
+      [fullWidth]="false"
+      (click)="handleButtonClick()"
+    >
+      <span class="button-content row-stack-sm items-center justify-center">
+        <span>{{ buttonText }}</span>
+        <app-icon name="add" [size]="20" [color]="'var(--ion-color-primary-contrast, #ffffff)'"></app-icon>
+      </span>
+    </app-button>
+  </div>
+</div>
+

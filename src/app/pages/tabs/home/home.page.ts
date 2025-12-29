@@ -6,13 +6,11 @@ import {
   IonButtons,
   IonContent,
   IonHeader,
-  IonIcon,
   IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
 import { TranslateModule } from '@ngx-translate/core';
-import { addIcons } from 'ionicons';
-import { person } from 'ionicons/icons';
+import { IconComponent } from '../../../shared/components/icon/icon.component';
 
 // TODO: move to models
 interface DateWithProgress {
@@ -36,15 +34,13 @@ interface DateWithProgress {
     TranslateModule,
     IonButtons,
     IonButton,
-    IonIcon,
+    IconComponent,
   ],
 })
 export class HomePage implements OnInit {
   dates = signal<DateWithProgress[]>([]);
 
-  constructor() {
-    addIcons({ person });
-  }
+  constructor() {}
 
   ngOnInit() {
     this.generateDates();

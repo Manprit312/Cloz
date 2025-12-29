@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  backendBaseUrl: 'https://webhook.site/fc929068-e873-4e7a-a812-16c4986b6cf1',
+  backendBaseUrl: 'http://localhost:3002',
 };
 /*
  * For easier debugging in development mode, you can import the following file

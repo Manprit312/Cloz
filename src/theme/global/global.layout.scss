@@ -1,0 +1,210 @@
+// Stack Utilities - Matching charged-ui structure
+
+// Column Stack (Vertical)
+.column-stack-none {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.column-stack-xs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-xs, var(--x1, 4px));
+}
+
+.column-stack-sm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-sm, var(--x2, 8px));
+}
+
+.column-stack-md {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-md, var(--x4, 16px));
+}
+
+.column-stack-lg {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-lg, var(--x6, 24px));
+}
+
+// Row Stack (Horizontal)
+.row-stack-none {
+  display: flex;
+  flex-direction: row;
+  gap: 0;
+}
+
+.row-stack-xs {
+  display: flex;
+  flex-direction: row;
+  gap: var(--gap-xs, var(--x1, 4px));
+}
+
+.row-stack-sm {
+  display: flex;
+  flex-direction: row;
+  gap: var(--gap-sm, var(--x2, 8px));
+}
+
+.row-stack-md {
+  display: flex;
+  flex-direction: row;
+  gap: var(--gap-md, var(--x4, 16px));
+}
+
+.row-stack-lg {
+  display: flex;
+  flex-direction: row;
+  gap: var(--gap-lg, var(--x6, 24px));
+}
+
+// Uniform Padding
+.pad-all-xs {
+  padding: var(--padding-xs, var(--x2, 8px));
+}
+
+.pad-all-sm {
+  padding: var(--padding-sm, var(--x2, 8px));
+}
+
+.pad-all-md {
+  padding: var(--padding-md, var(--x4, 16px));
+}
+
+.pad-all-lg {
+  padding: var(--padding-lg, var(--x6, 24px));
+}
+
+// Asymmetric Padding
+.pad-v-lg-h-none {
+  padding-top: var(--padding-lg, var(--x6, 24px));
+  padding-bottom: var(--padding-lg, var(--x6, 24px));
+  padding-right: 0;
+  padding-left: 0;
+}
+
+.pad-v-md-h-none {
+  padding-top: var(--padding-md, var(--x4, 16px));
+  padding-bottom: var(--padding-md, var(--x4, 16px));
+  padding-right: 0;
+  padding-left: 0;
+}
+
+.pad-v-sm-h-md {
+  padding-top: var(--padding-sm, var(--x2, 8px));
+  padding-bottom: var(--padding-sm, var(--x2, 8px));
+  padding-right: var(--padding-md, var(--x4, 16px));
+  padding-left: var(--padding-md, var(--x4, 16px));
+}
+
+.pad-v-sm-h-none {
+  padding-top: var(--padding-sm, var(--x2, 8px));
+  padding-bottom: var(--padding-sm, var(--x2, 8px));
+  padding-right: 0;
+  padding-left: 0;
+}
+
+.pad-v-lg-h-md {
+  padding-top: var(--padding-lg, var(--x6, 24px));
+  padding-bottom: var(--padding-lg, var(--x6, 24px));
+  padding-right: var(--padding-md, var(--x4, 16px));
+  padding-left: var(--padding-md, var(--x4, 16px));
+}
+
+.pad-v-none-h-md {
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-right: var(--padding-md, var(--x4, 16px));
+  padding-left: var(--padding-md, var(--x4, 16px));
+}
+.pad-none-l-md {
+  padding-top: 0;
+  padding-bottom: 0;
+
+
+}
+.pad-v-xs-h-sm {
+  padding-top: var(--padding-xs, var(--x2, 8px));
+  padding-bottom: var(--padding-xs, var(--x2, 8px));
+  padding-right: var(--padding-sm, var(--x2, 8px));
+  padding-left: var(--padding-sm, var(--x2, 8px));
+}
+
+.pad-bottom-lg {
+  padding-bottom: var(--padding-lg, var(--x6, 24px));
+}
+
+.pad-top-lg {
+  padding-top: var(--padding-lg, var(--x6, 24px));
+}
+
+// Legacy aliases for backward compatibility - Use mixin pattern
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-md, var(--x4, 16px));
+}
+
+.stack.gap-xs {
+  gap: var(--gap-xs, var(--x1, 4px));
+}
+
+.stack.gap-sm {
+  gap: var(--gap-sm, var(--x2, 8px));
+}
+
+.stack.gap-md {
+  gap: var(--gap-md, var(--x4, 16px));
+}
+
+.stack.gap-lg {
+  gap: var(--gap-lg, var(--x6, 24px));
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  gap: var(--gap-md, var(--x4, 16px));
+}
+
+.row.gap-xs {
+  gap: var(--gap-xs, var(--x1, 4px));
+}
+
+.row.gap-sm {
+  gap: var(--gap-sm, var(--x2, 8px));
+}
+
+.row.gap-md {
+  gap: var(--gap-md, var(--x4, 16px));
+}
+
+.row.gap-lg {
+  gap: var(--gap-lg, var(--x6, 24px));
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-md, var(--x4, 16px));
+}
+
+.col.gap-xs {
+  gap: var(--gap-xs, var(--x1, 4px));
+}
+
+.col.gap-sm {
+  gap: var(--gap-sm, var(--x2, 8px));
+}
+
+.col.gap-md {
+  gap: var(--gap-md, var(--x4, 16px));
+}
+
+.col.gap-lg {
+  gap: var(--gap-lg, var(--x6, 24px));
+}

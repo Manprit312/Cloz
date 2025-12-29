@@ -1,0 +1,115 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()" >
+        <app-icon name="arrow-left" [size]="24" [color]="'#1860FA'"></app-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="ion-text-center">Upper garments</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="pad-all-md">
+    <!-- Subtype Filters - Only show when there are items -->
+    <div class="subtype-filters row-stack-sm" *ngIf="!isLoading && !error && items.length > 0">
+      <app-button
+        *ngFor="let subtype of availableSubtypes"
+        [variant]="selectedSubtype === subtype ? 'primary' : 'tertiary'"
+        size="small"
+        [fullWidth]="false"
+        (click)="selectSubtype(subtype)"
+        class="filter-button"
+      >
+        {{ subtype }}
+      </app-button>
+    </div>
+
+    <!-- Show loading state -->
+    <div *ngIf="isLoading" class="loading-container">
+      <p>Loading upper garments...</p>
+    </div>
+
+    <!-- Show error state -->
+    <div *ngIf="error && !isLoading" class="error-container">
+      <p>{{ error }}</p>
+      <app-button (click)="loadUpperGarments()" variant="primary" size="small">
+        Retry
+      </app-button>
+    </div>
+
+    <!-- Show empty state when no items (only when all items are loaded) -->
+    <app-empty-state
+      *ngIf="!isLoading && !error && items.length === 0"
+      icon="hanger"
+      [iconSize]="64"
+      iconColor="var(--text-color-600, #666666)"
+      title="No upper garments yet"
+      description="Add your tops to get started."
+      buttonText="Add item"
+      [showButton]="true"
+      (onButtonClick)="onAddItem()"
+    ></app-empty-state>
+
+    <!-- Show items grid when items exist -->
+    <ion-grid *ngIf="!isLoading && !error && filteredItems.length > 0" class="items-grid">
+      <ion-row>
+        <ion-col
+          *ngFor="let item of filteredItems"
+          size="4"
+        >
+          <ion-item
+            button
+            (click)="onItemClick(item)"
+            class="garment-item"
+            lines="none"
+          >
+            <ion-thumbnail slot="start" class="garment-thumbnail">
+              <!-- Carousel for multiple images -->
+              <div 
+                *ngIf="hasMultipleImages(item)" 
+                class="garment-carousel"
+                (touchstart)="onTouchStart($event, item)"
+                (touchend)="onTouchEnd($event, item)"
+                (click)="$event.stopPropagation()"
+              >
+                <img 
+                  [src]="getCurrentImage(item)" 
+                  [alt]="item.subtype" 
+                  class="garment-image"
+                />
+                <!-- Pagination dots -->
+                <div class="carousel-dots row-stack-xs">
+                  <span
+                    *ngFor="let img of getImages(item); let i = index"
+                    class="dot"
+                    [class.active]="i === getCurrentImageIndex(item)"
+                  ></span>
+                </div>
+              </div>
+              <!-- Single image -->
+              <img 
+                *ngIf="!hasMultipleImages(item)"
+                [src]="item.imageUrl" 
+                [alt]="item.subtype" 
+                class="garment-image"
+              />
+            </ion-thumbnail>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+
+  <!-- Floating Action Button - Only show when there are items -->
+  <ion-fab 
+    *ngIf="!isLoading && !error && items.length > 0"
+    vertical="bottom" 
+    horizontal="end" 
+    slot="fixed"
+  >
+    <ion-fab-button (click)="onAddItem()">
+      <app-icon name="add" [size]="24" [color]="'#ffffff'"></app-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

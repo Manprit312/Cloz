@@ -1,0 +1,183 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-title class="ion-text-center">Create outfit</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="goBack()" fill="clear" class="body1-regular">
+        Close
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="create-outfit-container column-stack-lg pad-all-md">
+    
+    <!-- Upper Garments Section -->
+    <div class="outfit-section column-stack-sm">
+      <h3 class="section-title body1-medium">Upper garments</h3>
+      <div class="garments-row row-stack-sm">
+        <!-- Selected Garments -->
+        <div 
+          *ngFor="let garment of getSelectedGarments('upper-garments')"
+          class="garment-item-wrapper"
+        >
+          <div class="garment-item-container">
+            <img 
+              [src]="garment.imageUrl"
+              [alt]="garment.subtype"
+              class="selected-garment-image"
+            />
+            <button 
+              class="remove-button"
+              (click)="removeGarment('upper-garments', garment.id); $event.stopPropagation()"
+            >
+              <app-icon name="close" [size]="16" [color]="'var(--ion-color-primary)'"></app-icon>
+            </button>
+          </div>
+        </div>
+        <!-- Add Button -->
+        <div 
+          class="garment-placeholder items-center justify-center"
+          (click)="openGarmentModal('upper-garments')"
+        >
+          <div class="placeholder-content items-center justify-center">
+            <app-icon name="add" [size]="32" [color]="'var(--ion-color-primary)'"></app-icon>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottoms Section -->
+    <div class="outfit-section column-stack-sm">
+      <h3 class="section-title body1-medium">Bottoms</h3>
+      <div class="garments-row row-stack-sm">
+        <!-- Selected Garments -->
+        <div 
+          *ngFor="let garment of getSelectedGarments('bottoms')"
+          class="garment-item-wrapper"
+        >
+          <div class="garment-item-container">
+            <img 
+              [src]="garment.imageUrl"
+              [alt]="garment.subtype"
+              class="selected-garment-image"
+            />
+            <button 
+              class="remove-button"
+              (click)="removeGarment('bottoms', garment.id); $event.stopPropagation()"
+            >
+              <app-icon name="close" [size]="16" [color]="'var(--ion-color-primary)'"></app-icon>
+            </button>
+          </div>
+        </div>
+        <!-- Add Button -->
+        <div 
+          class="garment-placeholder items-center justify-center"
+          (click)="openGarmentModal('bottoms')"
+        >
+          <div class="placeholder-content items-center justify-center">
+            <app-icon name="add" [size]="32" [color]="'var(--ion-color-primary)'"></app-icon>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Shoes Section -->
+    <div class="outfit-section column-stack-sm">
+      <h3 class="section-title body1-medium">Shoes</h3>
+      <div class="garments-row row-stack-sm">
+        <!-- Selected Garments -->
+        <div 
+          *ngFor="let garment of getSelectedGarments('shoes')"
+          class="garment-item-wrapper"
+        >
+          <div class="garment-item-container">
+            <img 
+              [src]="garment.imageUrl"
+              [alt]="garment.subtype"
+              class="selected-garment-image"
+            />
+            <button 
+              class="remove-button"
+              (click)="removeGarment('shoes', garment.id); $event.stopPropagation()"
+            >
+              <app-icon name="close" [size]="16" [color]="'var(--ion-color-primary)'"></app-icon>
+            </button>
+          </div>
+        </div>
+        <!-- Add Button -->
+        <div 
+          class="garment-placeholder items-center justify-center"
+          (click)="openGarmentModal('shoes')"
+        >
+          <div class="placeholder-content items-center justify-center">
+            <app-icon name="add" [size]="32" [color]="'var(--ion-color-primary)'"></app-icon>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Accessories Section -->
+    <div class="outfit-section column-stack-sm">
+      <h3 class="section-title body1-medium">Accessories</h3>
+      <div class="garments-row row-stack-sm">
+        <!-- Selected Garments -->
+        <div 
+          *ngFor="let garment of getSelectedGarments('accessories')"
+          class="garment-item-wrapper"
+        >
+          <div class="garment-item-container">
+            <img 
+              [src]="garment.imageUrl"
+              [alt]="garment.subtype"
+              class="selected-garment-image"
+            />
+            <button 
+              class="remove-button"
+              (click)="removeGarment('accessories', garment.id); $event.stopPropagation()"
+            >
+              <app-icon name="close" [size]="16" [color]="'var(--ion-color-primary)'"></app-icon>
+            </button>
+          </div>
+        </div>
+        <!-- Add Button -->
+        <div 
+          class="garment-placeholder items-center justify-center"
+          (click)="openGarmentModal('accessories')"
+        >
+          <div class="placeholder-content items-center justify-center">
+            <app-icon name="add" [size]="32" [color]="'var(--ion-color-primary)'"></app-icon>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Outfit Name Section -->
+    <div class="outfit-section column-stack-sm">
+      <h3 class="section-title body1-medium">Outfit name (optional)</h3>
+      <ion-item class="name-input-item">
+        <ion-input
+          [(ngModel)]="outfitName"
+          placeholder="Name your outfit"
+          class="outfit-name-input"
+        ></ion-input>
+      </ion-item>
+      <p class="body2-regular helper-text">Leave empty if you want AI to generate your outfit</p>
+    </div>
+
+    <!-- Create Outfit Button -->
+    <div class="create-button-container">
+      <app-button
+        variant="primary"
+        size="large"
+        [fullWidth]="true"
+        [disabled]="!canCreateOutfit"
+        (click)="onCreateOutfit()"
+      >
+        Create outfit
+      </app-button>
+    </div>
+
+  </div>
+</ion-content>
+

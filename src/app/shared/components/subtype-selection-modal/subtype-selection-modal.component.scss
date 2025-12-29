@@ -1,0 +1,96 @@
+// Subtype Selection Modal - using global layout and typography utilities
+
+// Header styles
+ion-header {
+  ion-toolbar {
+    --min-height: var(--x14);
+    --padding-start: var(--x2);
+    
+    ion-title {
+      font-weight: var(--font-weight-bold);
+      font-size: var(--font-size-md);
+      line-height: 1.2;
+    }
+    
+    ion-buttons {
+      ion-button {
+        font-size: var(--font-size-md);
+        font-weight: var(--font-weight-regular);
+        --color: var(--ion-color-primary);
+      }
+    }
+  }
+}
+
+// Content scrollable
+ion-content {
+  --overflow: auto;
+  --overflow-y: auto;
+  --overflow-x: hidden;
+  height: 100%;
+  max-height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+:host {
+  height: 100%;
+}
+
+ion-list {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+// List styles - break out of container padding to touch right edge
+.subtype-list {
+  --padding-start: 0;
+  --padding-end: 0;
+  padding: 0;
+  padding-bottom: var(--gap-lg);
+  margin-left: 0;
+  margin-right: calc(-1 * var(--padding-md));
+  width: calc(100% + var(--padding-md));
+}
+
+// Item styles - proper spacing and typography
+.subtype-item {
+  --padding-end: 0;
+  --min-height: var(--x14);
+  --detail-icon-opacity: 0;
+  --detail-icon-display: none;
+  
+  // Hide default iOS chevron
+  &::part(native) {
+    --detail-icon-opacity: 0;
+  }
+  
+  // Hide detail icon
+  ion-icon[slot="end"],
+  .item-detail-icon {
+    display: none !important;
+  }
+  
+  ion-label {
+    span {
+      display: block;
+    }
+  }
+  
+  // Ensure the border line touches right edge of screen
+  &[lines="full"]::after {
+    right: 0 !important;
+    left: var(--padding-md);
+  }
+  
+  // Remove extra left padding since container already provides it
+  .item-inner {
+    padding-left: 0 !important;
+    padding-right: var(--gap-lg);
+  }
+  
+  .chevron-icon {
+    margin-right: var(--gap-md);
+  }
+}
+

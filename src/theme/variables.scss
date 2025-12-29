@@ -1,10 +1,10 @@
 :root {
-  --ion-color-primary: #4e54c8;
+  --ion-color-primary: #1860FA;
   --ion-color-primary-rgb: 78, 84, 200;
   --ion-color-primary-contrast: #ffffff;
   --ion-color-primary-contrast-rgb: 255, 255, 255;
-  --ion-color-primary-shade: #4449b1;
-  --ion-color-primary-tint: #5f64cb;
+  --ion-color-primary-shade: #1860FA
+  --ion-color-primary-tint: #1860FA
 
   --ion-color-secondary: #ff6f61;
   --ion-color-secondary-rgb: 255, 111, 97;
@@ -12,12 +12,32 @@
   --ion-color-secondary-contrast-rgb: 255, 255, 255;
   --ion-color-secondary-shade: #e16055;
   --ion-color-secondary-tint: #ff7f73;
+  
+  // Background and text colors for light mode
+  --ion-background-color: #ffffff;
+  --ion-text-color: #000000;
+  
+  // Alert styling
+  --ion-alert-background: #ffffff;
+  --ion-alert-head-color: #000000;
+  --ion-alert-message-color: #666666;
+  --ion-alert-button-color: #1860FA;
+  --ion-alert-input-background: #ffffff;
+  --ion-alert-input-color: #000000;
 }
 
 .dark {
-  --ion-color-primary: #a0a8f3;
+  --ion-color-primary: #1860FA;
   --ion-color-secondary: #ff998a;
 
   --ion-background-color: #121212;
   --ion-text-color: #ffffff;
+  
+  // Alert styling for dark theme
+  --ion-alert-background: #1e1e1e;
+  --ion-alert-head-color: #ffffff;
+  --ion-alert-message-color: #cccccc;
+  --ion-alert-button-color: #1860FA;
+  --ion-alert-input-background: #2a2a2a;
+  --ion-alert-input-color: #ffffff;
 }

@@ -1,0 +1,39 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-title class="ion-text-center">Regenerate</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cancel()" fill="clear" class="body1-regular btn-text-primary">
+        Cancel
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="modal-content">
+  <div class="pad-top-lg pad-v-none-h-md column-stack-none modal-content-wrapper">
+    <div class="column-stack-sm">
+      <label class="label-default">Describe what should be improved</label>
+      <div class="input-border-full">
+        <textarea
+          [(ngModel)]="description"
+          placeholder="Describe what should be improved"
+          rows="4"
+          autofocus
+        ></textarea>
+      </div>
+    </div>
+
+    <!-- Regenerate Button - Positioned at bottom -->
+    <div class="button-container">
+      <app-button
+        variant="primary"
+        size="xlarge"
+        [fullWidth]="true"
+        (click)="regenerate()"
+      >
+        Regenerate
+      </app-button>
+    </div>
+  </div>
+</ion-content>
+

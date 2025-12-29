@@ -1,20 +1,21 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject } from '@angular/core';
+import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
   IonContent,
   IonHeader,
   IonTitle,
   IonToolbar,
-  IonItem,
-  IonLabel,
+
+
   IonButton,
-  IonInput,
+
   IonButtons,
-  IonBackButton,
 } from '@ionic/angular/standalone';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProfileService } from '@app-core';
+import { ButtonComponent } from '../../shared/components/button/button.component';
+import { IconComponent } from '../../shared/components/icon/icon.component';
 
 @Component({
   selector: 'app-change-email',
@@ -23,29 +24,30 @@ import { ProfileService } from '@app-core';
   standalone: true,
   imports: [
     IonButton,
-    IonItem,
-    IonLabel,
+  
+  
     IonContent,
     IonHeader,
     IonTitle,
     IonToolbar,
     IonButtons,
-    IonBackButton,
     CommonModule,
     FormsModule,
-    IonInput,
+  
+    ButtonComponent,
+    IconComponent,
   ],
 })
 export class ChangeEmailPage implements OnInit {
   currentEmail = '';
   newEmail = '';
-  error = '';
+  showErrorMessage = false;
+  errorMessageText = '';
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private profileService: ProfileService
-  ) {}
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private profileService = inject(ProfileService);
+  private location = inject(Location);
 
   ngOnInit() {
     this.currentEmail = this.profileService.profile().email;
@@ -57,29 +59,46 @@ export class ChangeEmailPage implements OnInit {
   }
 
   async updateEmail(): Promise<void> {
-    this.error = '';
+    this.showErrorMessage = false;
+    this.errorMessageText = '';
 
     if (!this.newEmail || !this.newEmail.trim()) {
-      this.error = 'Please enter a new email address';
+      this.showErrorMessage = true;
+      this.errorMessageText = 'Please enter a new email address';
+      setTimeout(() => {
+        this.showErrorMessage = false;
+      }, 5000);
       return;
     }
 
     if (!this.isValidEmail(this.newEmail)) {
-      this.error = 'Please enter a valid email address';
+      this.showErrorMessage = true;
+      this.errorMessageText = 'Please enter a valid email address';
+      setTimeout(() => {
+        this.showErrorMessage = false;
+      }, 5000);
       return;
     }
 
     if (this.newEmail.trim() === this.currentEmail) {
-      this.error = 'New email must be different from current email';
+      this.showErrorMessage = true;
+      this.errorMessageText = 'New email must be different from current email';
+      setTimeout(() => {
+        this.showErrorMessage = false;
+      }, 5000);
       return;
     }
 
     // Navigate to verification page
     this.router.navigateByUrl(
-      '/verify-email?email=' +
+      '/verification?email=' +
         encodeURIComponent(this.newEmail.trim()) +
         '&changeEmail=true'
     );
+  }
+
+  goBack(): void {
+    this.location.back();
   }
 
   private isValidEmail(email: string): boolean {

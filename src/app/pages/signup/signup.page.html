@@ -1,44 +1,49 @@
-<ion-header [translucent]="true">
+<ion-header class="ion-no-border">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/onboarding"></ion-back-button>
+      <ion-button (click)="goBack()" class="back-button">
+        <app-icon name="arrow-left" [size]="24" [color]="'#1860FA'"></app-icon>
+      </ion-button>
     </ion-buttons>
-    <ion-title>Create your account</ion-title>
+    <ion-title class="ion-text-center label-bold">Create your account</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true" class="signup-content">
-  <div class="signup-container">
-    <form (ngSubmit)="signup()" class="signup-form">
+  <div class="signup-container column-stack-none">
+    <form (ngSubmit)="signup()" class="signup-form column-stack-none">
       <!-- Name Field -->
-      <ion-item class="form-item">
-        <ion-label position="stacked">Name</ion-label>
+      <ion-item class="form-item" [detailIcon]="false">
+        <ion-label position="stacked" class="label-small">Name</ion-label>
         <ion-input
           type="text"
+          class="body1-regular"
           [(ngModel)]="name"
           name="name"
-          placeholder="Luisa"
+          placeholder="Your name"
           required
         ></ion-input>
       </ion-item>
 
       <!-- Email Field -->
-      <ion-item class="form-item">
-        <ion-label position="stacked">Email</ion-label>
+      <ion-item class="form-item" [detailIcon]="false">
+        <ion-label position="stacked" class="label-small">Email</ion-label>
         <ion-input
           type="email"
+          class="body1-regular"
           [(ngModel)]="email"
           name="email"
-          placeholder="luisa@zerena.nl"
+          placeholder="your@email.com"
           required
         ></ion-input>
       </ion-item>
 
       <!-- Password Field -->
-      <ion-item class="form-item">
-        <ion-label position="stacked">Password</ion-label>
+      <ion-item class="form-item" [detailIcon]="false">
+        <ion-label position="stacked" class="label-default">Password</ion-label>
         <ion-input
           type="password"
+          class="body1-regular"
           [(ngModel)]="password"
           name="password"
           placeholder="**********"
@@ -47,10 +52,11 @@
       </ion-item>
 
       <!-- Confirm Password Field -->
-      <ion-item class="form-item">
-        <ion-label position="stacked">Confirm password</ion-label>
+      <ion-item class="form-item" [detailIcon]="false">
+        <ion-label position="stacked" class="label-small">Confirm password</ion-label>
         <ion-input
           type="password"
+          class="body1-regular"
           [(ngModel)]="confirmPassword"
           name="confirmPassword"
           placeholder="**********"
@@ -59,18 +65,22 @@
       </ion-item>
 
       <!-- Gender Field -->
-      <ion-item class="form-item" button (click)="openGenderSelector()">
-        <ion-label position="stacked">Gender</ion-label>
-        <ion-input
-          [value]="genderDisplayText"
-          readonly
-          placeholder="Select gender"
-        ></ion-input>
-        <ion-icon
-          name="chevron-down-outline"
-          slot="end"
-          class="gender-chevron"
-        ></ion-icon>
+      <ion-item class="form-item" button (click)="openGenderSelector()" [detailIcon]="false">
+        <ion-label position="stacked" class="label-small">Gender</ion-label>
+        <div class="row-stack-sm  w-full">
+          <ion-input 
+            class="body1-regular flex-1"
+            [value]="genderDisplayText"
+            readonly
+            placeholder="Select gender"
+          ></ion-input>
+          <app-icon 
+            name="unfold-more" 
+            [size]="24" 
+            [color]="'#999999'"
+            class="gender-chevron"
+          ></app-icon>
+        </div>
       </ion-item>
 
       <!-- Error Message -->
@@ -78,7 +88,6 @@
         {{ error }}
       </ion-text>
 
-      <!-- Signup Button -->
       <ion-button
         expand="block"
         type="submit"

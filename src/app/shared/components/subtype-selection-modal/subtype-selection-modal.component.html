@@ -1,0 +1,27 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-title class="ion-text-center">Select subtype</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cancel()" fill="clear" class="body1-regular">
+        Cancel
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [scrollY]="true">
+  <ion-list class="subtype-list">
+    <ion-item
+      *ngFor="let option of options"
+      button
+      lines="full"
+      class="subtype-item"
+      (click)="onSubtypeChange(option.value)"
+    >
+      <ion-label>
+        <span class="body1-regular">{{ option.label }}</span>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>
+

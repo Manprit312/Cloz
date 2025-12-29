@@ -1,0 +1,81 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()" >
+        <app-icon name="arrow-left" [size]="24" [color]="'var(--ion-color-primary)'"></app-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="ion-text-center">{{ title }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" *ngIf="item">
+  <div class="detail-container column-stack-md pad-all-md">
+    <!-- Success Banner -->
+    <div class="success-banner pad-all-md row-stack-sm items-center" *ngIf="showSuccessMessage">
+      <app-icon name="checkmark-circle" [size]="24" [color]="'var(--text-primary)'"></app-icon>
+      <span class="body1-medium">Garment image updated</span>
+    </div>
+
+    <!-- Garment Image -->
+    <div class="image-container" 
+         (touchstart)="onTouchStart($event)" 
+         (touchend)="onTouchEnd($event)">
+      <img [src]="currentImage" [alt]="item.subtype" class="garment-image" />
+      
+      <!-- Pagination Dots - Overlay on bottom of image -->
+      <div class="pagination-dots row-stack-xs items-center justify-center" *ngIf="hasMultipleImages">
+        <span
+          *ngFor="let image of images; let i = index"
+          class="dot"
+          [class.active]="i === currentImageIndex"
+          (click)="goToImage(i)"
+        ></span>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="actions-container row-stack-md">
+      <app-button
+        variant="primary"
+        size="medium"
+        [fullWidth]="false"
+        (click)="onAICleanup()"
+        class="ai-cleanup-button"
+      >
+        <app-icon name="magic-wand" [size]="20" [color]="'var(--ion-color-primary-contrast)'" class="mr-sm"></app-icon>
+        AI cleanup
+      </app-button>
+      <app-button
+        variant="tertiary"
+        size="medium"
+        [fullWidth]="false"
+        (click)="onEdit()"
+        class="edit-button"
+      >
+        <app-icon name="edit" [size]="20" [color]="'var(--ion-color-primary)'" class="mr-sm"></app-icon>
+        Edit
+      </app-button>
+    </div>
+
+    <!-- Details -->
+    <div class="details-container">
+      <div class="details-column column-stack-md">
+        <app-detail-item label="Color(s)" [value]="item.color"></app-detail-item>
+        <app-detail-item label="Climate fit" [value]="item.climateFit.join(', ')"></app-detail-item>
+      </div>
+      <div class="details-column column-stack-md">
+        <app-detail-item label="Brand" [value]="item.brand || 'N/A'"></app-detail-item>
+        <app-detail-item label="Added on" [value]="formattedDate"></app-detail-item>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Action - Bottom Center -->
+  <div class="delete-container">
+    <button class="delete-link body1-regular" (click)="onDelete()">
+      Delete from wardrobe
+    </button>
+  </div>
+</ion-content>
+

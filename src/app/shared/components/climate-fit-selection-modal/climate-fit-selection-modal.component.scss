@@ -1,0 +1,149 @@
+// Climate Fit Selection Modal - using global layout and typography utilities
+
+// Header styles
+ion-header {
+  --background: var(--ion-background-color, #ffffff);
+  
+  ion-toolbar {
+    --background: var(--ion-background-color, #ffffff);
+    --color: var(--ion-text-color, #000000);
+    --min-height: var(--x14, 56px);
+    --padding-start: var(--x2, 8px);
+    
+    ion-title {
+      font-weight: var(--font-weight-bold, 700);
+      font-size: var(--font-size-md, 16px);
+      line-height: 1.2;
+      color: var(--ion-text-color, #000000);
+    }
+    
+    ion-buttons {
+      ion-button {
+        font-size: var(--font-size-md, 16px);
+        font-weight: var(--font-weight-regular, 400);
+        --color: var(--ion-color-primary);
+      }
+    }
+  }
+}
+
+.dark {
+  ion-header {
+    --background: var(--ion-background-color, #121212);
+    
+    ion-toolbar {
+      --background: var(--ion-background-color, #121212);
+      --color: var(--ion-text-color, #ffffff);
+      
+      ion-title {
+        color: var(--ion-text-color, #ffffff);
+      }
+    }
+  }
+}
+
+// Content layout - fixed footer, scrollable list
+:host {
+  height: 100%;
+}
+
+.climate-content {
+  --overflow: hidden;
+  height: 100%;
+  max-height: 100%;
+  min-height: 0;
+}
+
+.scrollable-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  min-height: 0;
+  max-height: 100%;
+}
+
+.climate-description {
+  padding-top: var(--gap-md, var(--x4, 16px));
+  padding-bottom: var(--gap-md, var(--x4, 16px));
+  margin: 0;
+  color: var(--ion-text-color, #000000);
+  
+  .dark & {
+    color: var(--ion-text-color, #ffffff);
+  }
+}
+
+// List styles - break out of container padding to touch right edge
+.climate-list {
+  --padding-start: 0;
+  --padding-end: 0;
+  padding: 0;
+  padding-bottom: var(--gap-lg, var(--x6, 24px));
+  margin-left: 0;
+  margin-right: calc(-1 * var(--padding-md, var(--x4, 16px)));
+  width: calc(100% + var(--padding-md, var(--x4, 16px)));
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  min-height: 0;
+}
+
+// Item styles - proper spacing and typography
+.climate-item {
+  --padding-end: 0;
+  --min-height: var(--x14, 56px);
+  
+  ion-label {
+    span {
+      display: block;
+    }
+  }
+  
+  // Ensure the border line touches right edge of screen
+  &[lines="full"]::after {
+    right: 0 !important;
+    left: var(--padding-md, var(--x4, 16px));
+  }
+  
+  // Remove extra left padding since container already provides it
+  .item-inner {
+    padding-left: 0 !important;
+    padding-right: var(--x4, 16px);
+  }
+  
+  ion-checkbox {
+    --color: var(--ion-color-primary);
+    --checkbox-background-checked: var(--ion-color-primary);
+    --border-color-checked: var(--ion-color-primary);
+  }
+}
+
+// Modal Footer - Fixed at bottom
+.modal-footer {
+  padding-top: var(--gap-lg, var(--x6, 24px));
+  padding-bottom: var(--gap-lg, var(--x6, 24px));
+  flex-shrink: 0;
+  background-color: var(--ion-background-color, #ffffff);
+  border-top: 1px solid var(--ion-color-step-200, #f0f0f0);
+  
+  .cancel-button {
+    --color: var(--ion-text-color, #000000);
+    font-weight: var(--font-weight-regular, 400);
+  }
+  
+  .confirm-button {
+    --color: var(--ion-color-primary);
+    font-weight: var(--font-weight-regular, 400);
+  }
+  
+  .dark & {
+    background-color: var(--ion-background-color, #121212);
+    border-top-color: var(--ion-color-step-800, #333333);
+    
+    .cancel-button {
+      --color: var(--ion-text-color, #ffffff);
+    }
+  }
+}
+

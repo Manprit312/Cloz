@@ -1,0 +1,76 @@
+// Regenerate Modal styles using only design tokens and global utilities
+// Sheet modal - 1/3 of screen height
+
+.modal-content {
+  --overflow: hidden;
+}
+
+.modal-content-wrapper {
+  padding-bottom: var(--gap-lg);
+}
+
+.button-container {
+  padding-top: var(--gap-lg);
+}
+
+// Ensure input border touches right edge (input-border-full already handles this globally)
+// The container has pad-v-none-h-md which adds horizontal padding
+// input-border-full breaks out of this padding to touch right edge
+
+// Header styles
+ion-header {
+  --background: var(--ion-background-color);
+  position: relative;
+  
+  // Add border-bottom that spans full width
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: var(--ion-color-step-200);
+  }
+  
+  ion-toolbar {
+    --background: var(--ion-background-color);
+    --color: var(--ion-text-color);
+    --min-height: var(--x14);
+    --padding-start: var(--x2);
+    
+    ion-title {
+      font-weight: var(--font-weight-bold);
+      font-size: var(--font-size-md);
+      line-height: 1.2;
+      color: var(--ion-text-color);
+    }
+    
+    ion-buttons {
+      ion-button {
+        font-size: var(--font-size-md);
+        font-weight: var(--font-weight-regular);
+      }
+    }
+  }
+}
+
+.dark {
+  ion-header {
+    --background: var(--ion-background-color);
+    
+    &::after {
+      background-color: var(--ion-color-step-800);
+    }
+    
+    ion-toolbar {
+      --background: var(--ion-background-color);
+      --color: var(--ion-text-color);
+      
+      ion-title {
+        color: var(--ion-text-color);
+      }
+    }
+  }
+}
+

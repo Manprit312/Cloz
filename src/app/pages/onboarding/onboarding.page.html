@@ -1,8 +1,8 @@
 <ion-content [fullscreen]="true" class="welcome-content">
-  <div class="welcome-container">
+  <div class="welcome-container column-stack-none items-center justify-center">
     <!-- Icon -->
     <div class="icon-container">
-      <ion-icon name="shirt-outline" class="welcome-icon"></ion-icon>
+      <app-icon name="shirt" [size]="64" [color]="'var(--ion-color-primary)'" class="welcome-icon"></app-icon>
     </div>
 
     <!-- Title -->
@@ -12,7 +12,7 @@
     <p class="welcome-subtitle">Call to action</p>
 
     <!-- Buttons -->
-    <div class="buttons-container">
+    <div class="buttons-container w-full">
       <ion-button
         expand="block"
         fill="outline"
@@ -22,7 +22,7 @@
         Sign up with email
       </ion-button>
 
-      <p class="or-separator">or</p>
+      <p class="or-separator"><span>or</span></p>
 
       <ion-button
         expand="block"

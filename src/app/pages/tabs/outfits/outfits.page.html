@@ -1,13 +1,29 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>outfits</ion-title>
-  </ion-toolbar>
-</ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
+  <ion-header [translucent]="true" hidden="true">
     <ion-toolbar>
-      <ion-title size="large">outfits</ion-title>
+      <ion-title>Outfits</ion-title>
     </ion-toolbar>
   </ion-header>
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Outfits</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+
+    <!-- Show empty state when no outfits -->
+    <app-empty-state
+      *ngIf="outfits.length === 0"
+      icon="accessibility"
+      [iconSize]="74"
+      iconColor="var(--text-color-600, #666666)"
+      title="No outfits yet"
+      description="Create your first outfit to get started."
+      buttonText="Create outfit"
+      [showButton]="true"
+      (onButtonClick)="onCreateOutfit()"
+    ></app-empty-state>
+
+  
 </ion-content>

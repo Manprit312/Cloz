@@ -2,21 +2,25 @@ import { Component, OnInit, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
+  IonBackdrop,
   IonContent,
   IonHeader,
   IonTitle,
   IonToolbar,
   IonItem,
   IonLabel,
-  IonIcon,
   IonToggle,
+  IonList,
+  ModalController,
   AlertController,
 } from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
-import { addIcons } from 'ionicons';
-import { chevronForwardOutline } from 'ionicons/icons';
-import { ProfileService } from '@app-core';
+import { ProfileService, AuthService } from '@app-core';
 import { Gender } from '@models/user.model';
+import { IconComponent } from '../../../shared/components/icon/icon.component';
+import { NameEditModalComponent } from '../../../shared/components/name-edit-modal/name-edit-modal.component';
+import { PasswordEditModalComponent } from '../../../shared/components/password-edit-modal/password-edit-modal.component';
+import { ButtonComponent } from '../../../shared/components/button/button.component';
 
 @Component({
   selector: 'app-profile',
@@ -24,60 +28,61 @@ import { Gender } from '@models/user.model';
   styleUrls: ['./profile.page.scss'],
   standalone: true,
   imports: [
+    IonBackdrop,
     IonContent,
     IonHeader,
     IonTitle,
     IonToolbar,
+    IonList,
     IonItem,
     IonLabel,
-    IonIcon,
     IonToggle,
+    IconComponent,
     CommonModule,
     FormsModule,
+    ButtonComponent,
   ],
 })
 export class ProfilePage implements OnInit {
   profile = computed(() => this.profileService.profile());
   darkMode = computed(() => this.profileService.darkMode());
+  showErrorMessage = false;
+  errorMessageText = '';
+  isModalOpen = false; // Track if any modal is open for backdrop visibility
 
   constructor(
     private profileService: ProfileService,
+    private authService: AuthService,
+    private modalController: ModalController,
     private alertController: AlertController,
     private router: Router
-  ) {
-    addIcons({ chevronForwardOutline });
+  ) {}
+
+  ngOnInit() {
+    // Sync profile from currentUser in localStorage on page load
+    this.profileService.syncFromAuthService();
   }
 
-  ngOnInit() {}
-
   async editName(): Promise<void> {
-    const alert = await this.alertController.create({
-      header: 'Name',
-      inputs: [
-        {
-          name: 'name',
-          type: 'text',
-          placeholder: 'Name',
-          value: this.profile().name,
-        },
-      ],
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel',
-        },
-        {
-          text: 'Save',
-          handler: (data) => {
-            if (data.name && data.name.trim()) {
-              this.profileService.updateName(data.name.trim());
-            }
-          },
-        },
-      ],
+    this.isModalOpen = true;
+    const modal = await this.modalController.create({
+      component: NameEditModalComponent,
+      componentProps: {
+        currentName: this.profile().name,
+      },
+      breakpoints: [0, 0.33],
+      initialBreakpoint: 0.33,
+      backdropBreakpoint: 0.33,
     });
 
-    await alert.present();
+    await modal.present();
+
+    const { data, role } = await modal.onWillDismiss();
+    this.isModalOpen = false;
+
+    if (role === 'confirm' && data) {
+      this.profileService.updateName(data);
+    }
   }
 
   editEmail(): void {
@@ -87,7 +92,21 @@ export class ProfilePage implements OnInit {
 
   async editGender(): Promise<void> {
     const alert = await this.alertController.create({
-      header: 'Gender',
+      header: 'Select gender',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+        },
+        {
+          text: 'Confirm',
+          handler: (selectedGender: string) => {
+            if (selectedGender) {
+              this.profileService.updateGender(selectedGender as Gender);
+            }
+          },
+        },
+      ],
       inputs: [
         {
           type: 'radio',
@@ -102,73 +121,42 @@ export class ProfilePage implements OnInit {
           checked: this.profile().gender === 'Female',
         },
       ],
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel',
-        },
-        {
-          text: 'Confirm',
-          handler: (selectedGender: Gender) => {
-            if (selectedGender) {
-              this.profileService.updateGender(selectedGender);
-            }
-          },
-        },
-      ],
     });
 
     await alert.present();
   }
 
   async changePassword(): Promise<void> {
-    const alert = await this.alertController.create({
-      header: 'Password',
-      inputs: [
-        {
-          name: 'currentPassword',
-          type: 'password',
-          placeholder: 'Current password',
-        },
-        {
-          name: 'newPassword',
-          type: 'password',
-          placeholder: 'New password',
-        },
-        {
-          name: 'confirmPassword',
-          type: 'password',
-          placeholder: 'Confirm new password',
-        },
-      ],
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel',
-        },
-        {
-          text: 'Save',
-          handler: (data) => {
-            // Validate passwords
-            if (!data.newPassword || data.newPassword.length < 6) {
-              // Show error (in real app, use toast or better error handling)
-              return false;
-            }
-
-            if (data.newPassword !== data.confirmPassword) {
-              // Show error
-              return false;
-            }
-
-            // In a real app, verify current password and update
-            // For demo, just accept it
-            return true;
-          },
-        },
-      ],
+    this.isModalOpen = true;
+    const modal = await this.modalController.create({
+      component: PasswordEditModalComponent,
+      componentProps: {
+        onError: (errorMessage: string) => {
+          // Show error message at top of screen without closing modal
+          this.showErrorMessage = true;
+          this.errorMessageText = errorMessage;
+          
+          // Hide message after 5 seconds
+          setTimeout(() => {
+            this.showErrorMessage = false;
+          }, 5000);
+        }
+      },
+      breakpoints: [0.4, 0.46, 0.8, 1],
+      initialBreakpoint: 0.52,
+      backdropDismiss: true,
+      handle: true,
     });
+    
+    await modal.present();
 
-    await alert.present();
+    const { data, role } = await modal.onWillDismiss();
+    this.isModalOpen = false;
+
+    if (role === 'confirm' && data) {
+      // Password update would be handled here in a real app
+      console.log('Password updated');
+    }
   }
 
   toggleDarkMode(): void {
@@ -177,5 +165,10 @@ export class ProfilePage implements OnInit {
 
   getMaskedPassword(): string {
     return '**********';
+  }
+
+  logout(): void {
+    // Call auth service logout which will call the API and clear all data
+    this.authService.logout();
   }
 }

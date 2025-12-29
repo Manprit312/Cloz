@@ -1,0 +1,123 @@
+// Shoe Detail Page - using design tokens and CSS variables only
+
+// Header styles
+ion-header {
+  --background: var(--ion-background-color);
+  
+  ion-toolbar {
+    --background: var(--ion-background-color);
+    --color: var(--ion-text-color);
+    
+    ion-title {
+      color: var(--ion-text-color);
+    }
+  }
+}
+
+// Detail container - using global classes in HTML
+
+// Success Banner - Matching login success banner
+.success-banner {
+  background-color: var(--ion-color-success);
+  color: var(--text-primary);
+  border-radius: var(--radius-md, 8px);
+  margin-bottom: var(--gap-lg, var(--x6, 24px));
+  margin-left: var(--padding-md, var(--x4, 16px));
+  margin-right: var(--padding-md, var(--x4, 16px));
+  
+  .dark & {
+    background-color: var(--ion-color-success);
+    color: var(--ion-color-primary-contrast);
+  }
+  
+  app-icon {
+    flex-shrink: 0;
+  }
+  
+  span {
+    color: var(--text-primary);
+    
+    .dark & {
+      color: var(--ion-color-primary-contrast);
+    }
+  }
+}
+
+.image-container {
+  position: relative;
+  width: 100%;
+  height: 400px; // Fixed height to prevent content from being pushed down
+  margin-bottom: var(--gap-lg, var(--x6, 24px));
+  overflow: hidden;
+  border-radius: var(--radius-md, 8px);
+  
+  .garment-image {
+    width: 100%;
+    height: 100%;
+    border-radius: var(--radius-md, 8px);
+    object-fit: cover;
+    display: block;
+    transition: opacity 0.3s ease;
+  }
+}
+
+// Pagination Dots - Simple circles below image
+.pagination-dots {
+  position: absolute;
+  bottom: var(--gap-md, var(--x4, 16px));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+}
+
+.pagination-dots .dot {
+  width: calc(var(--x1, 4px) * 1.5);
+  height: calc(var(--x1, 4px) * 1.5);
+  border-radius: 50%;
+  background-color: rgba(var(--ion-color-primary-contrast-rgb, 255, 255, 255), 0.5);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &.active {
+    background-color: rgba(var(--ion-color-primary-contrast-rgb, 255, 255, 255), 1);
+  }
+}
+
+// Actions container - using global classes in HTML
+.actions-container {
+  margin-bottom: var(--gap-lg, var(--x6, 24px));
+}
+
+.delete-container {
+  text-align: center;
+}
+
+.details-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--gap-lg, var(--x6, 24px));
+  margin-bottom: var(--gap-lg, var(--x6, 24px));
+}
+
+// Details column - using global classes in HTML
+// Detail item - using global classes in HTML
+
+.delete-link {
+  background: none;
+  border: none;
+  color: var(--ion-color-danger);
+  padding: var(--x0, 0);
+  text-align: center;
+  cursor: pointer;
+  align-self: center;
+  transition: opacity 0.2s ease;
+  
+  &:hover {
+    opacity: 0.8;
+  }
+  
+  &:active {
+    opacity: 0.6;
+  }
+}
+

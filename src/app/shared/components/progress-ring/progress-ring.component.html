@@ -1,4 +1,4 @@
-<div class="ring-wrapper" [class.selected]="selected()" (click)="onClick()">
+<div class="ring-wrapper column-stack-none items-center" [class.selected]="selected()" (click)="onClick()">
   <svg
     [attr.width]="size()"
     [attr.height]="size()"
@@ -42,7 +42,7 @@
   </svg>
 
   <!-- Month below -->
-  <div class="month-label">
+  <div class="month-label label-small text-color-600">
     {{ month() }}
   </div>
 </div>

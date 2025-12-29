@@ -1,0 +1,39 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-title>Gender</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="modal-content">
+  <div class="pad-v-none-h-md column-stack-none flex-1 modal-content-wrapper">
+    <ion-list class="gender-list">
+      <ion-radio-group [(ngModel)]="selectedGender">
+        <ion-item button lines="full" class="gender-item" (click)="selectedGender = 'Male'">
+          <ion-label>
+            <span class="body1-regular gender-option">Male</span>
+          </ion-label>
+          <ion-radio slot="end" value="Male" class="gender-radio"></ion-radio>
+        </ion-item>
+        
+        <ion-item button lines="none" class="gender-item" (click)="selectedGender = 'Female'">
+          <ion-label>
+            <span class="body1-regular gender-option">Female</span>
+          </ion-label>
+          <ion-radio slot="end" value="Female" class="gender-radio"></ion-radio>
+        </ion-item>
+      </ion-radio-group>
+    </ion-list>
+
+    <!-- Action Buttons -->
+    <div class="button-container">
+      <div class="button-row row-stack-none justify-between items-center">
+        <ion-button (click)="cancel()" fill="clear" class="cancel-button">
+          Cancel
+        </ion-button>
+        <ion-button (click)="confirm()" fill="clear" class="confirm-button">
+          Confirm
+        </ion-button>
+      </div>
+    </div>
+  </div>
+</ion-content>

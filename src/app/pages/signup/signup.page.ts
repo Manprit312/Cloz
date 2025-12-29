@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
@@ -11,14 +11,14 @@ import {
   IonButton,
   IonInput,
   IonText,
-  IonButtons,
-  IonBackButton,
-  AlertController,
-  IonIcon,
+    IonButtons,
+    AlertController,
 } from '@ionic/angular/standalone';
-import { Router } from '@angular/router';
-import { addIcons } from 'ionicons';
-import { chevronDownOutline } from 'ionicons/icons';
+import { Router, ActivatedRoute } from '@angular/router';
+import { Location } from '@angular/common';
+
+import { IconComponent } from '../../shared/components/icon/icon.component';
+import { UserService } from '@app-core';
 
 @Component({
   selector: 'app-signup',
@@ -34,12 +34,13 @@ import { chevronDownOutline } from 'ionicons/icons';
     IonTitle,
     IonToolbar,
     IonButtons,
-    IonBackButton,
-    IonIcon,
+
     CommonModule,
     FormsModule,
     IonInput,
     IonText,
+
+    IconComponent,
   ],
 })
 export class SignupPage implements OnInit {
@@ -51,14 +52,26 @@ export class SignupPage implements OnInit {
   genderDisplayText = 'Select gender';
   error = '';
 
+  private userService = inject(UserService);
+  private route = inject(ActivatedRoute);
+
   constructor(
     private router: Router,
-    private alertController: AlertController
-  ) {
-    addIcons({ chevronDownOutline });
+    private alertController: AlertController,
+    private location: Location
+  ) {}
+
+  ngOnInit() {
+    // Get email from query params if provided (e.g., when redirected from login)
+    const emailParam = this.route.snapshot.queryParamMap.get('email');
+    if (emailParam) {
+      this.email = emailParam;
+    }
   }
 
-  ngOnInit() {}
+  goBack(): void {
+    this.location.back();
+  }
 
   async openGenderSelector(): Promise<void> {
     const alert = await this.alertController.create({
@@ -116,13 +129,31 @@ export class SignupPage implements OnInit {
       return;
     }
 
-    // In a real app, you would call a signup service here
-    // For now, navigate to verification page
-    // Set flag to indicate this is a signup flow
-    sessionStorage.setItem('isSignup', 'true');
-    this.router.navigateByUrl(
-      '/verification?email=' + encodeURIComponent(this.email)
-    );
+    // Call Keycloak signup API
+    const signupData = {
+      name: this.name,
+      email: this.email,
+      password: this.password,
+      gender: this.gender.toLowerCase(), // Convert to lowercase as per API requirement
+    };
+
+    this.userService.signup(signupData).subscribe({
+      next: (response) => {
+        // Store mfaSessionId and password for MFA verification
+        sessionStorage.setItem('mfaSessionId', response.mfaSessionId);
+        sessionStorage.setItem('signupPassword', this.password);
+        sessionStorage.setItem('isSignup', 'true');
+        
+        // Navigate to verification page
+        this.router.navigateByUrl(
+          '/verification?email=' + encodeURIComponent(this.email)
+        );
+      },
+      error: (err) => {
+        console.error('Signup error:', err);
+        this.error = err.error?.message || 'Signup failed. Please try again.';
+      },
+    });
   }
 }
 

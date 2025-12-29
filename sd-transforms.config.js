@@ -14,8 +14,9 @@ register(StyleDictionary, {
 });
 
 // Configure Style Dictionary
+// Read from root where Token Studio syncs to GitHub
 const sd = new StyleDictionary({
-  source: ['src/theme/design-system/tokens/design-tokens.json'],
+  source: ['design-tokens.json'],
   preprocessors: ['tokens-studio'],
   expand: {
     typesMap: expandTypesMap,

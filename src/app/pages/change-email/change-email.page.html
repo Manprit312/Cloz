@@ -1,46 +1,53 @@
-<ion-header [translucent]="true">
+<ion-header class="ion-no-border">
   <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/tabs/profile"></ion-back-button>
+    <ion-buttons slot="start" class="items-center">
+      <ion-button (click)="goBack()" class="back-button items-center justify-start">
+        <app-icon name="arrow-left" [size]="24" [color]="'#1860FA'"></app-icon>
+      </ion-button>
     </ion-buttons>
-    <ion-title>Change email</ion-title>
+    <ion-title class="ion-text-center">Change email</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="change-email-content">
-  <div class="change-email-container">
-    <form (ngSubmit)="updateEmail()" class="change-email-form">
-      <!-- Current Email Display -->
-      <div class="current-email-section">
-        <p class="current-email-label">Current email</p>
-        <p class="current-email-value">{{ currentEmail }}</p>
-      </div>
+<ion-content [fullscreen]="true" class="change-email-content column-stack-none">
+  <div class="pad-top-lg pad-v-none-h-md change-email-wrapper column-stack-none flex-1 h-full">
+    <!-- Error Banner -->
+    <div class="error-banner pad-all-md row-stack-sm items-center" *ngIf="showErrorMessage">
+      <app-icon name="close" [size]="24" [color]="'#ffffff'"></app-icon>
+      <span class="body1-medium">{{ errorMessageText }}</span>
+    </div>
 
-      <!-- New Email Field -->
-      <ion-item class="form-item">
-        <ion-label position="stacked">New email</ion-label>
-        <ion-input
+    <!-- Current Email Display -->
+    <div class="column-stack-sm">
+      <label class="label-default">Current email</label>
+      <p class="body1-regular">{{ currentEmail }}</p>
+    </div>
+
+    <!-- Email Field -->
+    <div class="column-stack-sm">
+      <label class="label-default">Email</label>
+      <div class="input-border-full">
+        <input
           type="email"
           [(ngModel)]="newEmail"
           name="newEmail"
           placeholder="luisa@gmail.com"
           required
-        ></ion-input>
-      </ion-item>
+        />
+      </div>
+    </div>
 
-      <!-- Error Message -->
-      <p class="error-text" *ngIf="error">{{ error }}</p>
-
-      <!-- Update Button -->
-      <ion-button
-        expand="block"
-        type="submit"
-        class="update-button"
+    <!-- Update Button - Positioned at bottom -->
+    <div class="pad-top-lg">
+      <app-button
+        variant="primary"
+        size="xlarge"
+        [fullWidth]="true"
         [disabled]="!newEmail || newEmail.trim() === currentEmail"
+        (click)="updateEmail()"
       >
         Update
-      </ion-button>
-    </form>
+      </app-button>
+    </div>
   </div>
 </ion-content>
-

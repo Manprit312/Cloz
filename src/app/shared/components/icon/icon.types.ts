@@ -15,77 +15,55 @@ export type IconName =
   | 'arrow-left'
   | 'arrow-right'
   | 'arrow-up'
-  | 'arrow-down';
+  | 'arrow-down'
+  | 'chevron-forward'
+  | 'chevron-back'
+  | 'checkmark-circle'
+  | 'close'
+  | 'menu'
+  | 'search'
+  | 'more-vert'
+  | 'more-horiz'
+  | 'hanger'
+  | 'swap-horiz'
+  | 'refresh'
+  | 'image'
+  | 'unfold-more'
+  | 'magic-wand'
+  | 'accessibility';
 
-// Mapping from logical names to actual sprite IDs
-// Icons default to line variant, but can be specified as solid by adding '-solid' suffix
-export const ICON_MAPPING: Record<
-  IconName,
-  string | { line: string; solid: string }
-> = {
-  wardrobe: {
-    line: 'Wardrobe--line',
-    solid: 'Wardrobe--solid',
-  },
-  outfits: {
-    line: 'Outfits--line',
-    solid: 'Outfits--solid',
-  },
-  profile: {
-    line: 'Profile--line',
-    solid: 'Profile--solid',
-  },
-  shirt: {
-    line: 'Shirt--line',
-    solid: 'Shirt--solid',
-  },
-  person: {
-    line: 'Person--line',
-    solid: 'Person--solid',
-  },
-  'person-circle': {
-    line: 'Person-Circle--line',
-    solid: 'Person-Circle--solid',
-  },
-  home: {
-    line: 'Home--line',
-    solid: 'Home--solid',
-  },
-  settings: {
-    line: 'Settings--line',
-    solid: 'Settings--solid',
-  },
-  add: {
-    line: 'Add--line',
-    solid: 'Add--solid',
-  },
-  check: {
-    line: 'Check--line',
-    solid: 'Check--solid',
-  },
-  delete: {
-    line: 'Delete--line',
-    solid: 'Delete--solid',
-  },
-  edit: {
-    line: 'Edit--line',
-    solid: 'Edit--solid',
-  },
-  'arrow-left': {
-    line: 'Arrow-Left--line',
-    solid: 'Arrow-Left--solid',
-  },
-  'arrow-right': {
-    line: 'Arrow-Right--line',
-    solid: 'Arrow-Right--solid',
-  },
-  'arrow-up': {
-    line: 'Arrow-Up--line',
-    solid: 'Arrow-Up--solid',
-  },
-  'arrow-down': {
-    line: 'Arrow-Down--line',
-    solid: 'Arrow-Down--solid',
-  },
+// Mapping from logical names to Material Symbols icon names
+// Material Symbols uses lowercase with hyphens
+export const MATERIAL_SYMBOLS_MAPPING: Record<IconName, string> = {
+  wardrobe: 'checkroom',
+  outfits: 'checkroom',
+  profile: 'person',
+  shirt: 'checkroom',
+  person: 'person',
+  'person-circle': 'account_circle',
+  home: 'home',
+  settings: 'settings',
+  add: 'add',
+  check: 'check',
+  delete: 'delete',
+  edit: 'edit',
+  'arrow-left': 'arrow_back',
+  'arrow-right': 'arrow_forward',
+  'arrow-up': 'arrow_upward',
+  'arrow-down': 'arrow_downward',
+  'chevron-forward': 'chevron_right',
+  'chevron-back': 'chevron_left',
+  'checkmark-circle': 'check_circle',
+  close: 'close',
+  menu: 'menu',
+  search: 'search',
+  'more-vert': 'more_vert',
+  'more-horiz': 'more_horiz',
+  hanger: 'checkroom',
+  'swap-horiz': 'swap_horiz',
+  refresh: 'refresh',
+  image: 'image',
+  'unfold-more': 'unfold_more',
+  'magic-wand': 'auto_awesome',
+  accessibility: 'accessibility',
 } as const;
-

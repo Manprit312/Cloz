@@ -1,22 +1,18 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
   IonContent,
   IonHeader,
   IonTitle,
   IonToolbar,
-  IonLabel,
-  IonItem,
-  IonButton,
-  IonInput,
-  IonText,
   IonButtons,
-  IonBackButton,
+  IonButton,
 } from '@ionic/angular/standalone';
-import { TranslateModule } from '@ngx-translate/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService, UserService } from '@app-core';
+import { ButtonComponent } from '../../shared/components/button/button.component';
+import { IconComponent } from '../../shared/components/icon/icon.component';
 
 @Component({
   selector: 'app-login',
@@ -24,20 +20,16 @@ import { AuthService, UserService } from '@app-core';
   styleUrls: ['./login.page.scss'],
   standalone: true,
   imports: [
-    IonButton,
-    IonItem,
-    IonLabel,
     IonContent,
     IonHeader,
     IonTitle,
     IonToolbar,
     IonButtons,
-    IonBackButton,
+    IonButton,
     CommonModule,
     FormsModule,
-    TranslateModule,
-    IonInput,
-    IonText,
+    ButtonComponent,
+    IconComponent,
   ],
 })
 export class LoginPage implements OnInit {
@@ -49,6 +41,7 @@ export class LoginPage implements OnInit {
   private authService = inject(AuthService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private location = inject(Location);
 
   ngOnInit(): void {
     if (this.authService.isLoggedIn()) {
@@ -56,28 +49,51 @@ export class LoginPage implements OnInit {
     }
   }
 
+  goBack(): void {
+    this.location.back();
+  }
+
   async login(): Promise<void> {
     this.error = '';
 
-    // Use email as username for now (in real app, this would be separate)
-    // Extract username from email for demo
-    const username = this.email.split('@')[0] || this.email;
-    
-    this.userService.login(username, this.password).subscribe({
-      next: (user) => {
-        this.authService.setUser(user);
-        const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+    if (!this.email || !this.password) {
+      this.error = 'Please enter email and password';
+      return;
+    }
 
-        if (user.role === 'admin') {
-          this.router.navigateByUrl(returnUrl || '/admin');
-        } else {
-          // For demo: navigate to verification
-          // In real app, check if email is verified before navigating
-          this.router.navigateByUrl('/verification?email=' + encodeURIComponent(this.email));
-        }
+    // Call Keycloak login API
+    const loginData = {
+      email: this.email,
+      password: this.password,
+    };
+
+    this.userService.loginKeycloak(loginData).subscribe({
+      next: (response) => {
+        // Store mfaSessionId and password for MFA verification
+        sessionStorage.setItem('mfaSessionId', response.mfaSessionId);
+        sessionStorage.setItem('loginPassword', this.password);
+        sessionStorage.setItem('isSignup', 'false');
+        
+        // Navigate to verification page
+        this.router.navigateByUrl(
+          '/verification?email=' + encodeURIComponent(this.email)
+        );
       },
-      error: () => {
-        this.error = 'Invalid credentials';
+      error: (err) => {
+        console.error('Login error:', err);
+        
+        // Check if error is 400 with "User not found. Please signup first." message
+        if (err.status === 400 && 
+            err.error?.message === 'User not found. Please signup first.') {
+          // Redirect to signup page with email pre-filled
+          this.router.navigate(['/signup'], {
+            queryParams: { email: this.email }
+          });
+          return;
+        }
+        
+        // Show error for other cases
+        this.error = err.error?.message || 'Invalid credentials. Please try again.';
       },
     });
   }

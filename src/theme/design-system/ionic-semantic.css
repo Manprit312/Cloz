@@ -1,0 +1,14 @@
+/**
+ * Do not edit directly, this file was auto-generated.
+ */
+
+:root {
+  --gap-xs: var(--x1);
+  --gap-sm: var(--x2);
+  --gap-md: var(--x4);
+  --gap-lg: var(--x6);
+  --padding-md: var(--x4);
+  --padding-lg: var(--x6);
+  --padding-xs: var(--gap-sm);
+  --padding-sm: var(--gap-sm);
+}
