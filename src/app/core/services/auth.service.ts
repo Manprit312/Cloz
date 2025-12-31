@@ -2,7 +2,7 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { User, UserRole } from '@models/user.model';
 import { UserService } from './user.service';
-import { Observable, map, catchError, of } from 'rxjs';
+import { Observable, map, catchError, of, shareReplay, finalize } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -147,8 +147,9 @@ export class AuthService {
    */
   refreshAccessToken(): Observable<boolean> {
     // If a refresh is already in progress, return that observable
+    // This prevents multiple simultaneous refresh API calls
     if (this.refreshPromise) {
-      console.log('AuthService - refreshAccessToken: Refresh already in progress, returning existing promise');
+      console.log('AuthService - refreshAccessToken: Refresh already in progress, returning existing observable');
       return this.refreshPromise;
     }
 
@@ -157,6 +158,7 @@ export class AuthService {
 
     // Call /auth/refresh - backend uses session cookie to identify session and refresh token
     // No refreshToken needed in request body - session cookie is sufficient
+    // Use shareReplay(1) to ensure the API call is only made once, even if multiple subscribers exist
     this.refreshPromise = this.userService.refreshToken().pipe(
       map((response) => {
         // Get the new access token from response
@@ -167,12 +169,10 @@ export class AuthService {
           // Replace the current access token with the new one
           this.setAccessToken(newAccessToken, expiresIn);
           console.log('AuthService - refreshAccessToken: Access token refreshed successfully');
-          this.refreshPromise = null; // Clear the promise
           return true;
         }
 
         console.warn('AuthService - refreshAccessToken: No access token in refresh response');
-        this.refreshPromise = null; // Clear the promise
         return false;
       }),
       catchError((err) => {
@@ -180,8 +180,6 @@ export class AuthService {
         console.error('AuthService - refreshAccessToken: Error status:', err?.status);
         console.error('AuthService - refreshAccessToken: Error message:', err?.error?.message || err?.message);
         console.error('AuthService - refreshAccessToken: Full error response:', err?.error);
-        
-        this.refreshPromise = null; // Clear the promise on error
         
         // Only clear data if session/refresh token is invalid (401 or 403 from refresh endpoint)
         // Also handle 400 "Invalid or expired session" - this means session doesn't exist in backend
@@ -198,6 +196,15 @@ export class AuthService {
         }
         
         return of(false);
+      }),
+      // Use shareReplay(1) to ensure the API call executes only once and the result is shared
+      // This prevents multiple simultaneous refresh API calls when multiple requests trigger refresh
+      shareReplay(1),
+      // Clear the refreshPromise after the observable completes (success or error)
+      // This allows future refresh attempts to proceed
+      finalize(() => {
+        console.log('AuthService - refreshAccessToken: Observable completed, clearing refreshPromise');
+        this.refreshPromise = null;
       })
     );
 

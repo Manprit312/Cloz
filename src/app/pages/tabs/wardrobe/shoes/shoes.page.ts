@@ -4,7 +4,6 @@ import {
   IonContent,
   IonHeader,
   IonTitle,
-  IonToolbar,
   IonButtons,
   IonButton,
   IonThumbnail,
@@ -49,7 +48,7 @@ export interface ShoeItem {
     IonContent,
     IonHeader,
     IonTitle,
-    IonToolbar,
+
     IonButtons,
     IonButton,
     IonThumbnail,

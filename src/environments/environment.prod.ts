@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  backendBaseUrl: '/',
+  backendBaseUrl: 'https://api.cloz.pro',
 };

@@ -12,21 +12,95 @@ ion-header {
   }
 }
 
-.dark {
-  ion-header {
-    --background: var(--ion-background-color);
-    
-    ion-toolbar {
-      --background: var(--ion-background-color);
-      --color: var(--ion-text-color);
-      
-      ion-title {
-        color: var(--ion-text-color);
-      }
-    }
+// Content background
+
+
+// Outfits container
+.outfits-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-md, var(--x4, 16px));
+  background-color: var(--ion-background-color); // Light grey background as shown in design
+  min-height: 100%;
+}
+
+// Outfit card
+.outfit-card {
+  background-color: var(--ion-background-color); // White cards
+  border-radius: var(--radius-md, 8px);
+  padding: var(--padding-md, var(--x4, 16px));
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:active {
+    opacity: 0.8;
+    transform: scale(0.98);
   }
 }
 
+// Outfit card header
+.outfit-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--gap-sm, var(--x2, 8px));
+}
 
+.outfit-title {
+  color: var(--ion-text-color);
+  margin: 0;
+  font-weight: var(--font-weight-bold, 600);
+}
 
+// Outfit garments scroll container
+.outfit-garments-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; // Firefox
+  -ms-overflow-style: none; // IE and Edge
 
+  &::-webkit-scrollbar {
+    display: none; // Chrome, Safari, Opera
+  }
+}
+
+.outfit-garments-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap-sm, var(--x2, 8px));
+  padding-bottom: var(--x1, 4px); // Space for scroll
+}
+
+.outfit-garment-item {
+  flex-shrink: 0;
+  width: 60px;
+  height: 60px;
+  border-radius: var(--radius-sm, 4px);
+  overflow: hidden;
+  background-color: var(--ion-color-light);
+}
+
+.outfit-garment-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+// Dark mode styles
+body.dark {
+  ion-content {
+    --background: var(--ion-background-color);
+  }
+
+  .outfits-container {
+    background-color: var(--ion-background-color);
+  }
+
+  .outfit-card {
+    background-color: var(--ion-background-color);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+}

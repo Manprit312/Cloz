@@ -1,29 +1,69 @@
 
 <ion-content [fullscreen]="true">
-  <ion-header [translucent]="true" hidden="true">
-    <ion-toolbar>
-      <ion-title>Outfits</ion-title>
-    </ion-toolbar>
-  </ion-header>
+
   <ion-header collapse="condense">
     <ion-toolbar>
       <ion-title size="large">Outfits</ion-title>
     </ion-toolbar>
   </ion-header>
 
+  <!-- Show loading state -->
+  <div *ngIf="isLoading" class="pad-all-md">
+    <p>Loading outfits...</p>
+  </div>
 
-    <!-- Show empty state when no outfits -->
-    <app-empty-state
-      *ngIf="outfits.length === 0"
-      icon="accessibility"
-      [iconSize]="74"
-      iconColor="var(--text-color-600, #666666)"
-      title="No outfits yet"
-      description="Create your first outfit to get started."
-      buttonText="Create outfit"
-      [showButton]="true"
-      (onButtonClick)="onCreateOutfit()"
-    ></app-empty-state>
+  <!-- Show error state -->
+  <div *ngIf="error && !isLoading" class="pad-all-md">
+    <p>{{ error }}</p>
+  </div>
 
+  <!-- Show empty state when no outfits -->
+  <app-empty-state
+    *ngIf="!isLoading && !error && outfits.length === 0"
+    icon="accessibility"
+    [iconSize]="74"
+    iconColor="var(--text-color-600, #666666)"
+    title="No outfits yet"
+    description="Create your first outfit to get started."
+    buttonText="Create outfit"
+    [showButton]="true"
+    (onButtonClick)="onCreateOutfit()"
+  ></app-empty-state>
+
+  <!-- Show outfits cards when outfits exist -->
+  <div *ngIf="!isLoading && !error && outfits.length > 0" class="outfits-container pad-all-md">
+    <div *ngFor="let outfit of outfits" class="outfit-card" (click)="onOutfitClick(outfit)">
+      <div class="outfit-card-header">
+        <h3 class="outfit-title body2-bold">{{ outfit.name || 'Untitled Outfit' }}</h3>
+        <app-icon name="chevron-forward" [size]="24" [color]="'var(--ion-color-primary)'"></app-icon>
+      </div>
+      <div class="outfit-garments-scroll">
+        <div class="outfit-garments-container">
+          <div 
+            *ngFor="let item of getOutfitGarments(outfit)" 
+            class="outfit-garment-item"
+          >
+            <img 
+              [src]="getGarmentImage(item)" 
+              [alt]="item.subtype || 'Garment'"
+              class="outfit-garment-image"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Action Button - Only show when there are outfits -->
+  <ion-fab 
+    *ngIf="!isLoading && !error && outfits.length > 0"
+    vertical="bottom" 
+    horizontal="end" 
+    slot="fixed"
+  >
+    <ion-fab-button (click)="onCreateOutfit()">
+      <app-icon name="add" [size]="24" [color]="'#ffffff'"></app-icon>
+    </ion-fab-button>
+  </ion-fab>
   
 </ion-content>

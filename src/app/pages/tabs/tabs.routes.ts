@@ -71,6 +71,14 @@ export const tabsRoutes: Routes = [
         loadComponent: () => import('./outfits/create-outfit/create-outfit.page').then((m) => m.CreateOutfitPage),
       },
       {
+        path: 'outfits/outfit-detail/:id',
+        loadComponent: () => import('./outfits/outfit-detail/outfit-detail.page').then((m) => m.OutfitDetailPage),
+      },
+      {
+        path: 'outfits/edit-outfit/:id',
+        loadComponent: () => import('./outfits/edit-outfit/edit-outfit.page').then((m) => m.EditOutfitPage),
+      },
+      {
         path: 'profile',
         loadComponent: () => import('./profile/profile.page').then((m) => m.ProfilePage),
       },

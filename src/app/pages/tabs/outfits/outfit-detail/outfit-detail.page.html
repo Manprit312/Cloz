@@ -1,0 +1,65 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <app-icon name="arrow-left" [size]="24" [color]="'var(--ion-color-primary)'"></app-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="ion-text-center">{{ outfit?.name || 'Outfit' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="onEdit()" fill="clear" class="edit-button-text">
+        Edit
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <!-- Show loading state -->
+  <div *ngIf="isLoading" class="pad-all-md">
+    <p>Loading outfit...</p>
+  </div>
+
+  <!-- Show error state -->
+  <div *ngIf="error && !isLoading" class="pad-all-md">
+    <p>{{ error }}</p>
+  </div>
+
+  <!-- Show outfit details -->
+  <div *ngIf="outfit && !isLoading && !error" class="outfit-detail-container">
+    <!-- Heading -->
+    <div class="section-heading pad-all-md">
+      <h2 class="heading-text body1-bold">Garments in this look</h2>
+    </div>
+
+    <!-- Garments List -->
+    <ion-list class="garments-list">
+      <ion-item 
+        *ngFor="let garment of getAllGarments()" 
+        button
+        (click)="onGarmentClick(garment)"
+        lines="full"
+        class="garment-item"
+      >
+        <ion-thumbnail slot="start" class="garment-thumbnail">
+          <img 
+            [src]="getGarmentImage(garment)" 
+            [alt]="getGarmentDescription(garment)"
+            class="garment-image"
+          />
+        </ion-thumbnail>
+        <ion-label>
+          <span class="garment-description body1-regular">{{ getGarmentDescription(garment) }}</span>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+
+    <!-- Delete Button -->
+    <div class="delete-container">
+      <button class="delete-link body1-regular" (click)="onDelete()">
+        Delete from wardrobe
+      </button>
+    </div>
+  </div>
+</ion-content>
+

@@ -1,9 +1,9 @@
 <ion-header class="ion-no-border">
   <ion-toolbar>
-    <ion-title class="ion-text-center">Create outfit</ion-title>
+    <ion-title class="ion-text-center">Edit outfit</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="goBack()" fill="clear" class="body1-regular">
-        Close
+        Cancel
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -152,19 +152,30 @@
       </div>
     </div>
 
-    <!-- Create Outfit Button -->
+    <!-- Custom Name Section -->
+    <div class="outfit-section column-stack-sm">
+      <h3 class="section-title body1-medium">Custom name</h3>
+      <ion-item class="name-input-item">
+        <ion-input
+          [(ngModel)]="outfitName"
+          placeholder="Enter outfit name"
+          class="outfit-name-input"
+        ></ion-input>
+      </ion-item>
+    </div>
+
+    <!-- Save Outfit Button -->
     <div class="create-button-container">
       <app-button
         variant="primary"
         size="large"
         [fullWidth]="true"
-        [disabled]="!canCreateOutfit || isCreatingOutfit"
-        (click)="onCreateOutfit()"
+        [disabled]="!canSaveOutfit || isSavingOutfit"
+        (click)="onSaveOutfit()"
       >
-        Create outfit
+        Save outfit
       </app-button>
     </div>
 
   </div>
 </ion-content>
-

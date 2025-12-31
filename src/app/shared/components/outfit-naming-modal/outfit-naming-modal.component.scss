@@ -1,0 +1,69 @@
+.naming-modal-container {
+  display: flex;
+  flex-direction: column;
+  padding-top: var(--gap-sm, var(--x2, 8px));
+  padding-bottom: var(--x4, 16px);
+  min-height: fit-content;
+}
+
+ion-content {
+  --background: var(--ion-background-color);
+}
+
+ion-list {
+  background: transparent;
+  padding: 0;
+}
+
+.name-option-item {
+  --padding-start: var(--padding-md, var(--x4, 16px));
+  --padding-end: var(--padding-md, var(--x4, 16px));
+  --inner-padding-end: 0;
+  --inner-padding-start: 0;
+  --min-height: var(--x14, 56px);
+  margin-bottom: 0;
+  
+  &:active {
+    opacity: 0.7;
+  }
+
+  .icon-slot {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-inline-end: var(--gap-md, var(--x4, 16px));
+    flex-shrink: 0;
+  }
+
+  // Ensure label is visible even when icon slot is empty
+  ion-label {
+    flex: 1;
+    color: var(--ion-text-color);
+  }
+}
+
+.custom-name-input-container {
+  padding-top: var(--gap-md, var(--x4, 16px));
+  padding-bottom: 0;
+  padding-left: var(--padding-md, var(--x4, 16px));
+  padding-right: var(--padding-md, var(--x4, 16px));
+}
+
+.name-input-item {
+  --padding-start: 0;
+  --padding-end: 0;
+  --inner-padding-end: 0;
+  --inner-padding-start: 0;
+  --background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--ion-color-medium, #E0E0E0);
+  border-radius: 0;
+  
+  ion-input {
+    --padding-start: 0;
+    --padding-end: 0;
+  }
+}
+
