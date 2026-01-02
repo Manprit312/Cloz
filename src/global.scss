@@ -261,6 +261,23 @@ ion-modal {
   /* Explicitly set the bottom safe area to zero for web/PWA environments */
   --ion-safe-area-bottom: 0px !important;
 }
+/* iOS header safe area — keep this */
+.ios ion-header ion-toolbar {
+  padding-top: env(safe-area-inset-top);
+}
+
+/* Disable Ionic adding its own safe-area to tab bar */
+.ios ion-tab-bar {
+  padding-bottom: 0px !important;
+  --ion-safe-area-bottom: 0px !important;
+  margin-bottom: 0px !important;
+}
+
+/* Ensure content doesn’t reserve extra space for system UI */
+.ios ion-content {
+  --padding-bottom: 0px !important;
+  --ion-safe-area-bottom: 0px !important;
+}
 
 /* Also target the tab bar specifically to ensure consistency */
 ion-tab-bar {

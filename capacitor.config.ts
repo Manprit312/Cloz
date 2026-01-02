@@ -9,8 +9,15 @@ const config: CapacitorConfig = {
       resize: "none"
     }
   },
+  server: {
+    url: "https://api.cloz.pro",
+    cleartext: false,
+  },
+  CapacitorCookies:{
+    enabled:true
+  },
   ios: {
-    contentInset: 'automatic'
+    contentInset: "never",
   }
 };
 

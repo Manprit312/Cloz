@@ -11,6 +11,7 @@ import {
   IonFabButton,
   IonGrid,
   IonRow,
+  IonToolbar,
   IonCol,
   IonItem,
   ViewWillEnter,
@@ -48,7 +49,7 @@ export interface ShoeItem {
     IonContent,
     IonHeader,
     IonTitle,
-
+    IonToolbar,
     IonButtons,
     IonButton,
     IonThumbnail,

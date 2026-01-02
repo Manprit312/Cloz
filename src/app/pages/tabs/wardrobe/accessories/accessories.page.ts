@@ -4,7 +4,7 @@ import {
   IonContent,
   IonHeader,
   IonTitle,
-
+IonToolbar,
   IonButtons,
   IonButton,
   IonThumbnail,
@@ -48,7 +48,7 @@ export interface AccessoryItem {
     IonContent,
     IonHeader,
     IonTitle,
-  
+  IonToolbar,
     IonButtons,
     IonButton,
     IonThumbnail,
