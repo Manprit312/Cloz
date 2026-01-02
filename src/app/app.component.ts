@@ -2,6 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { TranslationService, AuthService } from '@app-core';
 import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 import { translations } from '@translations';
+import { Keyboard } from '@capacitor/keyboard';
 
 @Component({
   selector: 'app-root',
@@ -17,6 +18,13 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
+    Keyboard.addListener('keyboardWillShow', () => {
+      document.body.classList.add('keyboard-is-open');
+    });
+    
+    Keyboard.addListener('keyboardWillHide', () => {
+      document.body.classList.remove('keyboard-is-open');
+    });
     // Apply backdrop blur to all Ionic backdrops as they're created
     // This ensures blur is applied even if CSS doesn't catch them
     this.applyBackdropBlur();

@@ -249,6 +249,61 @@ ion-modal {
  * -----------------------------------------------------
  * Make sure the backdrop is always visible and covers the entire screen
  */
+ ion-tab-bar {
+  padding-bottom: env(safe-area-inset-bottom);
+  height: calc(56px + env(safe-area-inset-bottom));
+}
+:root {
+  /* Set safe area top to 0 for web/PWA to prevent unwanted space */
+  --ion-safe-area-top: 0px !important;
+}
+:root {
+  /* Explicitly set the bottom safe area to zero for web/PWA environments */
+  --ion-safe-area-bottom: 0px !important;
+}
+
+/* Also target the tab bar specifically to ensure consistency */
+ion-tab-bar {
+  --padding-bottom: 0 !important;
+}
+/* Specific targeting for toolbars if the above root variable isn't enough */
+ion-header ion-toolbar {
+  padding-top: 0 !important;
+}
+
+/* Ensure the content starts right from the top edge */
+ion-content {
+  --padding-top: 0 !important;
+}
+ion-header {
+  padding-top: env(safe-area-inset-top);
+}
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+ion-content {
+  --ion-safe-area-top: 0px !important;
+  --ion-safe-area-bottom: 0px !important;
+  --keyboard-offset: 0px !important;
+  --offset-top: 0px !important;
+  --offset-bottom: 0px !important;
+}
+
+
+.keyboard-is-open ion-content {
+  --offset-top: 0px !important;
+  --offset-bottom: 0px !important;
+  padding: 0 !important;
+}
+ion-content::part(scroll) {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
 ion-modal {
   --backdrop-opacity: 0.4;
   

@@ -1,15 +1,16 @@
-<ion-header class="ion-no-border">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-button (click)="goBack()" class="back-button">
-        <app-icon name="arrow-left" [size]="24" [color]="'#1860FA'"></app-icon>
-      </ion-button>
-    </ion-buttons>
-    <ion-title class="ion-text-center label-bold">Log in</ion-title>
-  </ion-toolbar>
-</ion-header>
 
-<ion-content [fullscreen]="true">
+
+<ion-content [fullscreen]="false">
+  <ion-header class="ion-no-border">
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-button (click)="goBack()" class="back-button">
+          <app-icon name="arrow-left" [size]="24" [color]="'#1860FA'"></app-icon>
+        </ion-button>
+      </ion-buttons>
+      <ion-title class="ion-text-center label-bold">Log in</ion-title>
+    </ion-toolbar>
+  </ion-header>
   <div class="pad-top-lg pad-v-none-h-md">
     <form (ngSubmit)="login()" class="column-stack-lg w-full">
       <!-- Email Field -->

@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  backendBaseUrl: 'http://localhost:3002',
+  backendBaseUrl: 'https://api.cloz.pro',
 };
 /*
  * For easier debugging in development mode, you can import the following file
