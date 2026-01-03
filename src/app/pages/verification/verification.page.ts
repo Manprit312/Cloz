@@ -13,6 +13,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService, UserService, ProfileService } from '@app-core';
 import { IconComponent } from '../../shared/components/icon/icon.component';
 import { ButtonComponent } from '../../shared/components/button/button.component';
+import { Preferences } from '@capacitor/preferences';
 
 @Component({
   selector: 'app-verification',
@@ -92,7 +93,7 @@ export class VerificationPage implements OnInit {
       };
 
       this.userService.verifyMfa(verifyData).subscribe({
-        next: (response) => {
+        next: async (response) => {
           // Clear session storage
           sessionStorage.removeItem('mfaSessionId');
           sessionStorage.removeItem('signupPassword');
@@ -100,22 +101,26 @@ export class VerificationPage implements OnInit {
           
           console.log('VerificationPage - verifyMfa response:', response);
           
-          // Extract accessToken and expiresIn from response
+          // Extract accessToken, sessionId, and expiresIn from response
           const accessToken = response?.['accessToken'] || response?.['token'];
-          const expiresIn = response?.['expiresIn'] || 900; // Default to 15 minutes if not provided
+          const sessionId = response?.['sessionId'] || response?.['session'];
+          const expiresIn = response?.['expiresIn'] || 300; // Default to 5 minutes if not provided
+          
           if (accessToken) {
-            this.authService.setAccessToken(accessToken, expiresIn);
+            await this.authService.setAccessToken(accessToken, expiresIn);
           }
           
-          // Session handling moved to backend
-          // The backend sets a session ID cookie after MFA verification
-          // The session cookie is automatically sent with all requests (withCredentials: true)
+          if (sessionId) {
+            await this.authService.setSessionId(sessionId);
+            console.log('VerificationPage - SessionId saved to Capacitor Preferences');
+          }
+          
+          // Session handling using Capacitor Preferences
+          // SessionId is stored in Capacitor Preferences and sent in X-Session-Id header
           // The backend manages refresh tokens server-side, linked to the session ID
-          // When calling /auth/refresh, the session cookie identifies the session
-          // No need to store refreshToken in localStorage - backend handles it via session
+          // When calling /auth/refresh, the sessionId header identifies the session
           console.log('VerificationPage - MFA verification successful');
-          console.log('VerificationPage - Session cookie should be set by backend');
-          console.log('VerificationPage - Backend manages refresh tokens server-side via session');
+          console.log('VerificationPage - SessionId and accessToken saved to Capacitor Preferences');
           
           // Extract user data from response or construct from email
           // The API response might contain user data, or we construct it from email

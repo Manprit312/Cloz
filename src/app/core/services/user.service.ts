@@ -104,28 +104,23 @@ export class UserService {
   }
 
   /**
-   * Refresh the access token using the session cookie
-   * The backend manages refresh tokens server-side linked to the session ID cookie
-   * The session cookie is automatically sent with withCredentials: true
-   * IMPORTANT: No request body is sent - backend uses session cookie to identify session
+   * Refresh the access token using the session ID from Capacitor Preferences
+   * Sends sessionId in X-Session-Id header instead of relying on cookies
+   * @param sessionId The session ID to send in X-Session-Id header
    * @returns Observable with the new access token and expiration time
    */
-  refreshToken(): Observable<RefreshTokenResponse> {
+  refreshToken(sessionId: string): Observable<RefreshTokenResponse> {
     console.log('UserService - refreshToken: Calling /auth/refresh endpoint');
     console.log('UserService - refreshToken: Endpoint URL:', `${environment.backendBaseUrl}/auth/refresh`);
-    console.log('UserService - refreshToken: withCredentials will be set to true');
-    console.log('UserService - refreshToken: No request body will be sent (null)');
-    console.log('UserService - refreshToken: Browser should automatically send sessionId cookie');
-    console.log('UserService - refreshToken: NOTE - sessionId cookie is HttpOnly, so it won\'t appear in document.cookie');
-    console.log('UserService - refreshToken: Check Network tab → Request Headers → Cookie header to see if sessionId is sent');
-    console.log('UserService - refreshToken: Available non-HttpOnly cookies:', document.cookie);
+    console.log('UserService - refreshToken: Sending X-Session-Id header:', sessionId);
     
-    // No request body - backend uses session cookie to identify session and refresh token
     return this.http.post<RefreshTokenResponse>(
       `${environment.backendBaseUrl}/auth/refresh`,
-      null, // No body - session cookie identifies the session
+      null, // No body - sessionId header identifies the session
       {
-        withCredentials: true // Important: allows session cookie to be sent automatically by browser
+        headers: {
+          'X-Session-Id': sessionId,
+        }
       }
     ).pipe(
       tap({
@@ -144,16 +139,19 @@ export class UserService {
 
   /**
    * Logout user by calling the logout API
+   * @param sessionId The session ID to send in X-Session-Id header
    * @returns Observable with the logout response
    */
-  logout(): Observable<LogoutResponse> {
+  logout(sessionId: string): Observable<LogoutResponse> {
     const logoutData: LogoutRequest = {};
     
     return this.http.post<LogoutResponse>(
       `${environment.backendBaseUrl}/auth/logout`,
       logoutData,
       {
-        withCredentials: true
+        headers: {
+          'X-Session-Id': sessionId,
+        }
       }
     );
   }
