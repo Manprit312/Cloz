@@ -2,10 +2,10 @@
 
 // Content - no padding needed as image fills screen
 ion-content {
-  --padding-bottom: var(--x0, 0);
-  --padding-top: var(--x0, 0);
-  --padding-start: var(--x0, 0);
-  --padding-end: var(--x0, 0);
+  --padding-bottom: var(--x0);
+  --padding-top: var(--x0);
+  --padding-start: var(--x0);
+  --padding-end: var(--x0);
   --background: var(--background-250);
 }
 
@@ -52,7 +52,7 @@ ion-header {
   flex: 1;
   overflow: hidden;
   background-color: var(--background-250);
-  min-height: calc(100vh - var(--x14, 56px) - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  min-height: calc(100vh - var(--x14) - env(safe-area-inset-top) - env(safe-area-inset-bottom));
   height: 100%;
 }
 
@@ -74,25 +74,25 @@ ion-header {
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.3);
   z-index: 10;
-  backdrop-filter: blur(var(--x1, 4px));
+  backdrop-filter: blur(var(--x1));
   
   // Increase spinner size
   ion-spinner {
-    width: calc(var(--x14, 56px) + var(--x1, 4px));
-    height: calc(var(--x14, 56px) + var(--x1, 4px));
-    margin-bottom: var(--gap-md, var(--x4, 16px));
+    width: calc(var(--x14) + var(--x1));
+    height: calc(var(--x14) + var(--x1));
+    margin-bottom: var(--gap-md);
   }
 }
 
 .loading-text {
   color: var(--ion-color-primary-contrast);
   text-align: center;
-  margin: var(--x0, 0);
-  margin-top: var(--gap-md, var(--x4, 16px));
-  padding: var(--x0, 0) var(--gap-lg, var(--x6, 24px));
+  margin: var(--x0);
+  margin-top: var(--gap-md);
+  padding: var(--x0) var(--gap-lg);
   line-height: 1.5;
-  text-shadow: 0 var(--x2, 8px) var(--x4, 16px) rgba(0, 0, 0, 0.5);
-  letter-spacing: var(--x1, 4px);
+  text-shadow: 0 var(--x2) var(--x4) rgba(0, 0, 0, 0.5);
+  letter-spacing: var(--x1);
 }
 
 .actions-bottom {
@@ -100,8 +100,8 @@ ion-header {
   bottom: 0;
   left: 0;
   right: 0;
-  padding: var(--gap-md, var(--x4, 16px));
-  padding-bottom: calc(var(--gap-md, var(--x4, 16px)) + env(safe-area-inset-bottom));
+  padding: var(--gap-md);
+  padding-bottom: calc(var(--gap-md) + env(safe-area-inset-bottom));
   background: var(--ion-background-color);
   border-top: 1px solid var(--ion-color-step-200);
   z-index: 20;

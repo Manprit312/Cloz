@@ -12,9 +12,9 @@ import {
 } from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
 import { IconComponent } from '../../../shared/components/icon/icon.component';
+import { SkeletonLoaderComponent } from '../../../shared/components/skeleton-loader/skeleton-loader.component';
 import { WardrobeService } from '../../../core/services/wardrobe.service';
 import { inject } from '@angular/core';
-import { forkJoin } from 'rxjs';
 
 interface WardrobeCategory {
   name: string;
@@ -37,6 +37,7 @@ interface WardrobeCategory {
     IonLabel,
     IonList,
     IconComponent,
+    SkeletonLoaderComponent,
     CommonModule,
     FormsModule,
   ],
@@ -88,39 +89,62 @@ export class WardrobePage implements OnInit {
 
   /**
    * Load counts for all wardrobe categories
+   * Makes requests sequentially with delays to avoid rate limiting (429 errors)
    */
   loadCategoryCounts(): void {
     this.isLoading = true;
 
-    // Load all category counts in parallel using dedicated service methods
-    forkJoin({
-      upper_garments: this.wardrobeService.getUpperGarments(),
-      bottoms: this.wardrobeService.getBottoms(),
-      shoes: this.wardrobeService.getShoes(),
-      accessories: this.wardrobeService.getAccessories(),
-    }).subscribe({
-      next: (results) => {
-        console.log('WardrobePage - Loaded category results:', results);
-        // Update counts for each category
-        this.categories.forEach((category) => {
-          const items = results[category.type as keyof typeof results];
-          console.log(`WardrobePage - Category: ${category.name}, Type: ${category.type}, Items:`, items);
-          if (Array.isArray(items)) {
-            category.count = items.length;
-            console.log(`WardrobePage - ${category.name} count set to:`, category.count);
-          } else {
-            console.warn(`WardrobePage - ${category.name} items is not an array:`, items);
-            category.count = 0;
-          }
+    // Create an array of category load functions with their types
+    const categoryLoaders = [
+      { type: 'upper_garments', loader: () => this.wardrobeService.getUpperGarments() },
+      { type: 'bottoms', loader: () => this.wardrobeService.getBottoms() },
+      { type: 'shoes', loader: () => this.wardrobeService.getShoes() },
+      { type: 'accessories', loader: () => this.wardrobeService.getAccessories() },
+    ];
+
+    // Track how many requests have completed
+    let completedCount = 0;
+    const totalRequests = categoryLoaders.length;
+
+    // Process each category sequentially with 300ms delay between requests
+    categoryLoaders.forEach((categoryLoader, index) => {
+      const delayTime = index * 300; // 300ms delay between requests to avoid rate limiting
+      
+      setTimeout(() => {
+        categoryLoader.loader().subscribe({
+          next: (items) => {
+            const category = this.categories.find((cat) => cat.type === categoryLoader.type);
+            if (category) {
+              if (Array.isArray(items)) {
+                category.count = items.length;
+                console.log(`WardrobePage - ${category.name} count set to:`, category.count);
+              } else {
+                console.warn(`WardrobePage - ${category.name} items is not an array:`, items);
+                category.count = 0;
+              }
+            }
+            
+            completedCount++;
+            // Set loading to false after all requests complete
+            if (completedCount === totalRequests) {
+              this.isLoading = false;
+            }
+          },
+          error: (err) => {
+            console.error(`WardrobePage - Error loading ${categoryLoader.type}:`, err);
+            const category = this.categories.find((cat) => cat.type === categoryLoader.type);
+            if (category) {
+              category.count = 0; // Set to 0 on error
+            }
+            
+            completedCount++;
+            // Set loading to false after all requests complete (even on errors)
+            if (completedCount === totalRequests) {
+              this.isLoading = false;
+            }
+          },
         });
-        console.log('WardrobePage - Final categories:', this.categories);
-        this.isLoading = false;
-      },
-      error: (err) => {
-        console.error('Error loading category counts:', err);
-        // Keep default counts (0) on error
-        this.isLoading = false;
-      },
+      }, delayTime);
     });
   }
 

@@ -103,3 +103,31 @@
 .create-button-container {
   margin-top: var(--gap-sm, var(--x2, 8px));
 }
+
+// Skeleton styles
+.garment-item-wrapper {
+  aspect-ratio: 1;
+  
+  app-skeleton-loader {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.garment-placeholder-skeleton {
+  width: 37%;
+  aspect-ratio: 1;
+  flex-shrink: 0;
+  
+  app-skeleton-loader {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.name-input-skeleton {
+  margin-top: var(--gap-sm, var(--x2, 8px));
+  padding-bottom: var(--gap-sm, var(--x2, 8px));
+}

@@ -11,14 +11,17 @@ import {
   IonItem,
   IonLabel,
   IonInput,
+  IonSpinner,
   ModalController,
 } from '@ionic/angular/standalone';
 import { ButtonComponent } from '../button/button.component';
 import { IconComponent } from '../icon/icon.component';
+import { SkeletonLoaderComponent } from '../skeleton-loader/skeleton-loader.component';
 import { SubtypeSelectionModalComponent } from '../subtype-selection-modal/subtype-selection-modal.component';
 import { ColorSelectionModalComponent } from '../color-selection-modal/color-selection-modal.component';
 import { ClimateFitSelectionModalComponent } from '../climate-fit-selection-modal/climate-fit-selection-modal.component';
 import { ProfileService } from '../../../core/services/profile.service';
+import { ImageCompressionService } from '../../../core/services/image-compression.service';
 
 export interface UpperGarmentData {
   imageUrl?: string;
@@ -47,6 +50,8 @@ export interface UpperGarmentData {
     IonInput,
     ButtonComponent,
     IconComponent,
+    SkeletonLoaderComponent,
+    IonSpinner,
   ],
 })
 export class AddUpperGarmentModalComponent implements OnInit {
@@ -59,10 +64,13 @@ export class AddUpperGarmentModalComponent implements OnInit {
   brand: string = '';
   showErrorMessage = false;
   errorMessageText = '';
+  isCompressing = false; // Track image compression state
+  compressionSuccess = false; // Track compression success
 
   constructor(
     private modalController: ModalController,
-    private profileService: ProfileService
+    private profileService: ProfileService,
+    private imageCompressionService: ImageCompressionService
   ) {}
 
   ngOnInit() {
@@ -87,9 +95,9 @@ export class AddUpperGarmentModalComponent implements OnInit {
         category: 'upper-garments',
         gender: this.profileService.profile().gender,
       },
-      breakpoints: [0, 0.6],
-      initialBreakpoint: 0.6,
-      backdropBreakpoint: 0.6,
+      breakpoints: [0, 0.8, 1],
+      initialBreakpoint: 0.8,
+      backdropBreakpoint: 0.8,
       handle: true,
       handleBehavior: 'cycle',
     });
@@ -108,9 +116,9 @@ export class AddUpperGarmentModalComponent implements OnInit {
       componentProps: {
         currentColor: this.color,
       },
-      breakpoints: [0, 0.6],
-      initialBreakpoint: 0.6,
-      backdropBreakpoint: 0.6,
+      breakpoints: [0, 0.8, 1],
+      initialBreakpoint: 0.8,
+      backdropBreakpoint: 0.8,
       handle: true,
       handleBehavior: 'cycle',
     });
@@ -129,9 +137,9 @@ export class AddUpperGarmentModalComponent implements OnInit {
       componentProps: {
         currentSelection: [...this.climateFit],
       },
-      breakpoints: [0, 0.6],
-      initialBreakpoint: 0.6,
-      backdropBreakpoint: 0.6,
+      breakpoints: [0, 0.8, 1],
+      initialBreakpoint: 0.8,
+      backdropBreakpoint: 0.8,
       handle: true,
       handleBehavior: 'cycle',
     });
@@ -209,7 +217,7 @@ export class AddUpperGarmentModalComponent implements OnInit {
     }
   }
 
-  onImageSelected(event: Event) {
+  async onImageSelected(event: Event) {
     this.showErrorMessage = false;
     this.errorMessageText = '';
 
@@ -227,24 +235,36 @@ export class AddUpperGarmentModalComponent implements OnInit {
         return;
       }
 
-      // Create a FileReader to read the file
-      const reader = new FileReader();
-      
-      reader.onload = (e: ProgressEvent<FileReader>) => {
-        if (e.target?.result) {
-          this.imageUrl = e.target.result as string;
-        }
-      };
-      
-      reader.onerror = () => {
+      // Set compressing state
+      this.isCompressing = true;
+      this.compressionSuccess = false; // Reset success state
+
+      try {
+        // Compress the image before storing - more aggressive compression for smaller file size
+        const compressedFile = await this.imageCompressionService.compressImage(file, {
+          maxWidth: 1200,
+          maxHeight: 1200,
+          quality: 0.7,
+          maxSizeMB: 1
+        });
+
+        // Convert compressed file to base64 for preview and passing to parent
+        const base64 = await this.imageCompressionService.fileToBase64(compressedFile);
+        this.imageUrl = base64;
+        
+        this.compressionSuccess = true; // Set success state
+        console.log(`Original size: ${file.size / 1024} KB, Compressed size: ${compressedFile.size / 1024} KB`);
+      } catch (error) {
+        console.error('Error compressing image:', error);
         this.showErrorMessage = true;
-        this.errorMessageText = 'Error reading file';
+        this.errorMessageText = 'Error processing image. Please try again.';
         setTimeout(() => {
           this.showErrorMessage = false;
         }, 5000);
-      };
-      
-      reader.readAsDataURL(file);
+      } finally {
+        this.isCompressing = false;
+        setTimeout(() => this.compressionSuccess = false, 3000); // Hide success after 3s
+      }
     }
   }
 }

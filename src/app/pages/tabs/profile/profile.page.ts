@@ -167,8 +167,8 @@ export class ProfilePage implements OnInit {
     return '**********';
   }
 
-  async logout(): Promise<void> {
+  logout(): void {
     // Call auth service logout which will call the API and clear all data
-    await this.authService.logout();
+    this.authService.logout();
   }
 }

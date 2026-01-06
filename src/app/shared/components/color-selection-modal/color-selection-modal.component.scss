@@ -3,8 +3,12 @@
 // Header styles
 ion-header {
   --background: var(--ion-background-color);
+  padding-top: 0 !important; // Remove top padding from modal header
+  margin-top: 0 !important;
   
   ion-toolbar {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
     --background: var(--ion-background-color);
     --color: var(--ion-text-color);
     --min-height: var(--x14);

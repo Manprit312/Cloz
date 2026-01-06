@@ -36,6 +36,7 @@ ion-backdrop {
 // Header styles
 ion-header {
   --background: var(--ion-background-color);
+  z-index: 0; // Ensure header is below backdrop (backdrop is z-index: 1)
   
   ion-toolbar {
     --background: var(--ion-background-color);
@@ -80,12 +81,7 @@ ion-header {
   margin-bottom: var(--gap-lg);
 }
 
-.image-upload-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--gap-md);
-}
+// .image-upload-container - Utility classes used in HTML: column-stack-md items-center
 
 .image-upload-area {
   position: relative;
@@ -94,13 +90,65 @@ ion-header {
   max-width: 100%;
   border: var(--x1) dashed var(--border-color);
   border-radius: var(--radius-md);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  // Utility classes used in HTML: column-stack-none items-center justify-center
   background-color: var(--ion-background-color);
   cursor: pointer;
   overflow: hidden;
+  
+  .compression-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    // Utility classes used in HTML: column-stack-none items-center justify-center w-full h-full
+    background-color: rgba(var(--ion-background-color-rgb, 255, 255, 255), 0.9);
+    z-index: 10;
+    border-radius: var(--radius-md);
+    
+    .dark & {
+      background-color: rgba(var(--ion-background-color-rgb, 18, 18, 18), 0.9);
+    }
+    
+    ion-spinner {
+      width: var(--x12, 48px);
+      height: var(--x12, 48px);
+      margin-bottom: var(--gap-sm);
+    }
+    
+    .compression-text {
+      color: var(--ion-color-primary);
+      margin-top: var(--gap-sm);
+    }
+  }
+  
+  .compression-success {
+    position: absolute;
+    top: var(--gap-sm);
+    right: var(--gap-sm);
+    // Utility classes used in HTML: row-stack-xs items-center
+    background-color: rgba(var(--ion-color-success-rgb, 76, 175, 80), 0.1);
+    padding: var(--gap-xs) var(--gap-sm);
+    border-radius: var(--radius-sm);
+    z-index: 5;
+    animation: fadeInOut 3s ease-in-out;
+    
+    .success-text {
+      color: var(--ion-color-success, #4CAF50);
+      margin: 0;
+    }
+  }
+  
+  @keyframes fadeInOut {
+    0%, 100% {
+      opacity: 0;
+      transform: translateY(calc(-1 * var(--gap-sm)));
+    }
+    10%, 90% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
   
   .dark & {
     border-color: var(--border-color-dark);
@@ -112,22 +160,15 @@ ion-header {
   display: none;
 }
 
-.image-placeholder {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-}
+// .image-placeholder-container - Utility classes used in HTML: column-stack-md items-center justify-center w-full h-full
+
+// .image-placeholder - Utility classes used in HTML: items-center justify-center
 
 .image-with-button {
   position: relative;
   width: 100%;
   height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  // Utility classes used in HTML: column-stack-none items-center justify-center w-full h-full
 }
 
 .garment-image {
@@ -144,12 +185,9 @@ ion-header {
   left: var(--x5);
   
   // Ensure button content (icon + text) is properly aligned
+  // Utility classes should be applied via button component or wrapper
   ::ng-deep button {
-    display: flex;
     background: var(--ion-background-color) !important;
-    align-items: center;
-    justify-content: center;
-    gap: var(--gap-xs);
     
     &:active,
     &:focus,
@@ -173,7 +211,7 @@ ion-header {
 
 .image-instruction {
   text-align: center;
-  margin: 0;
+  margin: var(--x0, 0);
 }
 
 .upload-button,
@@ -190,18 +228,21 @@ ion-header {
   }
 }
 
+.upload-button-inside {
+  // Ensure button content (icon + text) is properly aligned
+  border-radius: var(--radius-md);
+  // Utility classes should be applied via button component
+  // Note: Utility classes are handled by button component
+}
+
 // Select Field Styling - add border lines
 .select-field {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  // Utility classes used in HTML: row-stack-none items-center justify-between
   padding-top: var(--gap-sm);
   padding-bottom: var(--gap-sm);
   cursor: pointer;
   
-  span {
-    flex: 1;
-  }
+  // span - Utility class used in HTML: flex-1
   
   app-icon {
     margin-left: var(--gap-sm);
@@ -247,11 +288,16 @@ ion-header {
   padding-right: var(--x4);
 }
 
+// .button-content - Utility classes used in HTML: row-stack-sm items-center justify-center
+
+.button-spinner {
+  width: var(--x5, 20px);
+  height: var(--x5, 20px);
+}
+
 // Error banner using design tokens (similar to success banner)
 .error-banner {
-  display: flex;
-  align-items: center;
-  gap: var(--gap-sm);
+  // Utility classes used in HTML: row-stack-sm items-center
   background-color: var(--ion-color-danger);
   color: var(--ion-color-primary-contrast);
   border-radius: var(--radius-md);

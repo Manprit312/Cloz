@@ -92,9 +92,9 @@
         expand="block"
         type="submit"
         class="signup-button"
-        [disabled]="!name || !email || !password || !confirmPassword || !gender"
+        [disabled]="!name || !email || !password || !confirmPassword || !gender || isLoading"
       >
-        Sign up
+        {{ isLoading ? 'Signing up...' : 'Sign up' }}
       </ion-button>
     </form>
   </div>

@@ -132,18 +132,24 @@ export class AuthService {
 
   /**
    * Clear all storage and reset state
+   * IMPORTANT: Only clears auth-related data, not all localStorage
+   * This prevents clearing user preferences and other app data
    */
   private async clearAllData(): Promise<void> {
-    // Clear Capacitor Preferences
+    // Clear Capacitor Preferences (auth-related only)
     await Preferences.remove({ key: this.TOKEN_STORAGE_KEY });
     await Preferences.remove({ key: this.SESSION_ID_KEY });
     await Preferences.remove({ key: this.EXPIRES_AT_STORAGE_KEY });
     
-    // Clear localStorage items (for user data)
-    localStorage.clear();
+    // Clear only auth-related localStorage items, not all localStorage
+    // This preserves user preferences, profile data, etc.
+    localStorage.removeItem(this.STORAGE_KEY);
     
-    // Clear sessionStorage as well
-    sessionStorage.clear();
+    // Clear auth-related sessionStorage items
+    sessionStorage.removeItem('mfaSessionId');
+    sessionStorage.removeItem('signupPassword');
+    sessionStorage.removeItem('loginPassword');
+    sessionStorage.removeItem('isSignup');
     
     // Reset signals
     this._user.set(null);
@@ -185,7 +191,28 @@ export class AuthService {
         
         if (!sessionId) {
           console.error('AuthService - refreshAccessToken: Session not found on device');
-          return of(false);
+          // Check if user data exists (user was logged in before)
+          const user = this._user();
+          if (user) {
+            console.log('AuthService - refreshAccessToken: User data exists but sessionId missing - session may have expired, redirecting to login');
+            // User was logged in before but sessionId is missing - can't refresh without sessionId
+            // Clear data and redirect to login
+            return from(this.clearAllData()).pipe(
+              switchMap(() => {
+                const currentUrl = this.router.url;
+                if (!currentUrl.includes('/login') && !currentUrl.includes('/onboarding') && 
+                    !currentUrl.includes('/signup') && !currentUrl.includes('/verification')) {
+                  console.log('AuthService - refreshAccessToken: Redirecting to login - session not found but user was logged in');
+                  this.router.navigateByUrl('/login');
+                }
+                return of(false);
+              })
+            );
+          } else {
+            // No user data and no sessionId - user was never logged in or data was cleared
+            console.log('AuthService - refreshAccessToken: No sessionId and no user data - user not logged in');
+            return of(false);
+          }
         }
 
         return this.userService.refreshToken(sessionId).pipe(
@@ -216,11 +243,29 @@ export class AuthService {
         
         // Only clear data if session/refresh token is invalid (401 or 403 from refresh endpoint)
         // Also handle 400 "Invalid or expired session" - this means session doesn't exist in backend
+        // IMPORTANT: Don't clear data for network errors or temporary failures
         if (err.status === 401 || err.status === 403 || 
             (err.status === 400 && err?.error?.message?.toLowerCase().includes('invalid') && 
              err?.error?.message?.toLowerCase().includes('session'))) {
           console.error('AuthService - refreshAccessToken: Session/refresh token is invalid/expired, clearing session');
-          this.clearAllData();
+          // Only clear if we're sure the session is invalid
+          // Clear data and redirect to login
+          return from(this.clearAllData()).pipe(
+            switchMap(() => {
+              // Redirect to login if not already on login/onboarding pages
+              const currentUrl = this.router.url;
+              if (!currentUrl.includes('/login') && !currentUrl.includes('/onboarding') && 
+                  !currentUrl.includes('/signup') && !currentUrl.includes('/verification')) {
+                console.log('AuthService - refreshAccessToken: Redirecting to login after session expiration');
+                this.router.navigateByUrl('/login');
+              }
+              return of(false);
+            })
+          );
+        } else {
+          // For other errors (network issues, 500, etc.), don't clear data
+          // The session might still be valid, just the refresh call failed
+          console.warn('AuthService - refreshAccessToken: Refresh failed but session may still be valid, not clearing data');
         }
         
         return of(false);
@@ -263,6 +308,108 @@ export class AuthService {
     } catch {
       this._accessToken.set(null);
     }
+  }
+
+  /**
+   * Check if session is still valid by attempting to refresh the token
+   * This is useful when app resumes after being in background
+   * If accessToken is missing or session is invalid, user will be logged out and redirected to login
+   * @returns Promise resolving to true if session appears valid, false otherwise
+   */
+  async validateSessionOnResume(): Promise<boolean> {
+    // Check if user exists and session ID exists
+    const user = this._user();
+    const sessionIdResult = await Preferences.get({ key: this.SESSION_ID_KEY });
+    const sessionId = sessionIdResult.value;
+    
+    if (!user || !sessionId) {
+      console.log('AuthService - validateSessionOnResume: No user or session ID found, logging out');
+      // Clear any remaining data and redirect to login
+      await this.clearAllData();
+      this.router.navigateByUrl('/login');
+      return false;
+    }
+
+    // Check if accessToken exists
+    const token = this.getAccessToken();
+    
+    // If no token at all, try to refresh using sessionId
+    if (!token) {
+      console.log('AuthService - validateSessionOnResume: No accessToken found, attempting to refresh using sessionId');
+      return new Promise((resolve) => {
+        this.refreshAccessToken().subscribe({
+          next: (success) => {
+            if (success) {
+              console.log('AuthService - validateSessionOnResume: Token refreshed successfully');
+              resolve(true);
+            } else {
+              console.log('AuthService - validateSessionOnResume: Token refresh failed, logging out');
+              // Refresh failed - session is invalid, logout and redirect
+              this.logout().then(() => resolve(false));
+            }
+          },
+          error: (err) => {
+            console.error('AuthService - validateSessionOnResume: Token refresh error:', err);
+            // Check if it's a session invalidation error
+            const isSessionInvalid = err?.status === 401 || err?.status === 403 || 
+              (err?.status === 400 && err?.error?.message?.toLowerCase().includes('invalid') && 
+               err?.error?.message?.toLowerCase().includes('session'));
+            
+            if (isSessionInvalid) {
+              console.log('AuthService - validateSessionOnResume: Session is invalid, logging out');
+              // Session invalid - logout and redirect
+              this.logout().then(() => resolve(false));
+            } else {
+              // Network error or other temporary issue - keep session for now
+              console.warn('AuthService - validateSessionOnResume: Refresh failed but may be temporary, keeping session');
+              resolve(true);
+            }
+          }
+        });
+      });
+    }
+
+    // Token exists - check if it needs to be refreshed
+    const shouldRefresh = await this.shouldRefreshToken();
+    
+    if (shouldRefresh) {
+      console.log('AuthService - validateSessionOnResume: Token expired, attempting refresh');
+      return new Promise((resolve) => {
+        this.refreshAccessToken().subscribe({
+          next: (success) => {
+            if (success) {
+              console.log('AuthService - validateSessionOnResume: Token refreshed successfully');
+              resolve(true);
+            } else {
+              console.log('AuthService - validateSessionOnResume: Token refresh failed, logging out');
+              // Refresh failed - session is invalid, logout and redirect
+              this.logout().then(() => resolve(false));
+            }
+          },
+          error: (err) => {
+            console.error('AuthService - validateSessionOnResume: Token refresh error:', err);
+            // Check if it's a session invalidation error
+            const isSessionInvalid = err?.status === 401 || err?.status === 403 || 
+              (err?.status === 400 && err?.error?.message?.toLowerCase().includes('invalid') && 
+               err?.error?.message?.toLowerCase().includes('session'));
+            
+            if (isSessionInvalid) {
+              console.log('AuthService - validateSessionOnResume: Session is invalid, logging out');
+              // Session invalid - logout and redirect
+              this.logout().then(() => resolve(false));
+            } else {
+              // Network error or other temporary issue - keep session for now
+              console.warn('AuthService - validateSessionOnResume: Refresh failed but may be temporary, keeping session');
+              resolve(true);
+            }
+          }
+        });
+      });
+    }
+
+    // Token exists and is still valid
+    console.log('AuthService - validateSessionOnResume: Token still valid');
+    return true;
   }
 
 }

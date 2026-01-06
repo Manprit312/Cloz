@@ -1,5 +1,11 @@
 <ion-content [fullscreen]="false" class="welcome-content">
-  <div class="welcome-container column-stack-none items-center justify-center">
+  <!-- Loading Spinner -->
+  <div *ngIf="isLoading" class="welcome-container column-stack-none items-center justify-center">
+    <ion-spinner name="crescent" color="primary"></ion-spinner>
+  </div>
+
+  <!-- Onboarding Content -->
+  <div *ngIf="!isLoading" class="welcome-container column-stack-none items-center justify-center pad-all-md">
     <!-- Icon -->
     <div class="icon-container">
       <app-icon name="shirt" [size]="64" [color]="'var(--ion-color-primary)'" class="welcome-icon"></app-icon>

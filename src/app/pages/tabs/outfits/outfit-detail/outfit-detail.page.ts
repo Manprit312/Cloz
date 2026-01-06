@@ -19,6 +19,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { inject } from '@angular/core';
 import { IconComponent } from '../../../../shared/components/icon/icon.component';
 import { OutfitsService, Outfit, OutfitWardrobeItem } from '../../../../core/services/outfits.service';
+import { SkeletonLoaderComponent } from '../../../../shared/components/skeleton-loader/skeleton-loader.component';
 
 @Component({
   selector: 'app-outfit-detail',
@@ -38,6 +39,7 @@ import { OutfitsService, Outfit, OutfitWardrobeItem } from '../../../../core/ser
     IonLabel,
     IonThumbnail,
     IconComponent,
+    SkeletonLoaderComponent,
   ],
 })
 export class OutfitDetailPage implements OnInit, ViewWillEnter {

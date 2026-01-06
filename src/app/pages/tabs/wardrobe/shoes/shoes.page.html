@@ -28,7 +28,17 @@
 
     <!-- Show loading state -->
     <div *ngIf="isLoading" class="loading-container">
-      <p>Loading shoes...</p>
+      <ion-grid class="items-grid">
+        <ion-row>
+          <ion-col size="4" *ngFor="let item of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]">
+            <ion-item class="garment-item" lines="none">
+              <ion-thumbnail slot="start" class="garment-thumbnail">
+                <app-skeleton-loader type="image" [width]="'100%'" [height]="'100%'" [borderRadius]="'8px'" class="skeleton-square"></app-skeleton-loader>
+              </ion-thumbnail>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
     </div>
 
     <!-- Show error state -->
@@ -66,9 +76,19 @@
             lines="none"
           >
             <ion-thumbnail slot="start" class="garment-thumbnail">
+              <!-- Skeleton loader while image is loading -->
+              <app-skeleton-loader 
+                *ngIf="!isImageLoaded(item)"
+                type="image" 
+                [width]="'100%'" 
+                [height]="'150px'" 
+                [borderRadius]="'8px'"
+                class="image-skeleton"
+              ></app-skeleton-loader>
+              
               <!-- Carousel for multiple images -->
               <div 
-                *ngIf="hasMultipleImages(item)" 
+                *ngIf="hasMultipleImages(item) && isImageLoaded(item)" 
                 class="garment-carousel"
                 (touchstart)="onTouchStart($event, item)"
                 (touchend)="onTouchEnd($event, item)"
@@ -78,6 +98,8 @@
                   [src]="getCurrentImage(item)" 
                   [alt]="item.subtype" 
                   class="garment-image"
+                  loading="lazy"
+                  (load)="onImageLoad(item)"
                 />
                 <!-- Pagination dots -->
                 <div class="carousel-dots row-stack-xs">
@@ -90,10 +112,28 @@
               </div>
               <!-- Single image -->
               <img 
-                *ngIf="!hasMultipleImages(item)"
+                *ngIf="!hasMultipleImages(item) && isImageLoaded(item)"
                 [src]="item.imageUrl" 
                 [alt]="item.subtype" 
                 class="garment-image"
+                loading="lazy"
+                (load)="onImageLoad(item)"
+              />
+              <!-- Hidden image to trigger load event for carousel -->
+              <img 
+                *ngIf="hasMultipleImages(item) && !isImageLoaded(item)"
+                [src]="getCurrentImage(item)" 
+                [alt]="item.subtype" 
+                style="display: none;"
+                (load)="onImageLoad(item)"
+              />
+              <!-- Hidden image to trigger load event for single image -->
+              <img 
+                *ngIf="!hasMultipleImages(item) && !isImageLoaded(item)"
+                [src]="item.imageUrl" 
+                [alt]="item.subtype" 
+                style="display: none;"
+                (load)="onImageLoad(item)"
               />
             </ion-thumbnail>
           </ion-item>

@@ -31,7 +31,7 @@ ion-header {
 
 .subtype-filters {
   flex-wrap: wrap;
-  margin-bottom: var(--gap-lg, var(--x6, 24px));
+  margin-bottom: var(--gap-lg);
 }
 
 .filter-button {
@@ -41,29 +41,29 @@ ion-header {
 // Ensure grid aligns with filter buttons - remove any default grid padding
 // Container already has pad-all-md, so grid should have no padding
 .items-grid {
-  --padding-start: var(--x0, 0);
-  --padding-end: var(--x0, 0);
-  padding: var(--x0, 0);
+  --padding-start: var(--x0);
+  --padding-end: var(--x0);
+  padding: var(--x0);
   
   // Add gaps between thumbnails using padding on columns
   ion-col {
-    --padding-start: var(--x0, 0);
-    --padding-end: var(--x0, 0);
-    padding: var(--gap-xs, var(--x1, 4px));
+    --padding-start: var(--x0);
+    --padding-end: var(--x0);
+    padding: var(--gap-xs);
   }
 }
 
 .garment-item {
-  --padding-start: var(--x0, 0);
-  --padding-end: var(--x0, 0);
-  --inner-padding-end: var(--x0, 0);
-  --inner-padding-start: var(--x0, 0);
+  --padding-start: var(--x0);
+  --padding-end: var(--x0);
+  --inner-padding-end: var(--x0);
+  --inner-padding-start: var(--x0);
   --background: transparent;
   --background-activated: transparent;
   --background-hover: transparent;
   --background-focused: transparent;
-  margin: var(--x0, 0);
-  border-radius: var(--radius-md, 8px);
+  margin: var(--x0);
+  border-radius: var(--radius-md);
   overflow: hidden;
   height: 100%;
   
@@ -93,13 +93,30 @@ ion-header {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      border-radius: var(--radius-md, 8px);
+      border-radius: var(--radius-md);
     }
   }
 }
 
 .garment-thumbnail {
-  margin: var(--x0, 0);
+  margin: var(--x0);
+  position: relative;
+}
+
+.image-skeleton {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.skeleton-square {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .garment-carousel {
@@ -109,28 +126,28 @@ ion-header {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  border-radius: var(--radius-md, 8px);
+  border-radius: var(--radius-md);
 }
 
 .garment-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: var(--radius-md, 8px);
+  border-radius: var(--radius-md);
   display: block;
 }
 
 .carousel-dots {
   position: absolute;
-  bottom: var(--gap-xs, var(--x1, 4px));
+  bottom: var(--gap-xs);
   left: 50%;
   transform: translateX(-50%);
   z-index: 10;
 }
 
 .carousel-dots .dot {
-  width: calc(var(--x1, 4px) * 1.5);
-  height: calc(var(--x1, 4px) * 1.5);
+  width: calc(var(--x1) * 1.5);
+  height: calc(var(--x1) * 1.5);
   border-radius: 50%;
   background-color: rgba(var(--ion-color-primary-contrast-rgb, 255, 255, 255), 0.5);
   transition: background-color 0.2s ease;
@@ -142,6 +159,6 @@ ion-header {
 }
 
 ion-fab {
-  margin-bottom: var(--gap-lg, var(--x6, 24px));
+  margin-bottom: var(--gap-lg);
   margin-right: var(--gap-md, var(--x4, 16px));
 }

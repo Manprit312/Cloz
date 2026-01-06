@@ -1,17 +1,19 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { TranslationService, AuthService } from '@app-core';
 import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 import { translations } from '@translations';
 import { Keyboard } from '@capacitor/keyboard';
+import { App } from '@capacitor/app';
 
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
   imports: [IonApp, IonRouterOutlet],
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   private translate = inject(TranslationService);
   private authService = inject(AuthService);
+  private appStateListener?: any; // PluginListenerHandle from Capacitor
 
   constructor() {
     this.translate.init();
@@ -25,6 +27,7 @@ export class AppComponent implements OnInit {
     Keyboard.addListener('keyboardWillHide', () => {
       document.body.classList.remove('keyboard-is-open');
     });
+    
     // Apply backdrop blur to all Ionic backdrops as they're created
     // This ensures blur is applied even if CSS doesn't catch them
     this.applyBackdropBlur();
@@ -38,6 +41,60 @@ export class AppComponent implements OnInit {
       childList: true,
       subtree: true
     });
+
+    // Listen for app state changes (foreground/background)
+    this.setupAppStateListener();
+    
+    // Validate session when app initializes (in case it was closed and reopened)
+    this.validateSessionOnStartup();
+  }
+
+  ngOnDestroy() {
+    // Clean up app state listener if needed
+    if (this.appStateListener) {
+      this.appStateListener.remove();
+    }
+  }
+
+  /**
+   * Setup listener for app state changes (foreground/background)
+   */
+  private async setupAppStateListener(): Promise<void> {
+    this.appStateListener = await App.addListener('appStateChange', async ({ isActive }) => {
+      if (isActive) {
+        // App came to foreground - validate session
+        // But skip validation if user is on verification page (they might be checking email)
+        const currentUrl = window.location.pathname;
+        if (currentUrl.includes('/verification')) {
+          console.log('AppComponent - App came to foreground, but user is on verification page, skipping session validation');
+          return;
+        }
+        
+        console.log('AppComponent - App came to foreground, validating session');
+        await this.authService.validateSessionOnResume();
+      } else {
+        console.log('AppComponent - App went to background');
+      }
+    });
+  }
+
+  /**
+   * Validate session when app starts up
+   * This handles the case where app was closed and reopened after some time
+   */
+  private async validateSessionOnStartup(): Promise<void> {
+    // Small delay to ensure auth service is fully initialized
+    setTimeout(async () => {
+      // Check if user data exists (even if token is missing/expired)
+      // validateSessionOnResume will handle checking for token and redirecting if needed
+      if (this.authService.isLoggedIn()) {
+        console.log('AppComponent - Validating session on startup');
+        const isValid = await this.authService.validateSessionOnResume();
+        if (!isValid) {
+          console.log('AppComponent - Session validation failed, user should be redirected to login');
+        }
+      }
+    }, 1000);
   }
 
   private applyBackdropBlur() {

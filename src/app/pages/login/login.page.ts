@@ -36,6 +36,7 @@ export class LoginPage implements OnInit {
   email = '';
   password = '';
   error = '';
+  isLoading = false;
 
   private userService = inject(UserService);
   private authService = inject(AuthService);
@@ -54,12 +55,19 @@ export class LoginPage implements OnInit {
   }
 
   async login(): Promise<void> {
+    // Prevent multiple simultaneous login attempts
+    if (this.isLoading) {
+      return;
+    }
+
     this.error = '';
 
     if (!this.email || !this.password) {
       this.error = 'Please enter email and password';
       return;
     }
+
+    this.isLoading = true;
 
     // Call Keycloak login API
     const loginData = {
@@ -69,6 +77,7 @@ export class LoginPage implements OnInit {
 
     this.userService.loginKeycloak(loginData).subscribe({
       next: (response) => {
+        this.isLoading = false;
         // Store mfaSessionId and password for MFA verification
         sessionStorage.setItem('mfaSessionId', response.mfaSessionId);
         sessionStorage.setItem('loginPassword', this.password);
@@ -80,6 +89,7 @@ export class LoginPage implements OnInit {
         );
       },
       error: (err) => {
+        this.isLoading = false;
         console.error('Login error:', err);
         
         // Check if error is 400 with "User not found. Please signup first." message

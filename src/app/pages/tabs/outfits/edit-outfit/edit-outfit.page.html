@@ -10,7 +10,76 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <div class="create-outfit-container column-stack-lg pad-all-md">
+  <!-- Show loading state -->
+  <div *ngIf="isLoading" class="create-outfit-container column-stack-lg pad-all-md">
+    <!-- Upper Garments Section Skeleton -->
+    <div class="outfit-section column-stack-sm">
+      <app-skeleton-loader type="text" [width]="'40%'" [height]="'18px'" [borderRadius]="'4px'"></app-skeleton-loader>
+      <div class="garments-row row-stack-sm">
+        <div class="garment-item-wrapper">
+          <app-skeleton-loader type="image" [width]="'100%'" [height]="'100%'" [borderRadius]="'12px'"></app-skeleton-loader>
+        </div>
+        <div class="garment-placeholder-skeleton">
+          <app-skeleton-loader type="image" [width]="'100%'" [height]="'100%'" [borderRadius]="'12px'"></app-skeleton-loader>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottoms Section Skeleton -->
+    <div class="outfit-section column-stack-sm">
+      <app-skeleton-loader type="text" [width]="'30%'" [height]="'18px'" [borderRadius]="'4px'"></app-skeleton-loader>
+      <div class="garments-row row-stack-sm">
+        <div class="garment-item-wrapper">
+          <app-skeleton-loader type="image" [width]="'100%'" [height]="'100%'" [borderRadius]="'12px'"></app-skeleton-loader>
+        </div>
+        <div class="garment-placeholder-skeleton">
+          <app-skeleton-loader type="image" [width]="'100%'" [height]="'100%'" [borderRadius]="'12px'"></app-skeleton-loader>
+        </div>
+      </div>
+    </div>
+
+    <!-- Shoes Section Skeleton -->
+    <div class="outfit-section column-stack-sm">
+      <app-skeleton-loader type="text" [width]="'25%'" [height]="'18px'" [borderRadius]="'4px'"></app-skeleton-loader>
+      <div class="garments-row row-stack-sm">
+        <div class="garment-item-wrapper">
+          <app-skeleton-loader type="image" [width]="'100%'" [height]="'100%'" [borderRadius]="'12px'"></app-skeleton-loader>
+        </div>
+        <div class="garment-placeholder-skeleton">
+          <app-skeleton-loader type="image" [width]="'100%'" [height]="'100%'" [borderRadius]="'12px'"></app-skeleton-loader>
+        </div>
+      </div>
+    </div>
+
+    <!-- Accessories Section Skeleton -->
+    <div class="outfit-section column-stack-sm">
+      <app-skeleton-loader type="text" [width]="'35%'" [height]="'18px'" [borderRadius]="'4px'"></app-skeleton-loader>
+      <div class="garments-row row-stack-sm">
+        <div class="garment-item-wrapper">
+          <app-skeleton-loader type="image" [width]="'100%'" [height]="'100%'" [borderRadius]="'12px'"></app-skeleton-loader>
+        </div>
+        <div class="garment-placeholder-skeleton">
+          <app-skeleton-loader type="image" [width]="'100%'" [height]="'100%'" [borderRadius]="'12px'"></app-skeleton-loader>
+        </div>
+      </div>
+    </div>
+
+    <!-- Custom Name Section Skeleton -->
+    <div class="outfit-section column-stack-sm">
+      <app-skeleton-loader type="text" [width]="'35%'" [height]="'18px'" [borderRadius]="'4px'"></app-skeleton-loader>
+      <div class="name-input-skeleton">
+        <app-skeleton-loader type="text" [width]="'100%'" [height]="'20px'" [borderRadius]="'4px'"></app-skeleton-loader>
+      </div>
+    </div>
+
+    <!-- Save Button Skeleton -->
+    <div class="create-button-container">
+      <app-skeleton-loader type="text" [width]="'100%'" [height]="'48px'" [borderRadius]="'8px'"></app-skeleton-loader>
+    </div>
+  </div>
+
+  <!-- Show outfit edit form -->
+  <div *ngIf="!isLoading" class="create-outfit-container column-stack-lg pad-all-md">
     
     <!-- Upper Garments Section -->
     <div class="outfit-section column-stack-sm">

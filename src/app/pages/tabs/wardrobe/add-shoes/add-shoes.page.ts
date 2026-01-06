@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
@@ -10,6 +10,7 @@ import {
   IonButton,
   IonContent,
   AlertController,
+  IonSpinner,
 } from '@ionic/angular/standalone';
 import { Location } from '@angular/common';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
@@ -19,6 +20,8 @@ import { ColorSelectionModalComponent } from '../../../../shared/components/colo
 import { ModalController } from '@ionic/angular/standalone';
 import { ProfileService } from '../../../../core/services/profile.service';
 import { WardrobeService } from '../../../../core/services/wardrobe.service';
+import { ImageCompressionService } from '../../../../core/services/image-compression.service';
+import { Keyboard } from '@capacitor/keyboard';
 
 export interface ShoeData {
   id?: string;
@@ -46,9 +49,12 @@ export interface ShoeData {
     IonContent,
     ButtonComponent,
     IconComponent,
+    IonSpinner,
   ],
 })
-export class AddShoesPage implements OnInit {
+export class AddShoesPage implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild(IonContent) content!: IonContent;
+  
   imageUrl: string = '';
   originalImageUrl: string = ''; // Store original image URL to detect changes
   subtype: string = '';
@@ -61,6 +67,12 @@ export class AddShoesPage implements OnInit {
   isEditMode = false;
   itemId: string = '';
   isSubmitting = false; // Prevent double submission
+  isCompressing = false; // Track image compression state
+  compressionSuccess = false; // Track compression success
+  imageFile: File | null = null; // Store compressed file for upload
+  
+  private keyboardListeners: any[] = [];
+  private keyboardHeight: number = 300; // Default keyboard height, will be updated from event
 
   climateOptions = [
     { value: 'Cold', label: 'Cold' },
@@ -74,7 +86,8 @@ export class AddShoesPage implements OnInit {
     private modalController: ModalController,
     private alertController: AlertController,
     private profileService: ProfileService,
-    private wardrobeService: WardrobeService
+    private wardrobeService: WardrobeService,
+    private imageCompressionService: ImageCompressionService
   ) {}
 
   ngOnInit() {
@@ -92,6 +105,82 @@ export class AddShoesPage implements OnInit {
       this.color = data.color || '';
       this.climateFit = data.climateFit || [];
       this.brand = data.brand || '';
+    }
+  }
+
+  ngAfterViewInit() {
+    this.setupKeyboardHandling();
+  }
+
+  ngOnDestroy() {
+    // Remove keyboard listeners
+    this.keyboardListeners.forEach(listener => {
+      if (listener && listener.remove) {
+        listener.remove();
+      }
+    });
+    this.keyboardListeners = [];
+  }
+
+  private setupKeyboardHandling() {
+    // Listen for keyboard show event
+    const showListener = Keyboard.addListener('keyboardWillShow', (info) => {
+      // Store the actual keyboard height from the event
+      this.keyboardHeight = info.keyboardHeight || 300;
+      setTimeout(() => {
+        this.scrollToActiveInput();
+      }, 300); // Small delay to ensure keyboard is fully shown
+    });
+    this.keyboardListeners.push(showListener);
+
+    // Listen for keyboard hide event to reset height
+    const hideListener = Keyboard.addListener('keyboardWillHide', () => {
+      this.keyboardHeight = 300; // Reset to default
+    });
+    this.keyboardListeners.push(hideListener);
+
+    // Also handle focus events on inputs
+    const inputs = document.querySelectorAll('input[type="text"]');
+    inputs.forEach(input => {
+      input.addEventListener('focus', () => {
+        setTimeout(() => {
+          this.scrollToActiveInput();
+        }, 300);
+      });
+    });
+  }
+
+  private async scrollToActiveInput() {
+    const activeElement = document.activeElement;
+    if (activeElement && activeElement.tagName === 'INPUT') {
+      try {
+        const inputElement = activeElement as HTMLElement;
+        const inputRect = inputElement.getBoundingClientRect();
+        const contentElement = await this.content.getScrollElement();
+        
+        // Use actual keyboard height from event, or fallback to default
+        const viewportHeight = window.innerHeight;
+        const inputTop = inputRect.top;
+        const inputBottom = inputRect.bottom;
+        const visibleAreaBottom = viewportHeight - this.keyboardHeight;
+        
+        // Add extra padding to ensure input is fully visible above keyboard
+        const padding = 40; // Extra padding to ensure input is clearly visible
+        
+        if (inputBottom > visibleAreaBottom - padding) {
+          // Input is hidden or too close to keyboard, scroll to make it visible
+          const scrollOffset = inputBottom - (visibleAreaBottom - padding);
+          const currentScroll = contentElement.scrollTop;
+          await this.content.scrollToPoint(0, currentScroll + scrollOffset, 300);
+        } else if (inputTop < 0) {
+          // Input is above visible area, scroll it into view
+          const scrollOffset = inputTop - padding;
+          const currentScroll = contentElement.scrollTop;
+          await this.content.scrollToPoint(0, currentScroll + scrollOffset, 300);
+        }
+      } catch (error) {
+        console.error('Error scrolling to input:', error);
+      }
     }
   }
 
@@ -250,9 +339,15 @@ export class AddShoesPage implements OnInit {
     const isBase64Image = this.imageUrl.startsWith('data:image');
     
     if (imageChanged || isBase64Image || !this.isEditMode) {
-      // Include image if it's changed, is base64 (new upload), or if adding new item
-      wardrobeItemData.image = this.imageUrl;
-      console.log('Including image in update (changed or new upload)');
+      // Use the compressed file if available, otherwise use base64
+      // The compressed file is already optimized, so prefer it over base64
+      if (this.imageFile) {
+        wardrobeItemData.image = this.imageFile;
+        console.log('Including compressed image file in upload');
+      } else {
+        wardrobeItemData.image = this.imageUrl;
+        console.log('Including image base64 in update (changed or new upload)');
+      }
     } else {
       console.log('Image not changed, skipping image field in update');
     }
@@ -315,7 +410,7 @@ export class AddShoesPage implements OnInit {
     }
   }
 
-  onImageSelected(event: Event) {
+  async onImageSelected(event: Event) {
     this.showErrorMessage = false;
     this.errorMessageText = '';
 
@@ -333,24 +428,39 @@ export class AddShoesPage implements OnInit {
         return;
       }
 
-      // Create a FileReader to read the file
-      const reader = new FileReader();
-      
-      reader.onload = (e: ProgressEvent<FileReader>) => {
-        if (e.target?.result) {
-          this.imageUrl = e.target.result as string; // This will be base64, different from originalImageUrl
-        }
-      };
-      
-      reader.onerror = () => {
+      // Set compressing state
+      this.isCompressing = true;
+      this.compressionSuccess = false; // Reset success state
+
+      try {
+        // Compress the image before storing - more aggressive compression for smaller file size
+        const compressedFile = await this.imageCompressionService.compressImage(file, {
+          maxWidth: 1200,
+          maxHeight: 1200,
+          quality: 0.7,
+          maxSizeMB: 1
+        });
+
+        // Store the compressed file for upload
+        this.imageFile = compressedFile;
+
+        // Convert compressed file to base64 for preview
+        const base64 = await this.imageCompressionService.fileToBase64(compressedFile);
+        this.imageUrl = base64;
+        
+        this.compressionSuccess = true; // Set success state
+        console.log(`Original size: ${file.size / 1024} KB, Compressed size: ${compressedFile.size / 1024} KB`);
+      } catch (error) {
+        console.error('Error compressing image:', error);
         this.showErrorMessage = true;
-        this.errorMessageText = 'Error reading file';
+        this.errorMessageText = 'Error processing image. Please try again.';
         setTimeout(() => {
           this.showErrorMessage = false;
         }, 5000);
-      };
-      
-      reader.readAsDataURL(file);
+      } finally {
+        this.isCompressing = false;
+        setTimeout(() => this.compressionSuccess = false, 3000); // Hide success after 3s
+      }
     }
   }
 }

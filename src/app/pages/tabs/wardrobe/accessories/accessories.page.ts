@@ -22,6 +22,7 @@ import { Router } from '@angular/router';
 import { IconComponent } from '../../../../shared/components/icon/icon.component';
 import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
+import { SkeletonLoaderComponent } from '../../../../shared/components/skeleton-loader/skeleton-loader.component';
 import { WardrobeService, WardrobeItem } from '../../../../core/services/wardrobe.service';
 import { SubtypesService } from '../../../../core/services/subtypes.service';
 import { ProfileService } from '../../../../core/services/profile.service';
@@ -61,6 +62,7 @@ export interface AccessoryItem {
     IconComponent,
     EmptyStateComponent,
     ButtonComponent,
+    SkeletonLoaderComponent,
   ],
 })
 export class AccessoriesPage implements OnInit, ViewWillEnter {
@@ -73,6 +75,8 @@ export class AccessoriesPage implements OnInit, ViewWillEnter {
   selectedSubtype: string = 'All';
   // Track current image index for each item in carousel
   itemImageIndices: Map<string, number> = new Map();
+  // Track which items have loaded their images
+  loadedImages: Set<string> = new Set();
   // Track touch start positions for swipe gestures
   private touchStartX = 0;
   private touchEndX = 0;
@@ -119,6 +123,8 @@ export class AccessoriesPage implements OnInit, ViewWillEnter {
   loadAccessories(): void {
     this.isLoading = true;
     this.error = null;
+    // Clear loaded images when reloading
+    this.loadedImages.clear();
     
     this.wardrobeService.getAccessories().subscribe({
       next: (items) => {
@@ -135,6 +141,20 @@ export class AccessoriesPage implements OnInit, ViewWillEnter {
         this.items = [];
       }
     });
+  }
+
+  /**
+   * Check if an item's image has loaded
+   */
+  isImageLoaded(item: AccessoryItem): boolean {
+    return this.loadedImages.has(item.id);
+  }
+
+  /**
+   * Handle image load event
+   */
+  onImageLoad(item: AccessoryItem): void {
+    this.loadedImages.add(item.id);
   }
 
   /**

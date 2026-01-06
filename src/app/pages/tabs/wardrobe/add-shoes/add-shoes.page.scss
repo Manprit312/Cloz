@@ -35,25 +35,26 @@ ion-backdrop {
 
 // Header styles
 ion-header {
-  --background: var(--ion-background-color, #ffffff);
+  --background: var(--ion-background-color);
+  z-index: 0; // Ensure header is below backdrop (backdrop is z-index: 1)
   
   ion-toolbar {
-    --background: var(--ion-background-color, #ffffff);
-    --color: var(--ion-text-color, #000000);
-    --min-height: var(--x14, 56px);
-    --padding-start: var(--x2, 8px);
+    --background: var(--ion-background-color);
+    --color: var(--ion-text-color);
+    --min-height: var(--x14);
+    --padding-start: var(--x2);
     
     ion-title {
-      font-weight: var(--font-weight-bold, 700);
-      font-size: var(--font-size-md, 16px);
+      font-weight: var(--font-weight-bold);
+      font-size: var(--font-size-md);
       line-height: 1.2;
-      color: var(--ion-text-color, #000000);
+      color: var(--ion-text-color);
     }
     
     ion-buttons {
       ion-button {
-        font-size: var(--font-size-md, 16px);
-        font-weight: var(--font-weight-regular, 400);
+        font-size: var(--font-size-md);
+        font-weight: var(--font-weight-regular);
         --color: var(--ion-color-primary);
       }
     }
@@ -62,14 +63,14 @@ ion-header {
 
 .dark {
   ion-header {
-    --background: var(--ion-background-color, #121212);
+    --background: var(--ion-background-color);
     
     ion-toolbar {
-      --background: var(--ion-background-color, #121212);
-      --color: var(--ion-text-color, #ffffff);
+      --background: var(--ion-background-color);
+      --color: var(--ion-text-color);
       
       ion-title {
-        color: var(--ion-text-color, #ffffff);
+        color: var(--ion-text-color);
       }
     }
   }
@@ -77,69 +78,110 @@ ion-header {
 
 // Image Upload Section
 .image-section {
-  margin-bottom: var(--gap-lg, var(--x6, 24px));
+  margin-bottom: var(--gap-lg);
 }
 
-.image-upload-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--gap-md, var(--x4, 16px));
-}
+// .image-upload-container - Utility classes used in HTML: column-stack-md items-center
 
 .image-upload-area {
   position: relative;
   width: 100%;
   aspect-ratio: 1;
   max-width: 100%;
-  border: 2px dashed var(--border-color, #e0e0e0);
-  border-radius: var(--radius-md, 8px);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--ion-background-color, #ffffff);
+  border: var(--x1) dashed var(--border-color);
+  border-radius: var(--radius-md);
+  // Utility classes used in HTML: column-stack-none items-center justify-center
+  background-color: var(--ion-background-color);
   
-  .dark & {
-    border-color: var(--border-color-dark, #333333);
-    background-color: var(--ion-background-color, #121212);
+  .compression-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    // Utility classes used in HTML: column-stack-none items-center justify-center w-full h-full
+    background-color: rgba(var(--ion-background-color-rgb, 255, 255, 255), 0.9);
+    z-index: 10;
+    border-radius: var(--radius-md);
+    
+    .dark & {
+      background-color: rgba(var(--ion-background-color-rgb, 18, 18, 18), 0.9);
+    }
+    
+    ion-spinner {
+      width: var(--x12, 48px);
+      height: var(--x12, 48px);
+      margin-bottom: var(--gap-sm);
+    }
+    
+    .compression-text {
+      color: var(--ion-color-primary);
+      margin-top: var(--gap-sm);
+    }
   }
+  
+  .compression-success {
+    position: absolute;
+    top: var(--gap-sm);
+    right: var(--gap-sm);
+    // Utility classes used in HTML: row-stack-xs items-center
+    background-color: rgba(var(--ion-color-success-rgb, 76, 175, 80), 0.1);
+    padding: var(--gap-xs) var(--gap-sm);
+    border-radius: var(--radius-sm);
+    z-index: 5;
+    animation: fadeInOut 3s ease-in-out;
+    
+    .success-text {
+      color: var(--ion-color-success, #4CAF50);
+      margin: 0;
+    }
+  }
+  
+  @keyframes fadeInOut {
+    0%, 100% {
+      opacity: 0;
+      transform: translateY(calc(-1 * var(--gap-sm)));
+    }
+    10%, 90% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
   cursor: pointer;
   overflow: hidden;
+  
+  .dark & {
+    border-color: var(--border-color-dark);
+    background-color: var(--ion-background-color);
+  }
 }
 
 .file-input {
   display: none;
 }
 
-.image-placeholder {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-}
+// .image-placeholder-container - Utility classes used in HTML: column-stack-md items-center justify-center w-full h-full
+
+// .image-placeholder - Utility classes used in HTML: items-center justify-center
 
 .image-with-button {
   position: relative;
   width: 100%;
   height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  // Utility classes used in HTML: column-stack-none items-center justify-center w-full h-full
 }
 
 .garment-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: var(--radius-md, 8px);
+  border-radius: var(--radius-md);
 }
 
 .replace-button-inside {
   position: absolute;
-  bottom: var(--gap-md, var(--x4, 16px));
+  bottom: var(--gap-md);
   z-index: 10;
   left: var(--x5, 20px);
   
@@ -149,12 +191,12 @@ ion-header {
     background: var(--ion-background-color, #ffffff) !important;
     align-items: center;
     justify-content: center;
-    gap: var(--gap-xs, var(--x1, 4px));
+    gap: var(--gap-xs);
     
     &:active,
     &:focus,
     &:hover {
-      background: var(--ion-background-color, #ffffff) !important;
+      background: var(--ion-background-color) !important;
     }
   }
 }
@@ -172,31 +214,38 @@ ion-header {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: var(--gap-xs, var(--x1, 4px));
+    gap: var(--gap-xs);
+  }
+}
+
+.upload-button-inside {
+  // Ensure button content (icon + text) is properly aligned
+  border-radius: var(--radius-md);
+  ::ng-deep button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--gap-xs);
   }
 }
 
 // Select Field Styling - add border lines
 .select-field {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-top: var(--gap-sm, var(--x2, 8px));
-  padding-bottom: var(--gap-sm, var(--x2, 8px));
+  // Utility classes used in HTML: row-stack-none items-center justify-between
+  padding-top: var(--gap-sm);
+  padding-bottom: var(--gap-sm);
   cursor: pointer;
   
-  span {
-    flex: 1;
-  }
+  // span - Utility class used in HTML: flex-1
   
   app-icon {
-    margin-left: var(--gap-sm, var(--x2, 8px));
+    margin-left: var(--gap-sm);
   }
 }
 
 // Form Fields
 .form-fields {
-  margin-bottom: var(--gap-lg, var(--x6, 24px));
+  margin-bottom: var(--gap-lg);
 }
 
 // Input field styling - add border lines
@@ -204,8 +253,8 @@ ion-header {
 
 
   padding-right: var(--gap-md, var(--x4, 16px));
-  padding-top: var(--gap-sm, var(--x2, 8px));
-  padding-bottom: var(--gap-sm, var(--x2, 8px));
+  padding-top: var(--gap-sm);
+  padding-bottom: var(--gap-sm);
   
   input {
     border: none;
@@ -218,47 +267,52 @@ ion-header {
 
 // Optional text styling
 .optional-text {
-  margin-top: var(--gap-xs, var(--x1, 4px));
+  margin-top: var(--gap-xs);
   display: block;
 }
 
 // Button Container
 .button-container {
   margin-top: auto;
-  padding-top: var(--gap-lg, var(--x6, 24px));
-  padding-bottom: var(--gap-md, var(--x4, 16px));
-  margin-left: calc(-1 * var(--x4, 16px));
-  margin-right: calc(-1 * var(--x4, 16px));
-  padding-left: var(--x4, 16px);
-  padding-right: var(--x4, 16px);
+  padding-top: var(--gap-lg);
+  padding-bottom: var(--gap-md);
+  margin-left: calc(-1 * var(--x4));
+  margin-right: calc(-1 * var(--x4));
+  padding-left: var(--x4);
+  padding-right: var(--x4);
+}
+
+// .button-content - Utility classes used in HTML: row-stack-sm items-center justify-center
+
+.button-spinner {
+  width: var(--x5, 20px);
+  height: var(--x5, 20px);
 }
 
 // Error banner using design tokens (similar to success banner)
 .error-banner {
-  display: flex;
-  align-items: center;
-  gap: var(--gap-sm, var(--x2, 8px));
-  background-color: var(--ion-color-danger, #f44336);
-  color: var(--ion-color-primary-contrast, #ffffff);
-  border-radius: var(--radius-md, 8px);
-  margin-bottom: var(--gap-lg, var(--x6, 24px));
-  margin-left: var(--padding-md, var(--x4, 16px)); // Add left margin since parent has no left padding
+  // Utility classes used in HTML: row-stack-sm items-center
+  background-color: var(--ion-color-danger);
+  color: var(--ion-color-primary-contrast);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--gap-lg);
+  margin-left: var(--padding-md);
   
   .dark & {
-    background-color: var(--ion-color-danger, #f44336);
-    color: var(--ion-color-primary-contrast, #ffffff);
+    background-color: var(--ion-color-danger);
+    color: var(--ion-color-primary-contrast);
   }
 }
 
 .replace-button-inside {
   .dark & {
     ::ng-deep button {
-      background: var(--ion-background-color, #121212) !important;
+      background: var(--ion-background-color) !important;
       
       &:active,
       &:focus,
       &:hover {
-        background: var(--ion-background-color, #121212) !important;
+        background: var(--ion-background-color) !important;
       }
     }
   }

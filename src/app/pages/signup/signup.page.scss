@@ -96,6 +96,34 @@ ion-header {
   
   ion-input {
     --padding-end: var(--x0, 0);
+    
+    // Prevent iOS zoom on input focus by ensuring font-size is at least 16px
+    // iOS Safari automatically zooms in when input font-size is less than 16px
+    font-size: 16px !important;
+    
+    // Target the native input element inside ion-input shadow DOM
+    &::part(native) {
+      font-size: 16px !important;
+    }
+    
+    // Direct input selector for maximum compatibility
+    input {
+      font-size: 16px !important;
+    }
+    
+    // Use CSS custom property that Ionic supports
+    --padding-start: 0;
+    --padding-end: 0;
+  }
+  
+  // Additional global fix for all inputs in signup form
+  .signup-form {
+    ion-input {
+      input,
+      textarea {
+        font-size: 16px !important;
+      }
+    }
   }
   
 

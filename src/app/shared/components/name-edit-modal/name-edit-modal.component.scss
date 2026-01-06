@@ -21,6 +21,8 @@
 ion-header {
   --background: var(--ion-background-color);
   position: relative;
+  padding-top: 0 !important; // Remove top padding from modal header
+  margin-top: 0 !important;
   
   // Add border-bottom that spans full width
   &::after {
@@ -38,6 +40,8 @@ ion-header {
     --color: var(--ion-text-color);
     --min-height: var(--x14);
     --padding-start: var(--x2);
+    padding-top: 0 !important;
+    margin-top: 0 !important;
     
     ion-title {
       font-weight: var(--font-weight-bold);

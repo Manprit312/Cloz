@@ -51,6 +51,7 @@ export class SignupPage implements OnInit {
   gender = '';
   genderDisplayText = 'Select gender';
   error = '';
+  isLoading = false;
 
   private userService = inject(UserService);
   private route = inject(ActivatedRoute);
@@ -111,6 +112,11 @@ export class SignupPage implements OnInit {
   }
 
   async signup(): Promise<void> {
+    // Prevent multiple simultaneous signup attempts
+    if (this.isLoading) {
+      return;
+    }
+
     this.error = '';
 
     // Validation
@@ -129,6 +135,8 @@ export class SignupPage implements OnInit {
       return;
     }
 
+    this.isLoading = true;
+
     // Call Keycloak signup API
     const signupData = {
       name: this.name,
@@ -139,6 +147,7 @@ export class SignupPage implements OnInit {
 
     this.userService.signup(signupData).subscribe({
       next: (response) => {
+        this.isLoading = false;
         // Store mfaSessionId and password for MFA verification
         sessionStorage.setItem('mfaSessionId', response.mfaSessionId);
         sessionStorage.setItem('signupPassword', this.password);
@@ -150,6 +159,7 @@ export class SignupPage implements OnInit {
         );
       },
       error: (err) => {
+        this.isLoading = false;
         console.error('Signup error:', err);
         this.error = err.error?.message || 'Signup failed. Please try again.';
       },

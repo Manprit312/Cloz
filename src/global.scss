@@ -221,24 +221,36 @@ ion-modal {
  * Custom background colors for modal headers only
  * Light theme: #f4f4f4
  * Dark theme: #1a1a1a
+ * Ensure header is properly positioned inside modal wrapper
+ * Remove extra safe area padding that causes spacing issues
  */
 ion-modal {
-  ion-header {
-    --background: #f4f4f4;
-    
-    ion-toolbar {
+  .modal-wrapper {
+    ion-header {
       --background: #f4f4f4;
+      position: relative;
+      z-index: 1;
+      padding-top: 0 !important; // Remove safe area padding in modals
+      
+      ion-toolbar {
+        --background: #f4f4f4;
+        padding-top: 0 !important; // Remove safe area padding in modals
+      }
     }
   }
 }
 
 .dark {
   ion-modal {
-    ion-header {
-      --background: #1a1a1a;
-      
-      ion-toolbar {
+    .modal-wrapper {
+      ion-header {
         --background: #1a1a1a;
+        padding-top: 0 !important; // Remove safe area padding in modals
+        
+        ion-toolbar {
+          --background: #1a1a1a;
+          padding-top: 0 !important; // Remove safe area padding in modals
+        }
       }
     }
   }
@@ -324,7 +336,26 @@ ion-content::part(scroll) {
 ion-modal {
   --backdrop-opacity: 0.4;
   
-  // Ensure backdrop is always visible
+  // Ensure modal wrapper and content are properly positioned
+  .modal-wrapper {
+    z-index: 2 !important;
+    position: relative;
+    
+    // Ensure header is inside modal wrapper
+    ion-header {
+      position: relative;
+      z-index: 1;
+      padding-top: 0 !important; // Remove top padding from modal header
+    }
+    
+    // Ensure content is inside modal wrapper
+    ion-content {
+      position: relative;
+      z-index: 1;
+    }
+  }
+  
+  // Ensure backdrop is always visible and behind modal content
   ion-backdrop {
     display: block !important;
     visibility: visible !important;
@@ -496,6 +527,24 @@ textarea {
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+  }
+}
+
+/**
+ * Ionic Input Styles - Prevent iOS Zoom
+ * -----------------------------------------------------
+ * iOS Safari automatically zooms in when input font-size is less than 16px
+ * This ensures all ion-input elements have at least 16px font-size
+ */
+ion-input {
+  // Ensure the native input inside has 16px font-size to prevent iOS zoom
+  input {
+    font-size: 16px !important;
+  }
+  
+  // Also target via shadow DOM part
+  &::part(native) {
+    font-size: 16px !important;
   }
 }
 

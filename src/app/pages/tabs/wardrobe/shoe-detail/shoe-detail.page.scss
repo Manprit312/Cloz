@@ -20,10 +20,10 @@ ion-header {
 .success-banner {
   background-color: var(--ion-color-success);
   color: var(--text-primary);
-  border-radius: var(--radius-md, 8px);
-  margin-bottom: var(--gap-lg, var(--x6, 24px));
-  margin-left: var(--padding-md, var(--x4, 16px));
-  margin-right: var(--padding-md, var(--x4, 16px));
+  border-radius: var(--radius-md);
+  margin-bottom: var(--gap-lg);
+  margin-left: var(--padding-md);
+  margin-right: var(--padding-md);
   
   .dark & {
     background-color: var(--ion-color-success);
@@ -47,14 +47,14 @@ ion-header {
   position: relative;
   width: 100%;
   height: 400px; // Fixed height to prevent content from being pushed down
-  margin-bottom: var(--gap-lg, var(--x6, 24px));
+  margin-bottom: var(--gap-lg);
   overflow: hidden;
-  border-radius: var(--radius-md, 8px);
+  border-radius: var(--radius-md);
   
   .garment-image {
     width: 100%;
     height: 100%;
-    border-radius: var(--radius-md, 8px);
+    border-radius: var(--radius-md);
     object-fit: cover;
     display: block;
     transition: opacity 0.3s ease;
@@ -64,15 +64,15 @@ ion-header {
 // Pagination Dots - Simple circles below image
 .pagination-dots {
   position: absolute;
-  bottom: var(--gap-md, var(--x4, 16px));
+  bottom: var(--gap-md);
   left: 50%;
   transform: translateX(-50%);
   z-index: 5;
 }
 
 .pagination-dots .dot {
-  width: calc(var(--x1, 4px) * 1.5);
-  height: calc(var(--x1, 4px) * 1.5);
+  width: calc(var(--x1) * 1.5);
+  height: calc(var(--x1) * 1.5);
   border-radius: 50%;
   background-color: rgba(var(--ion-color-primary-contrast-rgb, 255, 255, 255), 0.5);
   cursor: pointer;
@@ -85,7 +85,7 @@ ion-header {
 
 // Actions container - using global classes in HTML
 .actions-container {
-  margin-bottom: var(--gap-lg, var(--x6, 24px));
+  margin-bottom: var(--gap-lg);
 }
 
 .delete-container {
@@ -95,8 +95,8 @@ ion-header {
 .details-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--gap-lg, var(--x6, 24px));
-  margin-bottom: var(--gap-lg, var(--x6, 24px));
+  gap: var(--gap-lg);
+  margin-bottom: var(--gap-lg);
 }
 
 // Details column - using global classes in HTML
@@ -106,7 +106,7 @@ ion-header {
   background: none;
   border: none;
   color: var(--ion-color-danger);
-  padding: var(--x0, 0);
+  padding: var(--x0);
   text-align: center;
   cursor: pointer;
   align-self: center;

@@ -53,9 +53,9 @@
         variant="primary"
         size="xlarge"
         [fullWidth]="true"
-        [disabled]="!email || !password"
+        [disabled]="!email || !password || isLoading"
       >
-        Login
+        {{ isLoading ? 'Logging in...' : 'Login' }}
       </app-button>
     </form>
   </div>

@@ -11,18 +11,18 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="add-garment-content">
+<ion-content #content [fullscreen]="true" class="add-garment-content">
   <div class="pad-top-lg pad-v-none-h-md add-garment-wrapper">
     <!-- Error Banner -->
-    <div class="error-banner pad-all-md" *ngIf="showErrorMessage">
-      <app-icon name="close" [size]="24" [color]="'#ffffff'"></app-icon>
+    <div class="row-stack-sm items-center error-banner pad-all-md" *ngIf="showErrorMessage">
+      <app-icon name="close" [size]="24" [color]="'var(--ion-color-primary-contrast)'"></app-icon>
       <span class="body1-medium">{{ errorMessageText }}</span>
     </div>
 
     <!-- Image Upload Section -->
     <div class="column-stack-sm image-section">
       <label class="label-default">Choose image</label>
-      <div class="image-upload-container">
+      <div class="column-stack-md items-center image-upload-container">
         <input
           type="file"
           accept="image/*"
@@ -30,11 +30,35 @@
           class="file-input"
           id="image-upload-input"
         />
-        <div class="image-upload-area" (click)="triggerFileInput()">
-          <div *ngIf="!imageUrl" class="image-placeholder">
-            <app-icon name="image" [size]="48" [color]="'var(--text-color-600, #666666)'"></app-icon>
+        <div class="column-stack-none items-center justify-center image-upload-area" (click)="triggerFileInput()">
+          <!-- Compression Loading Overlay -->
+          <div *ngIf="isCompressing" class="column-stack-none items-center justify-center w-full h-full compression-overlay">
+            <ion-spinner name="crescent" color="primary"></ion-spinner>
+            <p class="compression-text body1-medium">Compressing image...</p>
           </div>
-          <div *ngIf="imageUrl" class="image-with-button">
+          
+          <!-- Success Indicator -->
+          <div *ngIf="compressionSuccess && !isCompressing" class="row-stack-xs items-center compression-success">
+            <app-icon name="checkmark-circle" [size]="24" [color]="'var(--ion-color-success, #4CAF50)'"></app-icon>
+            <p class="success-text body2-medium">Image optimized!</p>
+          </div>
+          
+          <div *ngIf="!imageUrl && !isCompressing" class="column-stack-md items-center justify-center w-full h-full image-placeholder-container">
+            <div class="items-center justify-center image-placeholder">
+              <app-icon name="image" [size]="48" [color]="'var(--text-color-600)'"></app-icon>
+            </div>
+            <app-button
+              variant="primary"
+              size="medium"
+              [fullWidth]="false"
+              (click)="triggerFileInput(); $event.stopPropagation()"
+              class="upload-button-inside"
+            >
+              Upload garment image
+              <app-icon name="add" [size]="20" [color]="'var(--ion-color-primary-contrast)'" class="ml-sm"></app-icon>
+            </app-button>
+          </div>
+          <div *ngIf="imageUrl && !isCompressing" class="column-stack-none items-center justify-center w-full h-full image-with-button">
             <img [src]="imageUrl" alt="Garment" class="garment-image" />
             <app-button
               variant="tertiary"
@@ -48,18 +72,6 @@
             </app-button>
           </div>
         </div>
-        <p *ngIf="!imageUrl" class="image-instruction body1-regular text-color-600">Add a photo of your garment</p>
-        <app-button
-          *ngIf="!imageUrl"
-          variant="primary"
-          size="medium"
-          [fullWidth]="false"
-          (click)="triggerFileInput()"
-          class="upload-button"
-        >
-          Upload image
-          <app-icon name="add" [size]="20" [color]="'var(--ion-color-primary-contrast)'" class="ml-sm"></app-icon>
-        </app-button>
       </div>
     </div>
 
@@ -68,8 +80,8 @@
       <!-- Subtype -->
       <div class="column-stack-sm">
         <label class="label-default">Subtype</label>
-        <div class="input-border-full select-field" (click)="openSubtypeSelection()">
-          <span [class.text-placeholder]="!subtype" class="body1-regular">
+        <div class="input-border-full row-stack-none items-center justify-between select-field" (click)="openSubtypeSelection()">
+          <span [class.text-placeholder]="!subtype" class="body1-regular flex-1">
             {{ subtype || 'Select subtype' }}
           </span>
           <app-icon name="unfold-more" [size]="20" [color]="'var(--text-color-600)'"></app-icon>
@@ -79,8 +91,8 @@
       <!-- Color -->
       <div class="column-stack-sm">
         <label class="label-default">Color</label>
-        <div class="input-border-full select-field" (click)="openColorSelection()">
-          <span [class.text-placeholder]="!color" class="body1-regular">
+        <div class="input-border-full row-stack-none items-center justify-between select-field" (click)="openColorSelection()">
+          <span [class.text-placeholder]="!color" class="body1-regular flex-1">
             {{ color || 'Select color' }}
           </span>
           <app-icon name="unfold-more" [size]="20" [color]="'var(--text-color-600)'"></app-icon>
@@ -90,8 +102,8 @@
       <!-- Climate Fit -->
       <div class="column-stack-sm">
         <label class="label-default">Climate fit</label>
-        <div class="input-border-full select-field" (click)="openClimateFitSelection()">
-          <span [class.text-placeholder]="climateFit.length === 0" class="body1-regular">
+        <div class="input-border-full row-stack-none items-center justify-between select-field" (click)="openClimateFitSelection()">
+          <span [class.text-placeholder]="climateFit.length === 0" class="body1-regular flex-1">
             {{ climateFitDisplay || 'Select climate fit' }}
           </span>
           <app-icon name="unfold-more" [size]="20" [color]="'var(--text-color-600)'"></app-icon>
@@ -119,10 +131,16 @@
         variant="primary"
         size="xlarge"
         [fullWidth]="true"
-        [disabled]="!isFormValid"
+        [disabled]="!isFormValid || isSubmitting"
         (click)="addToWardrobe()"
       >
-        {{ isEditMode ? 'Update wardrobe' : 'Add to wardrobe' }}
+        <span *ngIf="isSubmitting && !isEditMode" class="row-stack-sm items-center justify-center button-content">
+          <span>Add to wardrobe</span>
+          <ion-spinner name="lines" [color]="'light'" class="button-spinner"></ion-spinner>
+        </span>
+        <span *ngIf="!isSubmitting || isEditMode">
+          {{ isEditMode ? 'Update wardrobe' : 'Add to wardrobe' }}
+        </span>
       </app-button>
     </div>
   </div>

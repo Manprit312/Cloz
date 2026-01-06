@@ -49,7 +49,7 @@ ion-header {
   ion-col {
     --padding-start: 0;
     --padding-end: 0;
-    padding: var(--gap-xs, var(--x1, 4px));
+    padding: var(--gap-xs);
   }
 }
 
@@ -62,7 +62,7 @@ ion-header {
   --background-activated: transparent;
   --background-hover: transparent;
   --background-focused: transparent;
-  margin: var(--x0, 0);
+  margin: var(--x0);
   border-radius: var(--radius-md);
   overflow: hidden;
   height: 100%;
@@ -99,7 +99,24 @@ ion-header {
 }
 
 .garment-thumbnail {
-  margin: var(--x0, 0);
+  margin: var(--x0);
+  position: relative;
+}
+
+.image-skeleton {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.skeleton-square {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .garment-carousel {
@@ -129,8 +146,8 @@ ion-header {
 }
 
 .carousel-dots .dot {
-  width: calc(var(--x1, 4px) * 1.5);
-  height: calc(var(--x1, 4px) * 1.5);
+  width: calc(var(--x1) * 1.5);
+  height: calc(var(--x1) * 1.5);
   border-radius: 50%;
   background-color: rgba(var(--ion-color-primary-contrast-rgb, 255, 255, 255), 0.5);
   transition: background-color 0.2s ease;

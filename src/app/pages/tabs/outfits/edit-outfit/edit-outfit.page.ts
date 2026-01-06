@@ -18,6 +18,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { inject } from '@angular/core';
 import { IconComponent } from '../../../../shared/components/icon/icon.component';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
+import { SkeletonLoaderComponent } from '../../../../shared/components/skeleton-loader/skeleton-loader.component';
 import {
   GarmentSelectionModalComponent,
   GarmentCategory,
@@ -48,6 +49,7 @@ import { OutfitsService, Outfit, OutfitWardrobeItem } from '../../../../core/ser
     IonInput,
     IconComponent,
     ButtonComponent,
+    SkeletonLoaderComponent,
   ],
 })
 export class EditOutfitPage implements OnInit {

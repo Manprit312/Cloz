@@ -7,22 +7,18 @@ ion-header {
     --color: var(--ion-text-color);
     --min-height: var(--x14);
     --padding-start: var(--x2);
-    display: flex;
-    align-items: center;
+    // Utility classes should be applied in HTML template
     
     ion-title {
       font-weight: var(--font-weight-medium);
       font-size: var(--font-size-md);
       line-height: 1.2;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      // Utility classes should be applied in HTML: items-center justify-center
       color: var(--ion-text-color);
     }
     
     ion-buttons {
-      display: flex;
-      align-items: center;
+      // Utility classes should be applied in HTML: items-center h-full
       height: 100%;
       min-height: var(--x14);
       
@@ -31,9 +27,7 @@ ion-header {
         --background: transparent;
         height: 100%;
         min-height: var(--x14);
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
+        // Utility classes should be applied in HTML: items-center justify-start
       }
     }
   }

@@ -1,0 +1,77 @@
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--background-300, #e0e0e0) 25%,
+    var(--background-200, #f0f0f0) 50%,
+    var(--background-300, #e0e0e0) 75%
+  );
+  background-size: 200% 100%;
+  border-radius: 4px;
+}
+
+.skeleton.animated {
+  animation: skeleton-loading 1.5s ease-in-out infinite;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.skeleton-text {
+  height: 1rem;
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+.skeleton-image {
+  width: 100%;
+  height: 200px;
+  margin-bottom: 0.5rem;
+}
+
+.skeleton-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-radius: 8px;
+  background: var(--background-100, #ffffff);
+  
+  .skeleton-image {
+    height: 150px;
+    width: 100%;
+  }
+}
+
+.skeleton-list-item {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  padding: 0.75rem 0;
+  
+  .skeleton-image {
+    width: 60px;
+    height: 60px;
+    min-width: 60px;
+    min-height: 60px;
+    border-radius: 8px;
+    margin-bottom: 0;
+  }
+  
+  .skeleton-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
+.skeleton-custom {
+  // Custom skeleton - dimensions controlled by inputs
+}
+

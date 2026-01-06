@@ -1,0 +1,40 @@
+<div *ngIf="type === 'text'" 
+  class="skeleton skeleton-text" 
+  [class.animated]="animated"
+  [style.width]="width"
+  [style.height]="height"
+  [style.border-radius]="borderRadius"
+></div>
+
+<div *ngIf="type === 'image'" 
+  class="skeleton skeleton-image" 
+  [class.animated]="animated"
+  [style.width]="width"
+  [style.height]="height"
+  [style.border-radius]="borderRadius"
+></div>
+
+<div *ngIf="type === 'card'" class="skeleton-card" [class.animated]="animated">
+  <div class="skeleton skeleton-image" [style.border-radius]="borderRadius"></div>
+  <div class="skeleton skeleton-text" [style.border-radius]="borderRadius"></div>
+  <div class="skeleton skeleton-text" [style.width]="'60%'" [style.border-radius]="borderRadius"></div>
+</div>
+
+<div *ngIf="type === 'list'">
+  <div *ngFor="let item of [].constructor(count); let i = index" class="skeleton-list-item" [class.animated]="animated">
+    <div class="skeleton skeleton-image" [style.border-radius]="borderRadius"></div>
+    <div class="skeleton-content">
+      <div class="skeleton skeleton-text" [style.border-radius]="borderRadius"></div>
+      <div class="skeleton skeleton-text" [style.width]="'70%'" [style.border-radius]="borderRadius"></div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="type === 'custom'" 
+  class="skeleton skeleton-custom" 
+  [class.animated]="animated"
+  [style.width]="width"
+  [style.height]="height"
+  [style.border-radius]="borderRadius"
+></div>
+

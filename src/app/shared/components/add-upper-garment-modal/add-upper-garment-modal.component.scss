@@ -11,8 +11,12 @@
 // Header styles
 ion-header {
   --background: var(--ion-background-color, #ffffff);
+  padding-top: 0 !important; // Remove top padding from modal header
+  margin-top: 0 !important;
   
   ion-toolbar {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
     --background: var(--ion-background-color, #ffffff);
     --color: var(--ion-text-color, #000000);
     --min-height: var(--x14, 56px);
@@ -68,6 +72,68 @@ ion-header {
   background-color: #ffffff;
   cursor: pointer;
   overflow: hidden;
+  
+  .compression-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.9);
+    z-index: 10;
+    border-radius: var(--radius-md, 8px);
+    
+    .dark & {
+      background-color: rgba(18, 18, 18, 0.9);
+    }
+    
+    ion-spinner {
+      width: 48px;
+      height: 48px;
+      margin-bottom: var(--gap-sm, var(--x2, 8px));
+    }
+    
+    .compression-text {
+      color: var(--ion-color-primary);
+      margin-top: var(--gap-sm, var(--x2, 8px));
+    }
+  }
+  
+  .compression-success {
+    position: absolute;
+    top: var(--gap-sm, var(--x2, 8px));
+    right: var(--gap-sm, var(--x2, 8px));
+    display: flex;
+    align-items: center;
+    gap: var(--gap-xs, var(--x1, 4px));
+    background-color: rgba(76, 175, 80, 0.1);
+    padding: var(--gap-xs, var(--x1, 4px)) var(--gap-sm, var(--x2, 8px));
+    border-radius: var(--radius-sm, 4px);
+    z-index: 5;
+    animation: fadeInOut 3s ease-in-out;
+    
+    .success-text {
+      color: #4CAF50;
+      margin: 0;
+    }
+  }
+  
+  @keyframes fadeInOut {
+    0%, 100% {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    10%, 90% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 }
 
 .file-input {

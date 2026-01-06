@@ -7,13 +7,14 @@ import { inject } from '@angular/core';
 import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 import { OutfitsService, Outfit } from '../../../core/services/outfits.service';
 import { IconComponent } from '../../../shared/components/icon/icon.component';
+import { SkeletonLoaderComponent } from '../../../shared/components/skeleton-loader/skeleton-loader.component';
 
 @Component({
   selector: 'app-outfits',
   templateUrl: './outfits.page.html',
   styleUrls: ['./outfits.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, IonFab, IonFabButton, CommonModule, FormsModule, EmptyStateComponent, IconComponent]
+  imports: [IonContent, IonHeader, IonTitle, IonToolbar, IonFab, IonFabButton, CommonModule, FormsModule, EmptyStateComponent, IconComponent, SkeletonLoaderComponent]
 })
 export class OutfitsPage implements OnInit {
   private router = inject(Router);

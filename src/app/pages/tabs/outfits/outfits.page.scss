@@ -17,11 +17,32 @@ ion-header {
 
 // Outfits container
 .outfits-container {
-  display: flex;
-  flex-direction: column;
-  gap: var(--gap-md, var(--x4, 16px));
+  // Utility classes used in HTML: column-stack-md
   background-color: var(--ion-background-color); // Light grey background as shown in design
   min-height: 100%;
+  
+}
+
+// Outfit card skeleton
+.outfit-card-skeleton {
+  background-color: var(--ion-background-color);
+  border-radius: var(--radius-md, 8px);
+  padding: var(--padding-md, var(--x4, 16px));
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.outfit-card-header-skeleton {
+  // Utility classes used in HTML: row-stack-none justify-between items-center
+  margin-bottom: var(--gap-sm);
+}
+
+.outfit-garments-skeleton {
+  // Utility classes used in HTML: row-stack-sm (with flex-wrap)
+  flex-wrap: wrap;
+}
+
+.garment-skeleton-item {
+  flex-shrink: 0;
 }
 
 // Outfit card
@@ -41,10 +62,8 @@ ion-header {
 
 // Outfit card header
 .outfit-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--gap-sm, var(--x2, 8px));
+  // Utility classes used in HTML: row-stack-none justify-between items-center
+  margin-bottom: var(--gap-sm);
 }
 
 .outfit-title {
@@ -68,9 +87,9 @@ ion-header {
 
 .outfit-garments-container {
   display: flex;
+  gap: var(--gap-sm);
   flex-wrap: wrap;
-  gap: var(--gap-sm, var(--x2, 8px));
-  padding-bottom: var(--x1, 4px); // Space for scroll
+  padding-bottom: var(--x1); // Space for scroll
 }
 
 .outfit-garment-item {

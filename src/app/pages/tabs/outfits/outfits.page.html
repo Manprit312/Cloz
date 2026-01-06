@@ -8,8 +8,23 @@
   </ion-header>
 
   <!-- Show loading state -->
-  <div *ngIf="isLoading" class="pad-all-md">
-    <p>Loading outfits...</p>
+  <div *ngIf="isLoading" class="column-stack-sm outfits-container pad-all-md">
+    <div *ngFor="let item of [1, 2]" class="outfit-card-skeleton">
+      <div class="row-stack-none justify-between items-center outfit-card-header-skeleton">
+        <app-skeleton-loader type="text" [width]="'60%'" [height]="'20px'" [borderRadius]="'4px'"></app-skeleton-loader>
+        <app-skeleton-loader type="custom" [width]="'24px'" [height]="'24px'" [borderRadius]="'50%'"></app-skeleton-loader>
+      </div>
+      <div class="row-stack-sm outfit-garments-skeleton" style="flex-wrap: wrap;">
+        <app-skeleton-loader 
+          *ngFor="let img of [1, 2, 3, 4]" 
+          type="image" 
+          [width]="'60px'" 
+          [height]="'60px'" 
+          [borderRadius]="'4px'"
+          class="garment-skeleton-item"
+        ></app-skeleton-loader>
+      </div>
+    </div>
   </div>
 
   <!-- Show error state -->
@@ -31,14 +46,14 @@
   ></app-empty-state>
 
   <!-- Show outfits cards when outfits exist -->
-  <div *ngIf="!isLoading && !error && outfits.length > 0" class="outfits-container pad-all-md">
+  <div *ngIf="!isLoading && !error && outfits.length > 0" class="column-stack-md outfits-container pad-all-md">
     <div *ngFor="let outfit of outfits" class="outfit-card" (click)="onOutfitClick(outfit)">
-      <div class="outfit-card-header">
+      <div class="row-stack-none justify-between items-center outfit-card-header">
         <h3 class="outfit-title body2-bold">{{ outfit.name || 'Untitled Outfit' }}</h3>
         <app-icon name="chevron-forward" [size]="24" [color]="'var(--ion-color-primary)'"></app-icon>
       </div>
       <div class="outfit-garments-scroll">
-        <div class="outfit-garments-container">
+        <div class="row-stack-sm outfit-garments-container">
           <div 
             *ngFor="let item of getOutfitGarments(outfit)" 
             class="outfit-garment-item"

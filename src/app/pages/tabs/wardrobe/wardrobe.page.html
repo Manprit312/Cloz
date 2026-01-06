@@ -1,5 +1,5 @@
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
+  <ion-header collapse="condense" >
     <ion-toolbar>
       <ion-title size="large">Wardrobe</ion-title>
     </ion-toolbar>
@@ -7,13 +7,29 @@
 
   <div class="pad-none-l-md">
     <!-- Success Message -->
-    <div class="success-banner pad-all-md" *ngIf="showSuccessMessage">
+    <div class="row-stack-sm items-center success-banner pad-all-md" *ngIf="showSuccessMessage">
       <app-icon name="checkmark-circle" [size]="24" [color]="'var(--text-primary)'"></app-icon>
       <span class="body1-medium">{{ successMessageText }}</span>
     </div>
 
+    <!-- Skeleton Loading -->
+    <ion-list *ngIf="isLoading" [class.pad-top-lg]="!showSuccessMessage" class="wardrobe-list">
+      <ion-item
+        *ngFor="let item of [1,2,3,4]"
+        lines="full"
+        class="wardrobe-item"
+      >
+        <ion-label>
+          <app-skeleton-loader type="text" [width]="'120px'" [height]="'16px'" [borderRadius]="'4px'"></app-skeleton-loader>
+        </ion-label>
+        <div slot="end" class="row-stack-sm items-center">
+          <app-skeleton-loader type="text" [width]="'20px'" [height]="'16px'" [borderRadius]="'4px'"></app-skeleton-loader>
+        </div>
+      </ion-item>
+    </ion-list>
+
     <!-- Category List -->
-    <ion-list [class.pad-top-lg]="!showSuccessMessage" class="wardrobe-list">
+    <ion-list *ngIf="!isLoading" [class.pad-top-lg]="!showSuccessMessage" class="wardrobe-list">
       <ion-item
         *ngFor="let category of categories"
         button

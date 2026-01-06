@@ -2,7 +2,8 @@
 
 .welcome-container {
   min-height: 80vh;
-  padding: var(--x8, 32px) var(--x6, 24px);
+  // Utility classes used in HTML: column-stack-none items-center justify-center
+  // Padding handled by utility classes or can use pad-all-lg
   text-align: center;
 }
 

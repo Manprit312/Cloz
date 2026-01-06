@@ -16,8 +16,38 @@
 
 <ion-content [fullscreen]="true">
   <!-- Show loading state -->
-  <div *ngIf="isLoading" class="pad-all-md">
-    <p>Loading outfit...</p>
+  <div *ngIf="isLoading" class="column-stack-none outfit-detail-container">
+    <!-- Heading Skeleton -->
+    <div class="section-heading pad-all-md">
+      <app-skeleton-loader type="text" [width]="'60%'" [height]="'20px'" [borderRadius]="'4px'"></app-skeleton-loader>
+    </div>
+
+    <!-- Garments List Skeleton -->
+    <ion-list class="garments-list">
+      <ion-item 
+        *ngFor="let item of [1, 2, 3, 4]" 
+        lines="full"
+        class="garment-item-skeleton"
+        button
+      >
+        <ion-thumbnail slot="start" class="garment-thumbnail">
+          <app-skeleton-loader 
+            type="image" 
+            [width]="'50px'" 
+            [height]="'50px'" 
+            [borderRadius]="'4px'"
+          ></app-skeleton-loader>
+        </ion-thumbnail>
+        <ion-label class="flex-1 items-center garment-label-skeleton">
+          <app-skeleton-loader type="text" [width]="'60%'" [height]="'16px'" [borderRadius]="'4px'"></app-skeleton-loader>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+    
+    <!-- Delete Button Skeleton -->
+    <div class="row-stack-none items-center justify-center delete-container">
+      <app-skeleton-loader type="text" [width]="'150px'" [height]="'18px'" [borderRadius]="'4px'"></app-skeleton-loader>
+    </div>
   </div>
 
   <!-- Show error state -->
@@ -26,7 +56,7 @@
   </div>
 
   <!-- Show outfit details -->
-  <div *ngIf="outfit && !isLoading && !error" class="outfit-detail-container">
+  <div *ngIf="outfit && !isLoading && !error" class="column-stack-none outfit-detail-container">
     <!-- Heading -->
     <div class="section-heading pad-all-md">
       <h2 class="heading-text body1-bold">Garments in this look</h2>
@@ -55,7 +85,7 @@
     </ion-list>
 
     <!-- Delete Button -->
-    <div class="delete-container">
+    <div class="row-stack-none items-center justify-center delete-container">
       <button class="delete-link body1-regular" (click)="onDelete()">
         Delete from wardrobe
       </button>

@@ -29,10 +29,22 @@
           id="image-upload-input"
         />
         <div class="image-upload-area column-stack-none items-center justify-center" (click)="triggerFileInput()">
-          <div *ngIf="!imageUrl" class="image-placeholder row-stack-none items-center justify-center">
+          <!-- Compression Loading Overlay -->
+          <div *ngIf="isCompressing" class="compression-overlay">
+            <ion-spinner name="crescent" color="primary"></ion-spinner>
+            <p class="compression-text body1-medium">Compressing image...</p>
+          </div>
+          
+          <!-- Success Indicator -->
+          <div *ngIf="compressionSuccess && !isCompressing" class="compression-success">
+            <app-icon name="checkmark-circle" [size]="24" [color]="'#4CAF50'"></app-icon>
+            <p class="success-text body2-medium">Image optimized!</p>
+          </div>
+          
+          <div *ngIf="!imageUrl && !isCompressing" class="image-placeholder row-stack-none items-center justify-center">
             <app-icon name="image" [size]="48" [color]="'var(--text-color-600, #666666)'"></app-icon>
           </div>
-          <div *ngIf="imageUrl" class="image-with-button column-stack-none items-center justify-center">
+          <div *ngIf="imageUrl && !isCompressing" class="image-with-button column-stack-none items-center justify-center">
             <img [src]="imageUrl" alt="Garment" class="garment-image" />
         <app-button
           variant="tertiary"
