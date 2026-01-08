@@ -1,109 +1,109 @@
 {
   "core": {
     "x0": {
-      "value": "0",
-      "type": "spacing"
+      "$type": "spacing",
+      "$value": "0"
     },
     "x1": {
-      "value": "4",
-      "type": "spacing"
+      "$type": "spacing",
+      "$value": "4"
     },
     "x2": {
-      "value": "8",
-      "type": "spacing"
+      "$type": "spacing",
+      "$value": "8"
     },
     "x3": {
-      "value": "12",
-      "type": "spacing"
+      "$type": "spacing",
+      "$value": "12"
     },
     "x4": {
-      "value": "16",
-      "type": "spacing"
+      "$type": "spacing",
+      "$value": "16"
     },
     "x5": {
-      "value": "20",
-      "type": "spacing"
+      "$type": "spacing",
+      "$value": "20"
     },
     "x6": {
-      "value": "24",
-      "type": "spacing"
+      "$type": "spacing",
+      "$value": "24"
     },
     "x7": {
-      "value": "28",
-      "type": "spacing"
+      "$type": "spacing",
+      "$value": "28"
     },
     "x8": {
-      "value": "32",
-      "type": "spacing"
+      "$type": "spacing",
+      "$value": "32"
     },
     "x9": {
-      "value": "36",
-      "type": "spacing"
+      "$type": "spacing",
+      "$value": "36"
     },
     "x10": {
-      "value": "40",
-      "type": "spacing"
+      "$type": "spacing",
+      "$value": "40"
     },
     "x12": {
-      "value": "48",
-      "type": "spacing"
+      "$type": "spacing",
+      "$value": "48"
     },
     "x14": {
-      "value": "56",
-      "type": "spacing"
+      "$type": "spacing",
+      "$value": "56"
     },
     "x16": {
-      "value": "64",
-      "type": "spacing"
+      "$type": "spacing",
+      "$value": "64"
     },
     "x18": {
-      "value": "72",
-      "type": "spacing"
+      "$type": "spacing",
+      "$value": "72"
     },
     "x20": {
-      "value": "80",
-      "type": "spacing"
+      "$type": "spacing",
+      "$value": "80"
     },
     "x250": {
-      "value": "1000",
-      "type": "spacing"
+      "$type": "spacing",
+      "$value": "1000"
     }
   },
   "semantic": {
     "gap": {
       "xs": {
-        "value": "{x1}",
-        "type": "spacing"
+        "$type": "spacing",
+        "$value": "{x1}"
       },
       "sm": {
-        "value": "{x2}",
-        "type": "spacing"
+        "$type": "spacing",
+        "$value": "{x2}"
       },
       "md": {
-        "value": "{x4}",
-        "type": "spacing"
+        "$type": "spacing",
+        "$value": "{x4}"
       },
       "lg": {
-        "value": "{x6}",
-        "type": "spacing"
+        "$type": "spacing",
+        "$value": "{x6}"
       }
     },
     "padding": {
       "xs": {
-        "value": "{gap.sm}",
-        "type": "spacing"
+        "$type": "spacing",
+        "$value": "{gap.sm}"
       },
       "sm": {
-        "value": "{gap.sm}",
-        "type": "spacing"
+        "$type": "spacing",
+        "$value": "{gap.sm}"
       },
       "md": {
-        "value": "{x4}",
-        "type": "spacing"
+        "$type": "spacing",
+        "$value": "{x4}"
       },
       "lg": {
-        "value": "{x6}",
-        "type": "spacing"
+        "$type": "spacing",
+        "$value": "{x6}"
       }
     }
   },
