@@ -10,6 +10,7 @@ import {
   IonButtons,
 } from '@ionic/angular/standalone';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Keyboard } from '@capacitor/keyboard';
 import { AuthService, UserService, ProfileService } from '@app-core';
 import { IconComponent } from '../../shared/components/icon/icon.component';
 import { ButtonComponent } from '../../shared/components/button/button.component';
@@ -67,7 +68,14 @@ export class VerificationPage implements OnInit {
     this.location.back();
   }
 
+  dismissKeyboard(): void {
+    Keyboard.hide();
+  }
+
   async verify(): Promise<void> {
+    // Dismiss keyboard
+    Keyboard.hide();
+    
     this.error = '';
     
     if (!this.code || this.code.length !== 6) {

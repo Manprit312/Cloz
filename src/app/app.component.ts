@@ -1,5 +1,6 @@
 import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { TranslationService, AuthService } from '@app-core';
+import { NetworkService } from './core/services/network.service';
 import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 import { translations } from '@translations';
 import { Keyboard } from '@capacitor/keyboard';
@@ -13,6 +14,7 @@ import { App } from '@capacitor/app';
 export class AppComponent implements OnInit, OnDestroy {
   private translate = inject(TranslationService);
   private authService = inject(AuthService);
+  private networkService = inject(NetworkService); // Initialize network monitoring
   private appStateListener?: any; // PluginListenerHandle from Capacitor
 
   constructor() {

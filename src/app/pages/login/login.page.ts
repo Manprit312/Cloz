@@ -10,6 +10,7 @@ import {
   IonButton,
 } from '@ionic/angular/standalone';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Keyboard } from '@capacitor/keyboard';
 import { AuthService, UserService } from '@app-core';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { IconComponent } from '../../shared/components/icon/icon.component';
@@ -54,7 +55,14 @@ export class LoginPage implements OnInit {
     this.location.back();
   }
 
+  dismissKeyboard(): void {
+    Keyboard.hide();
+  }
+
   async login(): Promise<void> {
+    // Dismiss keyboard
+    Keyboard.hide();
+    
     // Prevent multiple simultaneous login attempts
     if (this.isLoading) {
       return;

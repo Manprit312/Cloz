@@ -30,7 +30,7 @@
           class="file-input"
           id="image-upload-input"
         />
-        <div class="column-stack-none items-center justify-center image-upload-area" (click)="triggerFileInput()">
+        <div class="column-stack-none items-center justify-center image-upload-area" (click)="selectImageSource()">
           <!-- Compression Loading Overlay -->
           <div *ngIf="isCompressing" class="column-stack-none items-center justify-center w-full h-full compression-overlay">
             <ion-spinner name="crescent" color="primary"></ion-spinner>
@@ -51,7 +51,7 @@
               variant="primary"
               size="medium"
               [fullWidth]="false"
-              (click)="triggerFileInput(); $event.stopPropagation()"
+              (click)="selectImageSource(); $event.stopPropagation()"
               class="upload-button-inside"
             >
               Upload garment image
@@ -64,7 +64,7 @@
               variant="tertiary"
               size="medium"
               [fullWidth]="false"
-              (click)="triggerFileInput(); $event.stopPropagation()"
+              (click)="selectImageSource(); $event.stopPropagation()"
               class="replace-button-inside"
             >
               <app-icon name="refresh" [size]="20" [color]="'var(--ion-color-primary)'" class="mr-sm"></app-icon>
@@ -115,10 +115,14 @@
         <label class="label-default">Brand</label>
         <div class="input-border-full">
           <input
+            #brandInput
             type="text"
             [(ngModel)]="brand"
             placeholder="Name brand"
             class="body1-regular"
+            enterkeyhint="done"
+            (keydown.enter)="brandInput.blur(); dismissKeyboard()"
+            (blur)="dismissKeyboard()"
           />
         </div>
         <span class="text-color-600 body2-regular optional-text">Optional</span>

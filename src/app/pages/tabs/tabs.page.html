@@ -1,5 +1,5 @@
 <ion-tabs>
-  <ion-tab-bar slot="bottom">
+  <ion-tab-bar *ngIf="!hideTabBar" slot="bottom">
     <ion-tab-button tab="wardrobe" routerLink="/tabs/wardrobe">
       <app-icon name="wardrobe" [size]="24"></app-icon>
       <ion-label>Wardrobe</ion-label>

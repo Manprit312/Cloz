@@ -28,10 +28,14 @@
       <label class="label-default">Email</label>
       <div class="input-border-full">
         <input
+          #emailInput
           type="email"
           [(ngModel)]="newEmail"
           name="newEmail"
           placeholder="luisa@gmail.com"
+          enterkeyhint="done"
+          (keydown.enter)="emailInput.blur(); dismissKeyboard()"
+          (blur)="dismissKeyboard()"
           required
         />
       </div>

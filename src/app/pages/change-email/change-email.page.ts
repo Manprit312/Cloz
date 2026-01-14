@@ -13,6 +13,7 @@ import {
   IonButtons,
 } from '@ionic/angular/standalone';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Keyboard } from '@capacitor/keyboard';
 import { ProfileService } from '@app-core';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { IconComponent } from '../../shared/components/icon/icon.component';
@@ -59,6 +60,9 @@ export class ChangeEmailPage implements OnInit {
   }
 
   async updateEmail(): Promise<void> {
+    // Dismiss keyboard
+    Keyboard.hide();
+    
     this.showErrorMessage = false;
     this.errorMessageText = '';
 
@@ -99,6 +103,10 @@ export class ChangeEmailPage implements OnInit {
 
   goBack(): void {
     this.location.back();
+  }
+
+  dismissKeyboard(): void {
+    Keyboard.hide();
   }
 
   private isValidEmail(email: string): boolean {

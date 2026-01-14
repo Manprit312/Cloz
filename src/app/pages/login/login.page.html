@@ -13,16 +13,22 @@
   </ion-header>
   <ion-content [fullscreen]="true">
   <div class="pad-top-lg pad-v-none-h-md">
-    <form (ngSubmit)="login()" class="column-stack-lg w-full">
+    <form (ngSubmit)="login()" class="column-stack-lg w-full" name="loginForm" id="loginForm">
       <!-- Email Field -->
       <div class="column-stack-sm">
-        <label class="label-default">Email</label>
+        <label class="label-default" for="email-input">Email</label>
         <div class="input-border-full">
           <input
+            id="email-input"
             type="email"
             [(ngModel)]="email"
             name="email"
             placeholder="your@email.com"
+            autocomplete="username email"
+            autocapitalize="off"
+            autocorrect="off"
+            spellcheck="false"
+            enterkeyhint="next"
             required
           />
         </div>
@@ -30,13 +36,19 @@
 
       <!-- Password Field -->
       <div class="column-stack-sm">
-        <label class="label-default">Password</label>
+        <label class="label-default" for="password-input">Password</label>
         <div class="input-border-full">
           <input
+            #passwordInput
+            id="password-input"
             type="password"
             [(ngModel)]="password"
             name="password"
             placeholder="********"
+            autocomplete="current-password"
+            enterkeyhint="done"
+            (keydown.enter)="passwordInput.blur(); dismissKeyboard()"
+            (blur)="dismissKeyboard()"
             required
           />
         </div>

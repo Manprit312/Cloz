@@ -40,3 +40,6 @@ ion-tab-button {
   }
 }
 
+// Tab bar is now removed from DOM using *ngIf instead of CSS hiding
+// This prevents keyboard resize issues where hidden elements affect viewport calculations
+

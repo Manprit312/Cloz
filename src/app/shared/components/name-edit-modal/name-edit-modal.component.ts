@@ -10,6 +10,7 @@ import {
   IonContent,
   ModalController,
 } from '@ionic/angular/standalone';
+import { Keyboard } from '@capacitor/keyboard';
 import { ButtonComponent } from '../button/button.component';
 
 @Component({
@@ -44,7 +45,14 @@ export class NameEditModalComponent implements OnInit {
     this.modalController.dismiss(null, 'cancel');
   }
 
+  dismissKeyboard(): void {
+    Keyboard.hide();
+  }
+
   save() {
+    // Dismiss keyboard
+    Keyboard.hide();
+    
     if (this.name && this.name.trim()) {
       this.modalController.dismiss(this.name.trim(), 'confirm');
     }

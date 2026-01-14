@@ -25,12 +25,13 @@ ion-backdrop {
 
 .add-garment-content {
   --overflow: auto;
+  --background: var(--ion-background-color);
 }
 
 .add-garment-wrapper {
   display: flex;
   flex-direction: column;
-  padding-bottom: 0;
+  padding-bottom: var(--gap-xl, 32px);
 }
 
 // Header styles

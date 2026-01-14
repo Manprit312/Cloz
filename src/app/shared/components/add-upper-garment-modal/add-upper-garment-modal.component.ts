@@ -14,6 +14,7 @@ import {
   IonSpinner,
   ModalController,
 } from '@ionic/angular/standalone';
+import { Keyboard } from '@capacitor/keyboard';
 import { ButtonComponent } from '../button/button.component';
 import { IconComponent } from '../icon/icon.component';
 import { SkeletonLoaderComponent } from '../skeleton-loader/skeleton-loader.component';
@@ -158,6 +159,10 @@ export class AddUpperGarmentModalComponent implements OnInit {
 
   get isFormValid(): boolean {
     return !!(this.imageUrl && this.subtype && this.color && this.climateFit.length > 0);
+  }
+
+  dismissKeyboard() {
+    Keyboard.hide();
   }
 
   addToWardrobe() {

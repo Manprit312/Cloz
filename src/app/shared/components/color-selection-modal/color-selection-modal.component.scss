@@ -66,79 +66,138 @@ ion-list {
   -webkit-overflow-scrolling: touch;
 }
 
-// List styles - break out of container padding to touch right edge
+// List styles - no padding at all
 .color-list {
   --padding-start: 0;
   --padding-end: 0;
   padding: 0;
-  padding-bottom: var(--gap-lg);
-  margin-left: 0;
-  margin-right: calc(-1 * var(--padding-md));
-  width: calc(100% + var(--padding-md));
+  margin: 0;
+  width: 100%;
 }
 
-// Item styles - proper spacing and typography
-.color-item {
+// Hue Section
+.hue-section {
+  padding: 0;
+}
+
+// Shades Section
+.shades-section {
+  padding: 0;
+}
+
+// Variations Section
+.variations-section {
+  padding: 0;
+}
+
+
+// Gradient color items in Hue section
+.gradient-color-item {
+  --padding-start: 0;
   --padding-end: 0;
-  --min-height: var(--x14);
+  --inner-padding-end: 0;
+  --min-height: 56px;
   --detail-icon-opacity: 0;
-  --detail-icon-display: none;
+  --detail-icon-color: transparent;
   
-  // Hide default iOS chevron
-  &::part(native) {
-    --detail-icon-opacity: 0;
+  // Hide default Ionic chevron
+  &::part(detail-icon) {
+    display: none !important;
   }
   
-  // Hide detail icon
-  ion-icon[slot="end"],
-  .item-detail-icon {
+  ion-icon[slot="end"]:not(.chevron-icon) {
     display: none !important;
   }
   
   ion-label {
-    .color-row {
+    margin: 0;
+    
+    .gradient-color-row {
+      width: 100%;
       
-      .color-swatch {
-        width: var(--font-size-xl);
-        height: var(--font-size-xl);
-        border-radius: 50%;
-        border: var(--x2) solid;
-        flex-shrink: 0;
-      }
-      
-      .print-swatch {
-        width: var(--font-size-xl);
-        height: var(--font-size-xl);
-        border-radius: 50%;
-        border: var(--x2) solid var(--border-color);
-        flex-shrink: 0;
-        object-fit: cover;
+      .gradient-bar {
+        width: 100%;
+        min-height: 56px;
+        border-radius: 0;
+        display: flex;
+        align-items: center;
+        padding: 0 16px;
+        padding-right: 40px; // Extra padding for chevron space
+        position: relative;
         
-        .dark & {
-          border-color: var(--border-color-dark);
+        .color-label {
+          color: white;
+          font-weight: var(--font-weight-medium);
+          text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+          z-index: 1;
+          
+          &.dark-text {
+            color: #000000;
+            text-shadow: none;
+          }
         }
-      }
-      
-      span {
-        display: block;
+        
+        .chevron-icon {
+          position: absolute;
+          right: 12px;
+          top: 50%;
+          transform: translateY(-50%);
+          color: white;
+          font-size: 20px;
+          opacity: 0.9;
+          z-index: 2;
+          pointer-events: none;
+          // iOS specific fixes
+          -webkit-transform: translateY(-50%);
+          will-change: transform;
+          
+          &.dark-icon {
+            color: #666666;
+            opacity: 1;
+          }
+        }
+        
+        &.solid-bar {
+          &[style*="#FFFFFF"] {
+            border: 1px solid #e0e0e0;
+            background-color: white !important;
+          }
+        }
+        
+        &.print-bar {
+          background-color: white;
+          border: 1px solid #e0e0e0;
+          
+          .print-content {
+            display: flex;
+            align-items: center;
+            gap: var(--gap-md);
+            
+            .print-icon {
+              width: 32px;
+              height: 32px;
+              border-radius: 50%;
+              object-fit: cover;
+            }
+          }
+        }
       }
     }
   }
   
-  // Ensure the border line starts from color text (after swatch) and touches right edge
+  // Remove border line
   &[lines="full"]::after {
-    right: 0 !important;
-    left: calc(var(--padding-md) + var(--font-size-xl) + var(--gap-md));
+    display: none;
   }
   
-  // Remove extra left padding since container already provides it
+  // Remove item inner padding
   .item-inner {
-    padding-left: 0 !important;
-    padding-right: var(--gap-lg);
+    padding: 0 !important;
   }
   
-  .chevron-icon {
-    margin-right: var(--gap-md);
+  // Explicitly hide Ionic's default chevron
+  .item-detail-icon {
+    display: none !important;
   }
 }
 

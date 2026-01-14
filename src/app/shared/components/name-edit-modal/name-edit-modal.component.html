@@ -15,9 +15,13 @@
       <label class="label-default">Name</label>
       <div class="input-border-full">
         <input
+          #nameInput
           type="text"
           [(ngModel)]="name"
           placeholder="Name"
+          enterkeyhint="done"
+          (keydown.enter)="nameInput.blur(); dismissKeyboard()"
+          (blur)="dismissKeyboard()"
           required
           autofocus
         />

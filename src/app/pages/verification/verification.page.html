@@ -29,6 +29,7 @@
         <label class="label-default">Code</label>
         <div class="input-border-full">
           <input
+            #codeInput
             type="text"
             [(ngModel)]="code"
             name="code"
@@ -36,7 +37,10 @@
             maxlength="6"
             inputmode="numeric"
             pattern="[0-9]*"
+            enterkeyhint="done"
             (ionInput)="onCodeInput($event)"
+            (keydown.enter)="codeInput.blur(); dismissKeyboard()"
+            (blur)="dismissKeyboard()"
             required
             class="code-input"
           />

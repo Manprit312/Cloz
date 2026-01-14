@@ -113,10 +113,14 @@
         <label class="label-default">Brand</label>
         <div class="input-border-full">
           <input
+            #brandInput
             type="text"
             [(ngModel)]="brand"
             placeholder="Name brand"
             class="body1-regular"
+            enterkeyhint="done"
+            (keydown.enter)="brandInput.blur(); dismissKeyboard()"
+            (blur)="dismissKeyboard()"
           />
         </div>
         <span class="text-color-600 body2-regular optional-text">Optional</span>

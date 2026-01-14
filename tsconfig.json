@@ -24,7 +24,8 @@
       "@translations": ["i18n"],
       "@app-core": ["app/core"],
       "@models/*": ["app/models/*"],
-      "@env/*": ["environments/*"]
+      "@env/*": ["environments/*"],
+      "@shared/*": ["app/shared/*"]
     }
   },
   "angularCompilerOptions": {

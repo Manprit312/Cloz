@@ -12,6 +12,7 @@ import {
   IonItem,
   IonInput,
   ModalController,
+  ToastController,
 } from '@ionic/angular/standalone';
 import { Location } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -57,6 +58,7 @@ export class EditOutfitPage implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private modalController = inject(ModalController);
+  private toastController = inject(ToastController);
   private wardrobeService = inject(WardrobeService);
   private outfitsService = inject(OutfitsService);
 
@@ -337,21 +339,39 @@ export class EditOutfitPage implements OnInit {
       await this.loadGarmentsForCategory(category);
     }
 
-    let garments: GarmentItem[] = [];
+    let allGarments: GarmentItem[] = [];
 
     switch (category) {
       case 'upper-garments':
-        garments = this.upperGarments as GarmentItem[];
+        allGarments = this.upperGarments as GarmentItem[];
         break;
       case 'bottoms':
-        garments = this.bottoms as GarmentItem[];
+        allGarments = this.bottoms as GarmentItem[];
         break;
       case 'shoes':
-        garments = this.shoes as GarmentItem[];
+        allGarments = this.shoes as GarmentItem[];
         break;
       case 'accessories':
-        garments = this.accessories as GarmentItem[];
+        allGarments = this.accessories as GarmentItem[];
         break;
+    }
+
+    // Filter out already selected garments
+    const selectedGarments = this.getSelectedGarments(category);
+    const selectedIds = new Set(selectedGarments.map(g => g.id));
+    const garments = allGarments.filter(g => !selectedIds.has(g.id));
+
+    // If no garments available, show message and return
+    if (garments.length === 0) {
+      const categoryName = this.getCategoryDisplayName(category);
+      const toast = await this.toastController.create({
+        message: `All ${categoryName} are already selected`,
+        duration: 2000,
+        position: 'bottom',
+        color: 'medium',
+      });
+      await toast.present();
+      return;
     }
 
     const modal = await this.modalController.create({
@@ -422,6 +442,16 @@ export class EditOutfitPage implements OnInit {
 
   hasSelectedGarment(category: GarmentCategory): boolean {
     return this.getSelectedGarments(category).length > 0;
+  }
+
+  private getCategoryDisplayName(category: GarmentCategory): string {
+    const names: Record<GarmentCategory, string> = {
+      'upper-garments': 'upper garments',
+      'bottoms': 'bottoms',
+      'shoes': 'shoes',
+      'accessories': 'accessories',
+    };
+    return names[category] || 'items';
   }
 
   get canSaveOutfit(): boolean {

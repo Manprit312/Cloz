@@ -1,26 +1,43 @@
 import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { AuthService } from '../services/auth.service';
+import { NetworkService } from '../services/network.service';
 import { catchError, switchMap, throwError, of, from } from 'rxjs';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
+  const networkService = inject(NetworkService);
 
-  // Skip adding Authorization header for the refresh endpoint
-  const isRefreshEndpoint = req.url.includes('/auth/refresh');
-  if (isRefreshEndpoint) {
-    console.log('AuthInterceptor - Refresh endpoint, skipping Authorization header');
-    console.log('AuthInterceptor - Refresh endpoint URL:', req.url);
-    console.log('AuthInterceptor - Refresh endpoint method:', req.method);
-    console.log('AuthInterceptor - Request will use X-Session-Id header from service');
-    // Ensure the request passes through without modification - X-Session-Id header is set in the service
-    return next(req);
-  }
+  // Check network connectivity first
+  return from(networkService.checkConnectionBeforeRequest()).pipe(
+    catchError((error) => {
+      // Network is offline - block the request
+      console.error('AuthInterceptor - Request blocked: No internet connection');
+      return throwError(() => new HttpErrorResponse({
+        error: { message: 'No internet connection' },
+        status: 0,
+        statusText: 'Network Error',
+        url: req.url
+      }));
+    }),
+    switchMap(() => {
+      // Network is online, proceed with request
+      
+      // Skip adding Authorization header for the refresh endpoint
+      const isRefreshEndpoint = req.url.includes('/auth/refresh');
+      if (isRefreshEndpoint) {
+        console.log('AuthInterceptor - Refresh endpoint, skipping Authorization header');
+        console.log('AuthInterceptor - Refresh endpoint URL:', req.url);
+        console.log('AuthInterceptor - Refresh endpoint method:', req.method);
+        console.log('AuthInterceptor - Request will use X-Session-Id header from service');
+        // Ensure the request passes through without modification - X-Session-Id header is set in the service
+        return next(req);
+      }
 
-  // Check if token needs to be refreshed before making the request
-  // shouldRefreshToken is now async, so we need to use from() to convert Promise to Observable
-  
-  return from(authService.shouldRefreshToken()).pipe(
+      // Check if token needs to be refreshed before making the request
+      // shouldRefreshToken is now async, so we need to use from() to convert Promise to Observable
+      
+      return from(authService.shouldRefreshToken()).pipe(
     switchMap((shouldRefresh) => {
       if (!shouldRefresh) {
         // Token is still valid, proceed with normal request
@@ -135,6 +152,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
           return next(clonedRequest);
         })
       );
+    })
+  );
     })
   );
 };

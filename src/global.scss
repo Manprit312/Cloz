@@ -831,3 +831,42 @@ ion-list {
     }
   }
 }
+
+/* Network Alert Styles */
+.offline-alert {
+  .alert-wrapper {
+    --background: var(--ion-color-primary);
+  }
+
+  .alert-head {
+    color: var(--ion-color-primary-contrast);
+  }
+
+  .alert-message {
+    color: var(--ion-color-primary-contrast);
+  }
+
+  .alert-button {
+    color: var(--ion-color-primary-contrast);
+    font-weight: var(--font-weight-medium);
+  }
+}
+
+.online-alert {
+  .alert-wrapper {
+    --background: var(--ion-color-primary);
+  }
+
+  .alert-head {
+    color: var(--ion-color-primary-contrast);
+  }
+
+  .alert-message {
+    color: var(--ion-color-primary-contrast);
+  }
+
+  .alert-button {
+    color: var(--ion-color-primary-contrast);
+    font-weight: var(--font-weight-medium);
+  }
+}

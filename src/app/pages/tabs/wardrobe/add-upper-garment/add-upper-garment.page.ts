@@ -11,6 +11,7 @@ import {
   IonContent,
   AlertController,
   IonSpinner,
+  ActionSheetController,
 } from '@ionic/angular/standalone';
 import { Location } from '@angular/common';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
@@ -22,6 +23,9 @@ import { ProfileService } from '../../../../core/services/profile.service';
 import { WardrobeService } from '../../../../core/services/wardrobe.service';
 import { ImageCompressionService } from '../../../../core/services/image-compression.service';
 import { Keyboard, KeyboardResize } from '@capacitor/keyboard';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+import { addIcons } from 'ionicons';
+import { camera, images, close } from 'ionicons/icons';
 
 export interface UpperGarmentData {
   id?: string;
@@ -75,16 +79,6 @@ export class AddUpperGarmentPage implements OnInit, AfterViewInit, OnDestroy {
   private keyboardListeners: any[] = [];
   private keyboardHeight: number = 300; // Default keyboard height, will be updated from event
   
-  async onBrandFieldFocus() {
-    // Enable body resize only for brand field
-    await Keyboard.setResizeMode({ mode: KeyboardResize.Body });
-  }
-
-  async onBrandFieldBlur() {
-    // Reset to none when brand field loses focus
-    await Keyboard.setResizeMode({ mode: KeyboardResize.None });
-  }
-
   climateOptions = [
     { value: 'Cold', label: 'Cold' },
     { value: 'Mild', label: 'Mild' },
@@ -96,10 +90,14 @@ export class AddUpperGarmentPage implements OnInit, AfterViewInit, OnDestroy {
     private location: Location,
     private modalController: ModalController,
     private alertController: AlertController,
+    private actionSheetController: ActionSheetController,
     private profileService: ProfileService,
     private wardrobeService: WardrobeService,
     private imageCompressionService: ImageCompressionService
-  ) {}
+  ) {
+    // Register icons for action sheet
+    addIcons({ camera, images, close });
+  }
 
   ngOnInit() {
     // Check if we have data passed via navigation state
@@ -135,65 +133,25 @@ export class AddUpperGarmentPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private setupKeyboardHandling() {
-    // Listen for keyboard show event
+    // With KeyboardResize.Body, iOS handles most of the work
+    // We just need minimal assistance for smooth scrolling
     const showListener = Keyboard.addListener('keyboardWillShow', (info) => {
-      // Store the actual keyboard height from the event
       this.keyboardHeight = info.keyboardHeight || 300;
-      setTimeout(() => {
-        this.scrollToActiveInput();
-      }, 300); // Small delay to ensure keyboard is fully shown
     });
     this.keyboardListeners.push(showListener);
 
-    // Listen for keyboard hide event to reset height
     const hideListener = Keyboard.addListener('keyboardWillHide', () => {
-      this.keyboardHeight = 300; // Reset to default
+      this.keyboardHeight = 300;
     });
     this.keyboardListeners.push(hideListener);
+  }
 
-    // Also handle focus events on inputs
-    const inputs = document.querySelectorAll('input[type="text"]');
-    inputs.forEach(input => {
-      input.addEventListener('focus', () => {
-        setTimeout(() => {
-          this.scrollToActiveInput();
-        }, 300);
-      });
-    });
+  private async resetScrollPosition() {
+    // Not needed with KeyboardResize.Body - iOS handles it
   }
 
   private async scrollToActiveInput() {
-    const activeElement = document.activeElement;
-    if (activeElement && activeElement.tagName === 'INPUT') {
-      try {
-        const inputElement = activeElement as HTMLElement;
-        const inputRect = inputElement.getBoundingClientRect();
-        const contentElement = await this.content.getScrollElement();
-        
-        // Use actual keyboard height from event, or fallback to default
-        const viewportHeight = window.innerHeight;
-        const inputTop = inputRect.top;
-        const inputBottom = inputRect.bottom;
-        const visibleAreaBottom = viewportHeight - this.keyboardHeight;
-        
-        // Add extra padding to ensure input is fully visible above keyboard
-        const padding = 40; // Extra padding to ensure input is clearly visible
-        
-        if (inputBottom > visibleAreaBottom - padding) {
-          // Input is hidden or too close to keyboard, scroll to make it visible
-          const scrollOffset = inputBottom - (visibleAreaBottom - padding);
-          const currentScroll = contentElement.scrollTop;
-          await this.content.scrollToPoint(0, currentScroll + scrollOffset, 300);
-        } else if (inputTop < 0) {
-          // Input is above visible area, scroll it into view
-          const scrollOffset = inputTop - padding;
-          const currentScroll = contentElement.scrollTop;
-          await this.content.scrollToPoint(0, currentScroll + scrollOffset, 300);
-        }
-      } catch (error) {
-        console.error('Error scrolling to input:', error);
-      }
-    }
+    // Not needed with KeyboardResize.Body - iOS handles it
   }
 
   close() {
@@ -286,6 +244,10 @@ export class AddUpperGarmentPage implements OnInit, AfterViewInit, OnDestroy {
 
   get isFormValid(): boolean {
     return !!(this.imageUrl && this.subtype && this.color && this.climateFit.length > 0);
+  }
+
+  dismissKeyboard() {
+    Keyboard.hide();
   }
 
   addToWardrobe() {
@@ -421,6 +383,139 @@ export class AddUpperGarmentPage implements OnInit, AfterViewInit, OnDestroy {
         }, 5000);
       },
     });
+  }
+
+  async selectImageSource() {
+    const actionSheet = await this.actionSheetController.create({
+      header: 'Select Image Source',
+      buttons: [
+        {
+          text: 'Take Photo',
+          icon: 'camera',
+          handler: () => {
+            this.takePhoto();
+          }
+        },
+        {
+          text: 'Choose from Gallery',
+          icon: 'images',
+          handler: () => {
+            this.chooseFromGallery();
+          }
+        },
+        {
+          text: 'Cancel',
+          icon: 'close',
+          role: 'cancel'
+        }
+      ]
+    });
+    await actionSheet.present();
+  }
+
+  async takePhoto() {
+    try {
+      const image = await Camera.getPhoto({
+        quality: 90,
+        allowEditing: false,
+        resultType: CameraResultType.Uri,
+        source: CameraSource.Camera
+      });
+
+      if (image.webPath) {
+        await this.processImage(image.webPath);
+      }
+    } catch (error) {
+      console.error('Error taking photo:', error);
+      // Only show error if user didn't cancel
+      if ((error as any).message !== 'User cancelled photos app') {
+        this.showErrorMessage = true;
+        this.errorMessageText = 'Error accessing camera. Please try again.';
+        setTimeout(() => {
+          this.showErrorMessage = false;
+        }, 5000);
+      }
+    }
+  }
+
+  async chooseFromGallery() {
+    try {
+      const image = await Camera.getPhoto({
+        quality: 90,
+        allowEditing: false,
+        resultType: CameraResultType.Uri,
+        source: CameraSource.Photos
+      });
+
+      if (image.webPath) {
+        await this.processImage(image.webPath);
+      }
+    } catch (error) {
+      console.error('Error choosing from gallery:', error);
+      // Only show error if user didn't cancel
+      if ((error as any).message !== 'User cancelled photos app') {
+        this.showErrorMessage = true;
+        this.errorMessageText = 'Error accessing gallery. Please try again.';
+        setTimeout(() => {
+          this.showErrorMessage = false;
+        }, 5000);
+      }
+    }
+  }
+
+  async processImage(webPath: string) {
+    this.isCompressing = true;
+    this.showErrorMessage = false;
+    this.errorMessageText = '';
+    this.compressionSuccess = false;
+
+    try {
+      // Fetch the image as a blob
+      const response = await fetch(webPath);
+      const blob = await response.blob();
+      
+      // Convert blob to File
+      const file = new File([blob], 'garment-image.jpg', { type: 'image/jpeg' });
+
+      // Show original file size
+      const originalSizeMB = (file.size / (1024 * 1024)).toFixed(2);
+      console.log(`Original image size: ${originalSizeMB} MB`);
+
+      // Compress the image
+      const compressedFile = await this.imageCompressionService.compressImage(file, {
+        maxWidth: 1200,
+        maxHeight: 1200,
+        quality: 0.7,
+        maxSizeMB: 1
+      });
+
+      // Show compressed file size
+      const compressedSizeMB = (compressedFile.size / (1024 * 1024)).toFixed(2);
+      const reductionPercent = ((1 - compressedFile.size / file.size) * 100).toFixed(1);
+      console.log(`Compressed image size: ${compressedSizeMB} MB (${reductionPercent}% reduction)`);
+
+      // Store the compressed file for upload
+      this.imageFile = compressedFile;
+
+      // Convert compressed file to base64 for preview
+      const base64 = await this.imageCompressionService.fileToBase64(compressedFile);
+      this.imageUrl = base64;
+      
+      // Show success message
+      this.compressionSuccess = true;
+      setTimeout(() => {
+        this.compressionSuccess = false;
+      }, 3000);
+    } catch (error) {
+      console.error('Error processing image:', error);
+      this.showErrorMessage = true;
+      this.errorMessageText = 'Error processing image. Please try again.';
+      setTimeout(() => {
+        this.showErrorMessage = false;
+      }, 5000);
+    } finally {
+      this.isCompressing = false;
+    }
   }
 
   triggerFileInput() {

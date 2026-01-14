@@ -13,6 +13,7 @@ import {
   ModalController,
   ToastController,
 } from '@ionic/angular/standalone';
+import { Keyboard } from '@capacitor/keyboard';
 import { ButtonComponent } from '../button/button.component';
 
 @Component({
@@ -51,7 +52,14 @@ export class PasswordEditModalComponent implements OnInit {
     this.modalController.dismiss(null, 'cancel');
   }
 
+  dismissKeyboard(): void {
+    Keyboard.hide();
+  }
+
   async save() {
+    // Dismiss keyboard
+    Keyboard.hide();
+    
     // Validate passwords
     if (!this.newPassword || this.newPassword.length < 6) {
       if (this.onError) {

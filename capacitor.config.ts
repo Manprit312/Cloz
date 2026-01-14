@@ -10,7 +10,7 @@ const config: CapacitorConfig = {
   },
   plugins: {
     Keyboard: {
-      resize: KeyboardResize.None
+      resize: KeyboardResize.Body
     },
     CapacitorCookies: {
       enabled: true

@@ -1,6 +1,14 @@
 <ion-header class="ion-no-border">
   <ion-toolbar>
-    <ion-title class="ion-text-center">Select color</ion-title>
+    <ion-buttons *ngIf="viewingShades || viewingVariations" slot="start">
+      <ion-button (click)="viewingVariations ? backToShades() : backToColors()" fill="clear" class="body1-regular">
+        <ion-icon name="chevron-back-outline" slot="start"></ion-icon>
+        Back
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="ion-text-center">
+      {{ viewingVariations ? selectedShadeLevel : (viewingShades ? selectedColorFamily : 'Hue + Lightness Gradient') }}
+    </ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="cancel()" fill="clear" class="body1-regular">
         Cancel
@@ -10,31 +18,101 @@
 </ion-header>
 
 <ion-content [scrollY]="true">
-  <ion-list class="color-list flex-1">
+  <!-- Main Colors List -->
+  <div *ngIf="!viewingShades" class="hue-section">
+    <ion-list class="color-list">
       <ion-item
-        *ngFor="let color of colors"
+        *ngFor="let color of primaryColors"
         button
         lines="full"
-        class="color-item"
-        (click)="onColorChange(color.value)"
+        class="color-item gradient-color-item"
+        (click)="onColorClick(color)"
       >
         <ion-label>
-          <div class="color-row row-stack-md items-center">
-          <div 
-            *ngIf="color.hex !== 'print'"
-            class="color-swatch" 
-            [style.background-color]="color.hex"
-            [style.border-color]="color.hex === '#FFFFFF' ? '#e0e0e0' : 'transparent'"
-          ></div>
-          <img 
-            *ngIf="color.hex === 'print'"
-            src="assets/images/print.png" 
-            alt="Print pattern"
-            class="print-swatch"
-          />
-            <span class="body1-regular">{{ color.label }}</span>
+          <div class="gradient-color-row">
+            <!-- For colors with gradients -->
+            <div 
+              *ngIf="color.gradient"
+              class="gradient-bar" 
+              [style.background]="color.gradient"
+            >
+              <span class="body1-regular color-label">{{ color.label }}</span>
+              <ion-icon name="chevron-forward-outline" class="chevron-icon"></ion-icon>
+            </div>
+            
+            <!-- For solid colors (White/Black) - no chevron as they have no shades -->
+            <div 
+              *ngIf="!color.gradient && color.hex !== 'print'"
+              class="gradient-bar solid-bar" 
+              [style.background-color]="color.hex"
+            >
+              <span class="body1-regular color-label" [class.dark-text]="color.hex === '#FFFFFF'">{{ color.label }}</span>
+            </div>
+            
+            <!-- For Print pattern - no chevron as it has no shades -->
+            <div 
+              *ngIf="color.hex === 'print'"
+              class="gradient-bar print-bar"
+            >
+              <div class="print-content">
+                <img src="assets/images/print.png" alt="Print pattern" class="print-icon" />
+                <span class="body1-regular color-label dark-text">{{ color.label }}</span>
+              </div>
+            </div>
           </div>
-        </ion-label>      </ion-item>
-  </ion-list>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </div>
+
+  <!-- Shades List View (Level 2) -->
+  <div *ngIf="viewingShades && !viewingVariations" class="shades-section">
+    <ion-list class="color-list">
+      <ion-item
+        *ngFor="let shade of currentShades"
+        button
+        lines="full"
+        class="color-item gradient-color-item"
+        (click)="onShadeClick(shade)"
+      >
+        <ion-label>
+          <div class="gradient-color-row">
+            <div 
+              class="gradient-bar solid-bar" 
+              [style.background-color]="shade.hex"
+            >
+              <span class="body1-regular color-label" [class.dark-text]="isLightColor(shade.label)">{{ shade.label }}</span>
+              <ion-icon name="chevron-forward-outline" class="chevron-icon" [class.dark-icon]="isLightColor(shade.label)"></ion-icon>
+            </div>
+          </div>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </div>
+
+  <!-- Variations List View (Level 3: Vivid, Soft, Muted) -->
+  <div *ngIf="viewingVariations" class="variations-section">
+    <ion-list class="color-list">
+      <ion-item
+        *ngFor="let variation of currentVariations"
+        button
+        lines="full"
+        class="color-item gradient-color-item"
+        (click)="onVariationClick(variation)"
+      >
+        <ion-label>
+          <div class="gradient-color-row">
+            <div 
+              class="gradient-bar solid-bar" 
+              [style.background-color]="variation.hex"
+            >
+              <span class="body1-regular color-label" [class.dark-text]="isLightColor(variation.label)">{{ variation.label }}</span>
+              <ion-icon name="chevron-forward-outline" class="chevron-icon" [class.dark-icon]="isLightColor(variation.label)"></ion-icon>
+            </div>
+          </div>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </div>
 </ion-content>
 

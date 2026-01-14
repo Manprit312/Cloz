@@ -11,16 +11,19 @@
 
 <ion-content [fullscreen]="false" class="signup-content">
   <div class="signup-container column-stack-none">
-    <form (ngSubmit)="signup()" class="signup-form column-stack-none">
+    <form (ngSubmit)="signup()" class="signup-form column-stack-none" name="signupForm" id="signupForm">
       <!-- Name Field -->
       <ion-item class="form-item" [detailIcon]="false">
         <ion-label position="stacked" class="label-small">Name</ion-label>
         <ion-input
+          id="name-input"
           type="text"
           class="body1-regular"
           [(ngModel)]="name"
           name="name"
           placeholder="Your name"
+          autocomplete="name"
+          enterkeyhint="next"
           required
         ></ion-input>
       </ion-item>
@@ -29,11 +32,17 @@
       <ion-item class="form-item" [detailIcon]="false">
         <ion-label position="stacked" class="label-small">Email</ion-label>
         <ion-input
+          id="email-input"
           type="email"
           class="body1-regular"
           [(ngModel)]="email"
           name="email"
           placeholder="your@email.com"
+          autocomplete="username email"
+          autocapitalize="off"
+          autocorrect="off"
+          spellcheck="false"
+          enterkeyhint="next"
           required
         ></ion-input>
       </ion-item>
@@ -42,11 +51,14 @@
       <ion-item class="form-item" [detailIcon]="false">
         <ion-label position="stacked" class="label-default">Password</ion-label>
         <ion-input
+          id="password-input"
           type="password"
           class="body1-regular"
           [(ngModel)]="password"
           name="password"
           placeholder="**********"
+          autocomplete="new-password"
+          enterkeyhint="next"
           required
         ></ion-input>
       </ion-item>
@@ -55,11 +67,17 @@
       <ion-item class="form-item" [detailIcon]="false">
         <ion-label position="stacked" class="label-small">Confirm password</ion-label>
         <ion-input
+          #confirmPasswordInput
+          id="confirm-password-input"
           type="password"
           class="body1-regular"
           [(ngModel)]="confirmPassword"
           name="confirmPassword"
           placeholder="**********"
+          autocomplete="new-password"
+          enterkeyhint="done"
+          (keydown.enter)="blurIonInput(confirmPasswordInput)"
+          (ionBlur)="dismissKeyboard()"
           required
         ></ion-input>
       </ion-item>

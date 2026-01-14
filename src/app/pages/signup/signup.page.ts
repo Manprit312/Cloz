@@ -16,6 +16,7 @@ import {
 } from '@ionic/angular/standalone';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
+import { Keyboard } from '@capacitor/keyboard';
 
 import { IconComponent } from '../../shared/components/icon/icon.component';
 import { UserService } from '@app-core';
@@ -74,6 +75,10 @@ export class SignupPage implements OnInit {
     this.location.back();
   }
 
+  dismissKeyboard(): void {
+    Keyboard.hide();
+  }
+
   async openGenderSelector(): Promise<void> {
     const alert = await this.alertController.create({
       header: 'Select gender',
@@ -111,7 +116,17 @@ export class SignupPage implements OnInit {
     await alert.present();
   }
 
+  async blurIonInput(ionInput: any): Promise<void> {
+    // Blur the ion-input element to dismiss keyboard
+    const input = await ionInput.getInputElement();
+    input.blur();
+    Keyboard.hide();
+  }
+
   async signup(): Promise<void> {
+    // Dismiss keyboard
+    Keyboard.hide();
+    
     // Prevent multiple simultaneous signup attempts
     if (this.isLoading) {
       return;
