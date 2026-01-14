@@ -163,18 +163,25 @@ export class ColorSelectionModalComponent implements OnInit {
       this.viewingShades = true;
       this.viewingVariations = false;
     } else {
-      // For White, Black, Print - select directly
+      // For White, Black, Print - select directly (no shades)
+      // Gray has shades, so it will go through the shades view
       this.onColorChange(color.value);
     }
   }
 
   onShadeClick(shade: ColorOption) {
-    // Show variations for this shade level
+    // Get variations for this shade level
     const variations = this.getColorVariations(this.selectedColorFamily, shade.value);
     if (variations && variations.length > 0) {
-      this.selectedShadeLevel = shade.value;
-      this.currentVariations = variations;
-      this.viewingVariations = true;
+      // If there's only one variation (like Gray), select it directly
+      if (variations.length === 1) {
+        this.onVariationClick(variations[0]);
+      } else {
+        // Show variations view for colors with multiple variations
+        this.selectedShadeLevel = shade.value;
+        this.currentVariations = variations;
+        this.viewingVariations = true;
+      }
     }
   }
 

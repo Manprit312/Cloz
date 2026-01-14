@@ -9,16 +9,16 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="false">
+<ion-content [fullscreen]="false" [scrollY]="true" class="naming-modal-content">
   <div class="naming-modal-container pad-all-md">
     <ion-list>
       <!-- Suggested Names -->
       <ion-item 
-        *ngFor="let name of suggestedNames" 
-        button
-        (click)="selectName(name)"
+        *ngFor="let name of suggestedNames; let i = index" 
+        (click)="selectName(name, $event)"
         lines="none" 
-        class="name-option-item"
+        class="name-option-item clickable"
+        [class.selected]="selectedName === name && !isCustomName"
       >
         <span slot="start" class="icon-slot">
           <app-icon 
@@ -27,6 +27,7 @@
             [size]="24" 
             [color]="'var(--ion-color-primary)'"
           ></app-icon>
+          <span *ngIf="selectedName !== name || isCustomName" class="icon-placeholder"></span>
         </span>
         <ion-label>
           <span class="body1-regular">{{ name }}</span>
@@ -35,10 +36,10 @@
 
       <!-- Custom Name Option -->
       <ion-item 
-        button
-        (click)="toggleCustomName()"
+        (click)="toggleCustomName($event)"
         lines="none" 
-        class="name-option-item"
+        class="name-option-item clickable"
+        [class.selected]="isCustomName"
       >
         <span slot="start" class="icon-slot">
           <app-icon 
@@ -47,6 +48,7 @@
             [size]="24" 
             [color]="'var(--ion-color-primary)'"
           ></app-icon>
+          <span *ngIf="!isCustomName" class="icon-placeholder"></span>
         </span>
         <ion-label>
           <span class="body1-regular">Custom name</span>
@@ -56,16 +58,20 @@
 
     <!-- Custom Name Input -->
     <div *ngIf="isCustomName" class="custom-name-input-container pad-all-md">
-      <ion-item class="name-input-item">
-        <ion-input
+      <div class="input-border-full">
+        <input
+          type="text"
           [(ngModel)]="customName"
           placeholder="Enter outfit name"
-          class="outfit-name-input"
-          (ionBlur)="onCustomNameBlur()"
+          class="body1-regular"
+          enterkeyhint="done"
+          (focus)="onCustomNameFocus()"
+          (blur)="onCustomNameBlur()"
           (keyup.enter)="onCustomNameEnter()"
+          (keydown.enter)="onCustomNameEnter(); $event.preventDefault()"
           #customNameInput
-        ></ion-input>
-      </ion-item>
+        />
+      </div>
     </div>
   </div>
 </ion-content>

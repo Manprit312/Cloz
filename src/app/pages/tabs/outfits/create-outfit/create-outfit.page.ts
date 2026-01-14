@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { catchError, of } from 'rxjs';
@@ -50,7 +50,7 @@ import { OutfitsService } from '../../../../core/services/outfits.service';
     ButtonComponent,
   ],
 })
-export class CreateOutfitPage implements OnInit {
+export class CreateOutfitPage implements OnInit, OnDestroy {
   private location = inject(Location);
   private modalController = inject(ModalController);
   private toastController = inject(ToastController);
@@ -73,11 +73,25 @@ export class CreateOutfitPage implements OnInit {
 
   isLoading = false;
   isCreatingOutfit = false; // Track if outfit creation is in progress
+  isLoadingGarments = false; // Track if garments are being loaded
+  private namingModal?: any; // Track naming modal instance
+  private isNamingModalOpen = false; // Track if naming modal is currently open
 
   constructor() {}
 
   ngOnInit() {
     // Don't load all garments upfront - load on demand when modal opens
+  }
+
+  ngOnDestroy() {
+    // Ensure modal is dismissed when component is destroyed
+    if (this.namingModal) {
+      this.namingModal.dismiss().catch(() => {
+        // Ignore errors if modal is already dismissed
+      });
+      this.namingModal = undefined;
+    }
+    this.isNamingModalOpen = false;
   }
 
   /**
@@ -173,60 +187,105 @@ export class CreateOutfitPage implements OnInit {
   }
 
   async openGarmentModal(category: GarmentCategory) {
-    // Load garments for this category if not already loaded
-    if (!this.loadedCategories.has(category)) {
-      await this.loadGarmentsForCategory(category);
-    }
-
-    let allGarments: GarmentItem[] = [];
-
-    switch (category) {
-      case 'upper-garments':
-        allGarments = this.upperGarments as GarmentItem[];
-        break;
-      case 'bottoms':
-        allGarments = this.bottoms as GarmentItem[];
-        break;
-      case 'shoes':
-        allGarments = this.shoes as GarmentItem[];
-        break;
-      case 'accessories':
-        allGarments = this.accessories as GarmentItem[];
-        break;
-    }
-
-    // Filter out already selected garments
-    const selectedGarments = this.getSelectedGarments(category);
-    const selectedIds = new Set(selectedGarments.map(g => g.id));
-    const garments = allGarments.filter(g => !selectedIds.has(g.id));
-
-    // If no garments available, show message and return
-    if (garments.length === 0) {
-      const categoryName = this.getCategoryDisplayName(category);
-      const toast = await this.toastController.create({
-        message: `All ${categoryName} are already selected`,
-        duration: 2000,
-        position: 'bottom',
-        color: 'medium',
-      });
-      await toast.present();
+    // Prevent multiple clicks while loading
+    if (this.isLoadingGarments) {
       return;
     }
 
-    const modal = await this.modalController.create({
-      component: GarmentSelectionModalComponent,
-      componentProps: {
-        category,
-        garments,
-      },
-    });
+    this.isLoadingGarments = true;
 
-    await modal.present();
+    try {
+      // Load garments for this category if not already loaded
+      if (!this.loadedCategories.has(category)) {
+        await this.loadGarmentsForCategory(category);
+      }
 
-    const { data, role } = await modal.onWillDismiss();
+      let allGarments: GarmentItem[] = [];
 
-    if (role === 'confirm' && data) {
-      this.handleGarmentSelection(category, data);
+      switch (category) {
+        case 'upper-garments':
+          allGarments = this.upperGarments as GarmentItem[];
+          break;
+        case 'bottoms':
+          allGarments = this.bottoms as GarmentItem[];
+          break;
+        case 'shoes':
+          allGarments = this.shoes as GarmentItem[];
+          break;
+        case 'accessories':
+          allGarments = this.accessories as GarmentItem[];
+          break;
+      }
+
+      // Filter out already selected garments
+      const selectedGarments = this.getSelectedGarments(category);
+      const selectedIds = new Set(selectedGarments.map(g => g.id));
+      const garments = allGarments.filter(g => !selectedIds.has(g.id));
+
+      this.isLoadingGarments = false;
+
+      // If no garments available, show message and return
+      if (garments.length === 0) {
+        const categoryName = this.getCategoryDisplayName(category);
+        const toast = await this.toastController.create({
+          message: `All ${categoryName} are already selected`,
+          duration: 2000,
+          position: 'bottom',
+          color: 'medium',
+        });
+        await toast.present();
+        return;
+      }
+
+      // Open modal with loaded data
+      const modal = await this.modalController.create({
+        component: GarmentSelectionModalComponent,
+        componentProps: {
+          category,
+          garments,
+          isLoading: false,
+        },
+      });
+
+      await modal.present();
+
+      const { data, role } = await modal.onWillDismiss();
+
+      if (role === 'confirm' && data) {
+        this.handleGarmentSelection(category, data);
+      }
+    } catch (error) {
+      console.error('Error loading garments:', error);
+      this.isLoadingGarments = false;
+      
+      const toast = await this.toastController.create({
+        message: 'Failed to load garments. Please try again.',
+        duration: 3000,
+        position: 'bottom',
+        color: 'danger',
+      });
+      await toast.present();
+    }
+  }
+
+  private async getModalComponent(modal: any): Promise<GarmentSelectionModalComponent | null> {
+    try {
+      // Access component instance using componentRef (proper Ionic way)
+      const componentInstance = modal.componentRef?.instance as GarmentSelectionModalComponent;
+      if (componentInstance && typeof componentInstance.updateGarments === 'function') {
+        return componentInstance;
+      }
+      
+      // Fallback: try alternative access methods
+      const altInstance = (modal as any).componentInstance as GarmentSelectionModalComponent;
+      if (altInstance && typeof altInstance.updateGarments === 'function') {
+        return altInstance;
+      }
+      
+      return null;
+    } catch (error) {
+      console.warn('Could not access modal component:', error);
+      return null;
     }
   }
 
@@ -367,19 +426,23 @@ export class CreateOutfitPage implements OnInit {
   }
 
   get canCreateOutfit(): boolean {
-    return !!(
-      this.selectedUpperGarments.length > 0 &&
-      this.selectedBottoms.length > 0 &&
-      this.selectedShoes.length > 0 &&
-      this.selectedAccessories.length > 0
-    );
+    // Require at least 2 garments total across all categories
+    const totalGarments = 
+      this.selectedUpperGarments.length +
+      this.selectedBottoms.length +
+      this.selectedShoes.length +
+      this.selectedAccessories.length;
+    return totalGarments >= 2;
   }
 
   async onCreateOutfit(): Promise<void> {
-    // Prevent double submission
-    if (!this.canCreateOutfit || this.isCreatingOutfit) {
+    // Prevent double submission or reopening modal
+    if (!this.canCreateOutfit || this.isCreatingOutfit || this.isNamingModalOpen) {
       return;
     }
+
+    // Set flag to prevent reopening
+    this.isNamingModalOpen = true;
 
     // TODO: Fetch suggested names from API if available
     // For now, use default suggested names
@@ -390,23 +453,45 @@ export class CreateOutfitPage implements OnInit {
       'The Friday Shift',
     ];
 
+    try {
     // Open naming modal
     const modal = await this.modalController.create({
       component: OutfitNamingModalComponent,
       componentProps: {
         suggestedNames: suggestedNames,
       },
-      breakpoints: [0, 0.5],
+        breakpoints: [0, 0.5, 0.9],
       initialBreakpoint: 0.5,
+        backdropDismiss: false, // Prevent backdrop dismissal
+        keyboardClose: false, // Keep modal open when keyboard appears
     });
+
+      // Track modal instance
+      this.namingModal = modal;
 
     await modal.present();
 
-    const { data, role } = await modal.onWillDismiss();
+      // Wait for modal to fully dismiss before proceeding
+      const { data, role } = await modal.onDidDismiss();
+
+      // Clear flags and modal reference
+      this.isNamingModalOpen = false;
+      this.namingModal = undefined;
 
     if (role === 'confirm' && data) {
       // User selected/entered a name, now create the outfit with loader
+        // Add small delay to ensure modal is fully closed
+        setTimeout(() => {
       this.createOutfitWithName(data);
+        }, 200);
+      } else {
+        // Modal was cancelled, reset flag
+        this.isNamingModalOpen = false;
+      }
+    } catch (error) {
+      console.error('Error opening naming modal:', error);
+      this.isNamingModalOpen = false;
+      this.namingModal = undefined;
     }
   }
 

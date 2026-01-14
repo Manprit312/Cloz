@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, SimpleChanges, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   IonHeader,
@@ -12,6 +12,7 @@ import {
   IonList,
   IonThumbnail,
   ModalController,
+  IonSpinner,
 } from '@ionic/angular/standalone';
 
 export type GarmentCategory = 'upper-garments' | 'bottoms' | 'shoes' | 'accessories';
@@ -44,15 +45,34 @@ export interface GarmentItem {
     IonLabel,
     IonList,
     IonThumbnail,
+    IonSpinner,
   ],
 })
-export class GarmentSelectionModalComponent implements OnInit {
+export class GarmentSelectionModalComponent implements OnInit, OnChanges {
   @Input() category: GarmentCategory = 'upper-garments';
   @Input() garments: GarmentItem[] = [];
+  @Input() isLoading: boolean = false;
 
-  constructor(private modalController: ModalController) {}
+  constructor(
+    private modalController: ModalController,
+    public cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {}
+
+  ngOnChanges(changes: SimpleChanges) {
+    // Watch for changes to garments and isLoading inputs
+    if (changes['garments'] || changes['isLoading']) {
+      this.cdr.detectChanges();
+    }
+  }
+
+  // Public method to update garments and loading state
+  updateGarments(garments: GarmentItem[], isLoading: boolean = false): void {
+    this.garments = garments;
+    this.isLoading = isLoading;
+    this.cdr.detectChanges();
+  }
 
   cancel() {
     this.modalController.dismiss(null, 'cancel');
@@ -77,6 +97,16 @@ export class GarmentSelectionModalComponent implements OnInit {
       return garment.imageUrls[0];
     }
     return garment.imageUrl;
+  }
+
+  getLoadingText(): string {
+    const texts: Record<GarmentCategory, string> = {
+      'upper-garments': 'Loading upper garments...',
+      'bottoms': 'Loading bottoms...',
+      'shoes': 'Loading shoes...',
+      'accessories': 'Loading accessories...',
+    };
+    return texts[this.category] || 'Loading garments...';
   }
 }
 

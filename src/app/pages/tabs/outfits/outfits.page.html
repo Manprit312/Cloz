@@ -9,7 +9,7 @@
 
   <!-- Show loading state -->
   <div *ngIf="isLoading" class="column-stack-sm outfits-container pad-all-md">
-    <div *ngFor="let item of [1, 2]" class="outfit-card-skeleton">
+    <div *ngFor="let item of [1, 2, 3, 4, 5, 6]" class="outfit-card-skeleton">
       <div class="row-stack-none justify-between items-center outfit-card-header-skeleton">
         <app-skeleton-loader type="text" [width]="'60%'" [height]="'20px'" [borderRadius]="'4px'"></app-skeleton-loader>
         <app-skeleton-loader type="custom" [width]="'24px'" [height]="'24px'" [borderRadius]="'50%'"></app-skeleton-loader>
