@@ -96,6 +96,11 @@ ion-header {
   cursor: pointer;
   overflow: hidden;
   
+  // Remove dashed border when image is present
+  &:has(.garment-image) {
+    border: none;
+  }
+  
   .compression-overlay {
     position: absolute;
     top: 0;

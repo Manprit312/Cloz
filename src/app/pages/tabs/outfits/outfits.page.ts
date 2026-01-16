@@ -78,6 +78,17 @@ export class OutfitsPage implements OnInit {
   }
 
   getGarmentImage(item: any): string {
+    // Check for images array (new structure)
+    if (item.images && Array.isArray(item.images) && item.images.length > 0) {
+      // Sort images: primary first, then by displayOrder
+      const sortedImages = [...item.images].sort((a: any, b: any) => {
+        if (a.isPrimary && !b.isPrimary) return -1;
+        if (!a.isPrimary && b.isPrimary) return 1;
+        return (a.displayOrder || 0) - (b.displayOrder || 0);
+      });
+      return sortedImages[0].imageUrl || '';
+    }
+    // Fallback to imageUrl or imageUrls (legacy/computed)
     if (item.imageUrl) {
       return item.imageUrl;
     }

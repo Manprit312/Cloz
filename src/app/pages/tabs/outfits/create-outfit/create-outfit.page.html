@@ -158,10 +158,15 @@
         variant="primary"
         size="large"
         [fullWidth]="true"
-        [disabled]="!canCreateOutfit || isCreatingOutfit"
+        [disabled]="!canCreateOutfit || isCreatingOutfit || isLoadingOutfitNames"
         (click)="onCreateOutfit()"
       >
-        Create outfit
+        <span *ngIf="!isLoadingOutfitNames">Create outfit</span>
+        <span *ngIf="isLoadingOutfitNames" class="row-stack-sm items-center" style="display: flex; align-items: center; gap: 8px;">
+          
+          Generating Outfit Name...
+          <ion-spinner name="lines-small" size="small" ></ion-spinner>
+        </span>
       </app-button>
     </div>
 

@@ -91,7 +91,7 @@
                 class="garment-carousel"
                 (touchstart)="onTouchStart($event, item)"
                 (touchend)="onTouchEnd($event, item)"
-                (click)="$event.stopPropagation()"
+                (click)="onCarouselClick($event, item)"
               >
                 <img 
                   [src]="getCurrentImage(item)" 

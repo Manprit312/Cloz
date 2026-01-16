@@ -94,6 +94,11 @@ ion-header {
   // Utility classes used in HTML: column-stack-none items-center justify-center
   background-color: var(--ion-background-color);
   
+  // Remove dashed border when image is present
+  &:has(.garment-image) {
+    border: none;
+  }
+  
   .compression-overlay {
     position: absolute;
     top: 0;

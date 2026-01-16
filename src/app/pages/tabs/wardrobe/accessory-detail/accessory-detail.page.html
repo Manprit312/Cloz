@@ -40,7 +40,7 @@
         variant="primary"
         size="medium"
         [fullWidth]="false"
-        (click)="onAICleanup()"
+        (click)="onAICleanup(); $event.stopPropagation()"
         class="ai-cleanup-button"
       >
         <app-icon name="magic-wand" [size]="20" [color]="'var(--ion-color-primary-contrast)'" class="mr-sm"></app-icon>

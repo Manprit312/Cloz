@@ -48,6 +48,9 @@ export class AccessoryDetailPage implements OnInit, ViewWillEnter {
   private touchEndX = 0;
   private readonly SWIPE_THRESHOLD = 50; // Minimum distance for swipe
 
+  // Prevent multiple alerts from being created
+  private isAlertPresent = false;
+
   private wardrobeService = inject(WardrobeService);
 
   constructor(
@@ -70,33 +73,6 @@ export class AccessoryDetailPage implements OnInit, ViewWillEnter {
       console.log('Detail page - images array:', this.images);
       console.log('Detail page - hasMultipleImages:', this.hasMultipleImages);
       console.log('Detail page - images length:', this.images.length);
-      
-      // Check if we should show success message
-      // Only show if explicitly coming from AI cleanup with success flag
-      const fromAICleanup = state.fromAICleanup === true || sessionStorage.getItem('fromAICleanup') === 'true';
-      const showSuccessFromState = state.showSuccess === true;
-      const showSuccessFromStorage = sessionStorage.getItem('showImageUpdateSuccess') === 'true';
-      
-      // Only show banner if coming from AI cleanup AND success flag is set
-      if (fromAICleanup && (showSuccessFromState || showSuccessFromStorage)) {
-        console.log('Detail page - showing success banner');
-        this.showSuccessMessage = true;
-        // Clear sessionStorage flags
-        sessionStorage.removeItem('showImageUpdateSuccess');
-        sessionStorage.removeItem('fromAICleanup');
-        
-        // Scroll to top to ensure success banner is visible
-        setTimeout(() => {
-          const content = document.querySelector('ion-content');
-          if (content) {
-            content.scrollToTop(300);
-          }
-        }, 100);
-        // Hide message after 5 seconds with fade out
-        setTimeout(() => {
-          this.showSuccessMessage = false;
-        }, 5000);
-      }
     } else {
       // If no item data, go back
       this.location.back();
@@ -108,6 +84,35 @@ export class AccessoryDetailPage implements OnInit, ViewWillEnter {
    */
   ionViewWillEnter(): void {
     console.log('Accessory detail page - ionViewWillEnter called, item:', this.item);
+    
+    // Check if we should show success message BEFORE reloading
+    // Only show if explicitly coming from AI cleanup with success flag
+    const state = history.state;
+    const fromAICleanup = (state?.fromAICleanup === true) || (sessionStorage.getItem('fromAICleanup') === 'true');
+    const showSuccessFromState = state?.showSuccess === true;
+    const showSuccessFromStorage = sessionStorage.getItem('showImageUpdateSuccess') === 'true';
+    
+    // Only show banner if coming from AI cleanup AND success flag is set
+    if (fromAICleanup && (showSuccessFromState || showSuccessFromStorage)) {
+      console.log('Detail page - showing success banner');
+      this.showSuccessMessage = true;
+      // Clear sessionStorage flags
+      sessionStorage.removeItem('showImageUpdateSuccess');
+      sessionStorage.removeItem('fromAICleanup');
+      
+      // Scroll to top to ensure success banner is visible
+      setTimeout(() => {
+        const content = document.querySelector('ion-content');
+        if (content) {
+          content.scrollToTop(300);
+        }
+      }, 100);
+      // Hide message after 5 seconds with fade out
+      setTimeout(() => {
+        this.showSuccessMessage = false;
+        }, 5000);
+    }
+    
     // Reload item from API if we have an item ID
     // This ensures we have the latest data after updates
     if (this.item?.id) {
@@ -251,6 +256,22 @@ export class AccessoryDetailPage implements OnInit, ViewWillEnter {
   }
 
   async onAICleanup(): Promise<void> {
+    // Prevent multiple alerts from being created - set flag IMMEDIATELY and SYNCHRONOUSLY
+    if (this.isAlertPresent) {
+      return;
+    }
+    
+    // Set flag BEFORE any async operations to prevent race conditions
+    this.isAlertPresent = true;
+    
+    // Check for and dismiss any existing alerts first
+    const existingAlert = await this.alertController.getTop();
+    if (existingAlert) {
+      await existingAlert.dismiss();
+      // Wait longer for dismissal to complete
+      await new Promise(resolve => setTimeout(resolve, 300));
+    }
+    
     const alert = await this.alertController.create({
       header: 'Try AI cleanup?',
       message: 'This improves your photo; your original is always kept.',
@@ -260,19 +281,49 @@ export class AccessoryDetailPage implements OnInit, ViewWillEnter {
           text: 'Cancel',
           role: 'cancel',
           cssClass: 'alert-button-cancel',
+          // No handler needed - role: 'cancel' handles dismissal automatically
         },
         {
           text: 'Continue',
           cssClass: 'alert-button-confirm',
           handler: () => {
-            if (this.item) {
-              this.router.navigate(['/tabs/wardrobe/ai-cleanup'], {
-                state: { item: this.item },
-              });
-            }
+            // Return true to allow default dismissal
+            return true;
           },
         },
       ],
+    });
+
+    // Handle navigation after alert is fully dismissed
+    alert.onDidDismiss().then(async (data) => {
+      // Check if there are still any alerts present after dismissal
+      const stillPresent = await this.alertController.getTop();
+      if (stillPresent) {
+        // Force dismiss any remaining alerts
+        await stillPresent.dismiss();
+        // Wait longer for complete removal
+        await new Promise(resolve => setTimeout(resolve, 300));
+      }
+      
+      // Reset flag after a short delay to prevent race conditions
+      setTimeout(() => {
+        this.isAlertPresent = false;
+      }, 100);
+      
+      // Only navigate if Continue was clicked (not Cancel)
+      if (data.role !== 'cancel' && this.item) {
+        // Store item in local variable to avoid null check issues in nested callbacks
+        const item = this.item;
+        // Wait for multiple animation frames to ensure alert dismissal animation fully completes
+        // Ionic alerts are global overlays that need time to animate out
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            this.router.navigate(['/tabs/wardrobe/ai-cleanup'], {
+              state: { item: item },
+            });
+          });
+        });
+      }
     });
 
     await alert.present();

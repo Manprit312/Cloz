@@ -80,7 +80,10 @@ export class UpperGarmentsPage implements OnInit {
   // Track touch start positions for swipe gestures
   private touchStartX = 0;
   private touchEndX = 0;
+  private touchStartTime = 0;
+  private touchEndTime = 0;
   private readonly SWIPE_THRESHOLD = 50;
+  private readonly CLICK_MAX_TIME = 300; // Max time for a click (ms)
   
   items: UpperGarmentItem[] = [];
   isLoading = false;
@@ -201,6 +204,21 @@ export class UpperGarmentsPage implements OnInit {
     });
   }
 
+  onCarouselClick(event: Event, item: UpperGarmentItem): void {
+    // Only navigate if it's a click (not a swipe)
+    // Check if this was a swipe by looking at touch distance and duration
+    const touchDistance = Math.abs(this.touchStartX - this.touchEndX);
+    const touchDuration = this.touchEndTime - this.touchStartTime;
+    const wasSwipe = touchDistance > this.SWIPE_THRESHOLD && touchDuration < this.CLICK_MAX_TIME;
+    
+    if (!wasSwipe) {
+      // Prevent event from bubbling to parent (which would cause double navigation)
+      event.stopPropagation();
+      this.onItemClick(item);
+    }
+    // If it was a swipe, do nothing (swipe already handled in onTouchEnd)
+  }
+
   selectSubtype(subtype: string): void {
     this.selectedSubtype = subtype;
   }
@@ -229,10 +247,12 @@ export class UpperGarmentsPage implements OnInit {
 
   onTouchStart(event: TouchEvent, item: UpperGarmentItem): void {
     this.touchStartX = event.changedTouches[0].screenX;
+    this.touchStartTime = Date.now();
   }
 
   onTouchEnd(event: TouchEvent, item: UpperGarmentItem): void {
     this.touchEndX = event.changedTouches[0].screenX;
+    this.touchEndTime = Date.now();
     this.handleSwipe(item);
   }
 

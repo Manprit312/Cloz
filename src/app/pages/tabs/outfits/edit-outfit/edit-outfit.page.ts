@@ -157,10 +157,30 @@ export class EditOutfitPage implements OnInit {
         ? item.climateFit.split(',').map(c => c.trim())
         : [];
 
+    // Extract imageUrl and imageUrls from images array if available
+    let imageUrl = item.imageUrl || '';
+    let imageUrls: string[] = [];
+    
+    if (item.images && Array.isArray(item.images) && item.images.length > 0) {
+      // Sort images: primary first, then by displayOrder
+      const sortedImages = [...item.images].sort((a: any, b: any) => {
+        if (a.isPrimary && !b.isPrimary) return -1;
+        if (!a.isPrimary && b.isPrimary) return 1;
+        return (a.displayOrder || 0) - (b.displayOrder || 0);
+      });
+      imageUrls = sortedImages.map((img: any) => img.imageUrl).filter(Boolean);
+      imageUrl = imageUrls[0] || imageUrl;
+    } else if (item.imageUrls && Array.isArray(item.imageUrls)) {
+      imageUrls = item.imageUrls;
+      imageUrl = imageUrls[0] || imageUrl;
+    } else if (imageUrl) {
+      imageUrls = [imageUrl];
+    }
+
     return {
       id: item.id,
-      imageUrl: item.imageUrl || '',
-      imageUrls: item['imageUrls'] || (item.imageUrl ? [item.imageUrl] : undefined),
+      imageUrl: imageUrl,
+      imageUrls: imageUrls.length > 0 ? imageUrls : (imageUrl ? [imageUrl] : undefined),
       subtype: item.subtype,
       color: item.color,
       climateFit: climateFit,

@@ -201,7 +201,18 @@ export class OutfitDetailPage implements OnInit, ViewWillEnter {
   }
 
   getGarmentImage(item: OutfitWardrobeItem): string {
-    return item.imageUrl || '';
+    // Check for images array (new structure)
+    if (item.images && Array.isArray(item.images) && item.images.length > 0) {
+      // Sort images: primary first, then by displayOrder
+      const sortedImages = [...item.images].sort((a: any, b: any) => {
+        if (a.isPrimary && !b.isPrimary) return -1;
+        if (!a.isPrimary && b.isPrimary) return 1;
+        return (a.displayOrder || 0) - (b.displayOrder || 0);
+      });
+      return sortedImages[0].imageUrl || '';
+    }
+    // Fallback to imageUrl or imageUrls (legacy/computed)
+    return item.imageUrl || (item.imageUrls && item.imageUrls.length > 0 ? item.imageUrls[0] : '');
   }
 
   onGarmentClick(garment: OutfitWardrobeItem): void {
@@ -227,9 +238,30 @@ export class OutfitDetailPage implements OnInit, ViewWillEnter {
     }
 
     // Transform OutfitWardrobeItem to the format expected by detail pages
+    // Extract imageUrl from images array if available
+    let imageUrl = garment.imageUrl || '';
+    let imageUrls: string[] = [];
+    
+    if (garment.images && Array.isArray(garment.images) && garment.images.length > 0) {
+      // Sort images: primary first, then by displayOrder
+      const sortedImages = [...garment.images].sort((a: any, b: any) => {
+        if (a.isPrimary && !b.isPrimary) return -1;
+        if (!a.isPrimary && b.isPrimary) return 1;
+        return (a.displayOrder || 0) - (b.displayOrder || 0);
+      });
+      imageUrls = sortedImages.map((img: any) => img.imageUrl).filter(Boolean);
+      imageUrl = imageUrls[0] || imageUrl;
+    } else if (garment.imageUrls && Array.isArray(garment.imageUrls)) {
+      imageUrls = garment.imageUrls;
+      imageUrl = imageUrls[0] || imageUrl;
+    } else if (imageUrl) {
+      imageUrls = [imageUrl];
+    }
+    
     const garmentItem = {
       id: garment.id,
-      imageUrl: garment.imageUrl,
+      imageUrl: imageUrl,
+      imageUrls: imageUrls,
       subtype: garment.subtype,
       color: garment.color,
       climateFit: Array.isArray(garment.climateFit) 

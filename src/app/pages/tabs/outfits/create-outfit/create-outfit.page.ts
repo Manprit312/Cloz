@@ -9,6 +9,7 @@ import {
   IonToolbar,
   IonButtons,
   IonButton,
+  IonSpinner,
   ModalController,
   ToastController,
 } from '@ionic/angular/standalone';
@@ -43,9 +44,7 @@ import { OutfitsService } from '../../../../core/services/outfits.service';
     IonToolbar,
     IonButtons,
     IonButton,
- 
-    
-
+    IonSpinner,
     IconComponent,
     ButtonComponent,
   ],
@@ -74,6 +73,7 @@ export class CreateOutfitPage implements OnInit, OnDestroy {
   isLoading = false;
   isCreatingOutfit = false; // Track if outfit creation is in progress
   isLoadingGarments = false; // Track if garments are being loaded
+  isLoadingOutfitNames = false; // Track if outfit names are being fetched
   private namingModal?: any; // Track naming modal instance
   private isNamingModalOpen = false; // Track if naming modal is currently open
 
@@ -217,14 +217,28 @@ export class CreateOutfitPage implements OnInit, OnDestroy {
           break;
       }
 
+      this.isLoadingGarments = false;
+
+      // If user doesn't have any garments in this category, show empty state message
+      if (allGarments.length === 0) {
+        const categoryName = this.getCategoryDisplayName(category);
+        const toast = await this.toastController.create({
+          message: `You don't have any ${categoryName} yet.\nAdd ${categoryName} to your wardrobe to use them in outfits`,
+          duration: 3000,
+          position: 'bottom',
+          color: 'medium',
+          cssClass: 'empty-state-toast',
+        });
+        await toast.present();
+        return;
+      }
+
       // Filter out already selected garments
       const selectedGarments = this.getSelectedGarments(category);
       const selectedIds = new Set(selectedGarments.map(g => g.id));
       const garments = allGarments.filter(g => !selectedIds.has(g.id));
 
-      this.isLoadingGarments = false;
-
-      // If no garments available, show message and return
+      // If all garments are already selected, show message and return
       if (garments.length === 0) {
         const categoryName = this.getCategoryDisplayName(category);
         const toast = await this.toastController.create({
@@ -437,39 +451,90 @@ export class CreateOutfitPage implements OnInit, OnDestroy {
 
   async onCreateOutfit(): Promise<void> {
     // Prevent double submission or reopening modal
-    if (!this.canCreateOutfit || this.isCreatingOutfit || this.isNamingModalOpen) {
+    if (!this.canCreateOutfit || this.isCreatingOutfit || this.isNamingModalOpen || this.isLoadingOutfitNames) {
       return;
     }
 
-    // Set flag to prevent reopening
+    // Set flags to prevent multiple clicks and show loading state
     this.isNamingModalOpen = true;
+    this.isLoadingOutfitNames = true;
 
-    // TODO: Fetch suggested names from API if available
-    // For now, use default suggested names
-    // When fetching from API, show loader here: this.isLoading = true;
-    const suggestedNames = [
+    // Collect all image URLs from selected garments
+    const imageUrls: string[] = [];
+    
+    // Get image URLs from all selected garments
+    [...this.selectedUpperGarments, ...this.selectedBottoms, ...this.selectedShoes, ...this.selectedAccessories].forEach(garment => {
+      if (garment.imageUrls && Array.isArray(garment.imageUrls) && garment.imageUrls.length > 0) {
+        // Use the first image URL from the array
+        imageUrls.push(garment.imageUrls[0]);
+      } else if (garment.imageUrl) {
+        imageUrls.push(garment.imageUrl);
+      }
+    });
+
+    // Fetch suggested names from API
+    let suggestedNames: string[] = [];
+    
+    try {
+      if (imageUrls.length > 0) {
+        // Call API to get suggested names
+        this.outfitsService.generateOutfitNames(imageUrls).subscribe({
+          next: (names) => {
+            suggestedNames = names && names.length > 0 ? names : this.getDefaultSuggestedNames();
+            this.isLoadingOutfitNames = false;
+            this.openNamingModalWithNames(suggestedNames);
+          },
+          error: (error) => {
+            console.error('Error fetching outfit name suggestions:', error);
+            // Fallback to default names if API fails
+            suggestedNames = this.getDefaultSuggestedNames();
+            this.isLoadingOutfitNames = false;
+            this.openNamingModalWithNames(suggestedNames);
+          }
+        });
+      } else {
+        // No images available, use default names
+        suggestedNames = this.getDefaultSuggestedNames();
+        this.isLoadingOutfitNames = false;
+        this.openNamingModalWithNames(suggestedNames);
+      }
+    } catch (error) {
+      console.error('Error preparing outfit name suggestions:', error);
+      suggestedNames = this.getDefaultSuggestedNames();
+      this.isLoadingOutfitNames = false;
+      this.openNamingModalWithNames(suggestedNames);
+    }
+  }
+
+  private getDefaultSuggestedNames(): string[] {
+    return [
       'The Sand & Sky Commuter',
       'Weekend Tailored',
       'The Friday Shift',
     ];
+  }
 
+  private async openNamingModalWithNames(suggestedNames: string[]): Promise<void> {
     try {
-    // Open naming modal
-    const modal = await this.modalController.create({
-      component: OutfitNamingModalComponent,
-      componentProps: {
-        suggestedNames: suggestedNames,
-      },
+      // Open naming modal
+      const modal = await this.modalController.create({
+        component: OutfitNamingModalComponent,
+        componentProps: {
+          suggestedNames: suggestedNames,
+        },
         breakpoints: [0, 0.5, 0.9],
-      initialBreakpoint: 0.5,
+        initialBreakpoint: 0.5,
         backdropDismiss: false, // Prevent backdrop dismissal
         keyboardClose: false, // Keep modal open when keyboard appears
-    });
+      });
 
       // Track modal instance
       this.namingModal = modal;
 
-    await modal.present();
+      await modal.present();
+      
+      // Clear loading flag once modal is presented
+      this.isLoadingOutfitNames = false;
 
       // Wait for modal to fully dismiss before proceeding
       const { data, role } = await modal.onDidDismiss();
@@ -478,11 +543,11 @@ export class CreateOutfitPage implements OnInit, OnDestroy {
       this.isNamingModalOpen = false;
       this.namingModal = undefined;
 
-    if (role === 'confirm' && data) {
-      // User selected/entered a name, now create the outfit with loader
+      if (role === 'confirm' && data) {
+        // User selected/entered a name, now create the outfit with loader
         // Add small delay to ensure modal is fully closed
         setTimeout(() => {
-      this.createOutfitWithName(data);
+          this.createOutfitWithName(data);
         }, 200);
       } else {
         // Modal was cancelled, reset flag
@@ -491,6 +556,7 @@ export class CreateOutfitPage implements OnInit, OnDestroy {
     } catch (error) {
       console.error('Error opening naming modal:', error);
       this.isNamingModalOpen = false;
+      this.isLoadingOutfitNames = false;
       this.namingModal = undefined;
     }
   }
