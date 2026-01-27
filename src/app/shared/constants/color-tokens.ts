@@ -482,6 +482,26 @@ export const COLOR_FAMILIES: ColorFamily[] = [
   }
 ];
 
+/**
+ * Resolve a color string (e.g. "Extra Dark Blue Vivid") to its family and level.
+ * Returns null if the color is empty or not found as a variation in COLOR_FAMILIES.
+ * Used to open the color selection modal at the saturation step when editing in garment details.
+ */
+export function getColorFamilyAndLevel(color: string): { family: string; level: string } | null {
+  if (!color || !String(color).trim()) return null;
+  const n = (s: string) => String(s).trim().toLowerCase();
+  const needle = n(color);
+  for (const family of COLOR_FAMILIES) {
+    for (const level of family.levels) {
+      const found = level.variations.some(
+        (v) => n(v.value) === needle || n(v.label) === needle
+      );
+      if (found) return { family: family.name, level: level.name };
+    }
+  }
+  return null;
+}
+
 // Helper function to get color variations by family and level
 export function getColorVariations(family: string, level: string): ColorToken[] {
   const colorFamily = COLOR_FAMILIES.find(f => f.name === family);

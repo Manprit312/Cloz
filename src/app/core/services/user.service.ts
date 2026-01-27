@@ -52,6 +52,18 @@ export interface LogoutResponse {
   [key: string]: any;
 }
 
+/** Body for PATCH /user/profile - send only fields being updated */
+export interface UpdateProfileRequest {
+  name?: string;
+  gender?: string;
+  password?: string;
+}
+
+export interface UpdateProfileResponse {
+  message?: string;
+  [key: string]: any;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -152,6 +164,20 @@ export class UserService {
         headers: {
           'X-Session-Id': sessionId,
         }
+      }
+    );
+  }
+
+  /**
+   * Update user profile (name, gender, password). Uses PATCH {{baseurl}}/user/profile.
+   * Auth interceptor adds Bearer token.
+   */
+  updateProfile(body: UpdateProfileRequest): Observable<UpdateProfileResponse> {
+    return this.http.patch<UpdateProfileResponse>(
+      `${environment.backendBaseUrl}/user/profile`,
+      body,
+      {
+        headers: { 'Content-Type': 'application/json' },
       }
     );
   }

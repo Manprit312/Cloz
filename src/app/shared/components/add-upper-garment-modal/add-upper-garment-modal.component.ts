@@ -20,7 +20,6 @@ import { IconComponent } from '../icon/icon.component';
 import { SkeletonLoaderComponent } from '../skeleton-loader/skeleton-loader.component';
 import { SubtypeSelectionModalComponent } from '../subtype-selection-modal/subtype-selection-modal.component';
 import { ColorSelectionModalComponent } from '../color-selection-modal/color-selection-modal.component';
-import { ClimateFitSelectionModalComponent } from '../climate-fit-selection-modal/climate-fit-selection-modal.component';
 import { ProfileService } from '../../../core/services/profile.service';
 import { ImageCompressionService } from '../../../core/services/image-compression.service';
 
@@ -28,7 +27,6 @@ export interface UpperGarmentData {
   imageUrl?: string;
   subtype?: string;
   color?: string;
-  climateFit?: string[];
   brand?: string;
 }
 
@@ -61,7 +59,6 @@ export class AddUpperGarmentModalComponent implements OnInit {
   imageUrl: string = '';
   subtype: string = '';
   color: string = '';
-  climateFit: string[] = [];
   brand: string = '';
   showErrorMessage = false;
   errorMessageText = '';
@@ -79,7 +76,6 @@ export class AddUpperGarmentModalComponent implements OnInit {
       this.imageUrl = this.garmentData.imageUrl || '';
       this.subtype = this.garmentData.subtype || '';
       this.color = this.garmentData.color || '';
-      this.climateFit = this.garmentData.climateFit || [];
       this.brand = this.garmentData.brand || '';
     }
   }
@@ -96,6 +92,7 @@ export class AddUpperGarmentModalComponent implements OnInit {
         category: 'upper-garments',
         gender: this.profileService.profile().gender,
       },
+      showBackdrop: true,
       breakpoints: [0, 0.8, 1],
       initialBreakpoint: 0.8,
       backdropBreakpoint: 0.8,
@@ -117,9 +114,10 @@ export class AddUpperGarmentModalComponent implements OnInit {
       componentProps: {
         currentColor: this.color,
       },
-      breakpoints: [0, 0.8, 1],
+      showBackdrop: true,
+      breakpoints: [0.27, 0.4, 0.8],
       initialBreakpoint: 0.8,
-      backdropBreakpoint: 0.8,
+      backdropBreakpoint: 0.27,
       handle: true,
       handleBehavior: 'cycle',
     });
@@ -132,33 +130,8 @@ export class AddUpperGarmentModalComponent implements OnInit {
     }
   }
 
-  async openClimateFitSelection() {
-    const modal = await this.modalController.create({
-      component: ClimateFitSelectionModalComponent,
-      componentProps: {
-        currentSelection: [...this.climateFit],
-      },
-      breakpoints: [0, 0.8, 1],
-      initialBreakpoint: 0.8,
-      backdropBreakpoint: 0.8,
-      handle: true,
-      handleBehavior: 'cycle',
-    });
-
-    await modal.present();
-    const { data } = await modal.onWillDismiss();
-
-    if (data && Array.isArray(data)) {
-      this.climateFit = data;
-    }
-  }
-
-  get climateFitDisplay(): string {
-    return this.climateFit.length > 0 ? this.climateFit.join(', ') : '';
-  }
-
   get isFormValid(): boolean {
-    return !!(this.imageUrl && this.subtype && this.color && this.climateFit.length > 0);
+    return !!(this.imageUrl && this.subtype && this.color);
   }
 
   dismissKeyboard() {
@@ -196,20 +169,10 @@ export class AddUpperGarmentModalComponent implements OnInit {
       return;
     }
 
-    if (this.climateFit.length === 0) {
-      this.showErrorMessage = true;
-      this.errorMessageText = 'Please select a climate fit';
-      setTimeout(() => {
-        this.showErrorMessage = false;
-      }, 5000);
-      return;
-    }
-
       const data: UpperGarmentData = {
         imageUrl: this.imageUrl,
         subtype: this.subtype,
         color: this.color,
-        climateFit: this.climateFit,
         brand: this.brand.trim() || undefined,
       };
       this.modalController.dismiss(data, 'confirm');

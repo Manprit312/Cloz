@@ -103,7 +103,7 @@ export class OutfitDetailPage implements OnInit, ViewWillEnter {
   }
 
   goBack(): void {
-    this.location.back();
+    this.router.navigate(['/tabs/outfits']);
   }
 
   onEdit(): void {

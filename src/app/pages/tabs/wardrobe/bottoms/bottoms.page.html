@@ -2,11 +2,16 @@
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-button (click)="goBack()" >
-        <app-icon name="arrow-left" [size]="24" [color]="'#1860FA'"></app-icon>
+        <app-icon name="arrow-left" [size]="24" [color]="'var(--ion-color-primary)'"></app-icon>
       </ion-button>
     </ion-buttons>
     <ion-title class="ion-text-center">Bottoms</ion-title>
-</ion-toolbar>
+    <ion-buttons slot="end">
+      <ion-button (click)="openSortMenu()">
+        <app-icon name="sort" [size]="22" [color]="'var(--ion-color-primary)'"></app-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
 
 </ion-header>
 

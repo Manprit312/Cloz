@@ -82,14 +82,15 @@
           <span class="garment-description body1-regular">{{ getGarmentDescription(garment) }}</span>
         </ion-label>
       </ion-item>
+      <div class="row-stack-none items-center justify-center delete-container">
+        <button class="delete-link body1-regular" (click)="onDelete()">
+         Delete garment from wardrobe
+        </button>
+      </div>
     </ion-list>
 
     <!-- Delete Button -->
-    <div class="row-stack-none items-center justify-center delete-container">
-      <button class="delete-link body1-regular" (click)="onDelete()">
-        Delete from wardrobe
-      </button>
-    </div>
+    
   </div>
 </ion-content>
 

@@ -13,9 +13,10 @@ import {
   IonList,
   ModalController,
   AlertController,
+  ToastController,
 } from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
-import { ProfileService, AuthService } from '@app-core';
+import { ProfileService, AuthService, UserService } from '@app-core';
 import { Gender } from '@models/user.model';
 import { IconComponent } from '../../../shared/components/icon/icon.component';
 import { NameEditModalComponent } from '../../../shared/components/name-edit-modal/name-edit-modal.component';
@@ -53,14 +54,27 @@ export class ProfilePage implements OnInit {
   constructor(
     private profileService: ProfileService,
     private authService: AuthService,
+    private userService: UserService,
     private modalController: ModalController,
     private alertController: AlertController,
+    private toastController: ToastController,
     private router: Router
   ) {}
 
   ngOnInit() {
     // Sync profile from currentUser in localStorage on page load
     this.profileService.syncFromAuthService();
+  }
+
+  private async showSuccessToast(message: string): Promise<void> {
+    const toast = await this.toastController.create({
+      message,
+      color: 'success',
+      duration: 3000,
+      position: 'top',
+      icon: 'checkmark-outline',
+    });
+    await toast.present();
   }
 
   async editName(): Promise<void> {
@@ -70,6 +84,7 @@ export class ProfilePage implements OnInit {
       componentProps: {
         currentName: this.profile().name,
       },
+      showBackdrop: true,
       breakpoints: [0, 0.33],
       initialBreakpoint: 0.33,
       backdropBreakpoint: 0.33,
@@ -81,7 +96,19 @@ export class ProfilePage implements OnInit {
     this.isModalOpen = false;
 
     if (role === 'confirm' && data) {
-      this.profileService.updateName(data);
+      this.userService.updateProfile({ name: data }).subscribe({
+        next: () => {
+          this.profileService.updateName(data);
+          const u = this.authService.user();
+          if (u) this.authService.setUser({ ...u, name: data });
+          this.showSuccessToast('Name updated');
+        },
+        error: (err) => {
+          this.showErrorMessage = true;
+          this.errorMessageText = err?.error?.message || 'Failed to update name. Please try again.';
+          setTimeout(() => { this.showErrorMessage = false; }, 5000);
+        },
+      });
     }
   }
 
@@ -94,32 +121,31 @@ export class ProfilePage implements OnInit {
     const alert = await this.alertController.create({
       header: 'Select gender',
       buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel',
-        },
+        { text: 'Cancel', role: 'cancel' },
         {
           text: 'Confirm',
           handler: (selectedGender: string) => {
             if (selectedGender) {
-              this.profileService.updateGender(selectedGender as Gender);
+              this.userService.updateProfile({ gender: selectedGender }).subscribe({
+                next: () => {
+                  this.profileService.updateGender(selectedGender as Gender);
+                  const u = this.authService.user();
+                  if (u) this.authService.setUser({ ...u, gender: selectedGender as Gender });
+                  this.showSuccessToast('Gender updated');
+                },
+                error: (err) => {
+                  this.showErrorMessage = true;
+                  this.errorMessageText = err?.error?.message || 'Failed to update gender. Please try again.';
+                  setTimeout(() => { this.showErrorMessage = false; }, 5000);
+                },
+              });
             }
           },
         },
       ],
       inputs: [
-        {
-          type: 'radio',
-          label: 'Male',
-          value: 'Male',
-          checked: this.profile().gender === 'Male',
-        },
-        {
-          type: 'radio',
-          label: 'Female',
-          value: 'Female',
-          checked: this.profile().gender === 'Female',
-        },
+        { type: 'radio', label: 'Male', value: 'Male', checked: this.profile().gender === 'Male' },
+        { type: 'radio', label: 'Female', value: 'Female', checked: this.profile().gender === 'Female' },
       ],
     });
 
@@ -142,6 +168,7 @@ export class ProfilePage implements OnInit {
           }, 5000);
         }
       },
+      showBackdrop: true,
       breakpoints: [0.4, 0.46, 0.8, 1],
       initialBreakpoint: 0.52,
       backdropDismiss: true,
@@ -153,9 +180,19 @@ export class ProfilePage implements OnInit {
     const { data, role } = await modal.onWillDismiss();
     this.isModalOpen = false;
 
-    if (role === 'confirm' && data) {
-      // Password update would be handled here in a real app
-      console.log('Password updated');
+    if (role === 'confirm' && data?.newPassword) {
+      this.userService.updateProfile({ password: data.newPassword }).subscribe({
+        next: () => {
+          this.showErrorMessage = false;
+          this.errorMessageText = '';
+          this.showSuccessToast('Password updated');
+        },
+        error: (err) => {
+          this.showErrorMessage = true;
+          this.errorMessageText = err?.error?.message || 'Failed to update password. Please try again.';
+          setTimeout(() => { this.showErrorMessage = false; }, 5000);
+        },
+      });
     }
   }
 

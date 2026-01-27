@@ -20,7 +20,8 @@ ion-header {
   // Utility classes used in HTML: column-stack-md
   background-color: var(--ion-background-color); // Light grey background as shown in design
   min-height: 100%;
-  
+  padding-left: var(--padding-md);
+  padding-right: 0;
 }
 
 // Outfit card skeleton
@@ -45,19 +46,18 @@ ion-header {
   flex-shrink: 0;
 }
 
+
+
 // Outfit card
 .outfit-card {
-  background-color: var(--ion-background-color); // White cards
-  border-radius: var(--radius-md, 8px);
-  padding: var(--padding-md, var(--x4, 16px));
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-  transition: all 0.2s ease;
+  position: relative;
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: var(--gap-sm) var(--padding-md) var(--gap-sm) 0;
+  border-bottom: 1px solid var(--grey-extra-light);
 
-  &:active {
-    opacity: 0.8;
-    transform: scale(0.98);
-  }
+
 }
 
 // Outfit card header
@@ -87,9 +87,13 @@ ion-header {
 
 .outfit-garments-container {
   display: flex;
-  gap: var(--gap-sm);
+  gap: var(--gap-xs);
   flex-wrap: wrap;
   padding-bottom: var(--x1); // Space for scroll
+}
+
+.outfit-garments-container app-count-badge {
+  flex-shrink: 0;
 }
 
 .outfit-garment-item {
@@ -97,6 +101,7 @@ ion-header {
   width: 60px;
   height: 60px;
   border-radius: var(--radius-sm, 4px);
+  border: 1px solid var( --grey-extra-light);
   overflow: hidden;
   background-color: var(--ion-color-light);
 }

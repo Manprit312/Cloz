@@ -9,7 +9,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" class="create-outfit-content">
   <div class="create-outfit-container column-stack-lg pad-all-md">
     
     <!-- Upper Garments Section -->
@@ -161,15 +161,26 @@
         [disabled]="!canCreateOutfit || isCreatingOutfit || isLoadingOutfitNames"
         (click)="onCreateOutfit()"
       >
-        <span *ngIf="!isLoadingOutfitNames">Create outfit</span>
-        <span *ngIf="isLoadingOutfitNames" class="row-stack-sm items-center" style="display: flex; align-items: center; gap: 8px;">
-          
-          Generating Outfit Name...
-          <ion-spinner name="lines-small" size="small" ></ion-spinner>
-        </span>
+        Create outfit
       </app-button>
     </div>
 
   </div>
+
 </ion-content>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay column-stack-none items-center justify-center" *ngIf="isLoadingOutfitNames">
+  <ion-spinner name="lines-sharp" size="medium" color="light"></ion-spinner>
+  <p class="loading-text body1-medium">Curating editorial names...</p>
+</div>
+
+<ion-toast
+  [isOpen]="isToastOpen"
+  [message]="toastMessage"
+  [duration]="toastDuration"
+  [color]="toastColor"
+  position="bottom"
+  (didDismiss)="onToastDidDismiss()"
+></ion-toast>
 

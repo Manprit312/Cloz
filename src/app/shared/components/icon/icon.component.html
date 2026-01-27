@@ -1,7 +1,25 @@
-<span
-  [class]="iconClass()"
-  [style]="iconStyle()"
-  [attr.aria-hidden]="true"
->
-  {{ iconName() }}
-</span>
+<ng-container *ngIf="isSparkIcon(); else materialIcon">
+  <svg
+    [attr.width]="size()"
+    [attr.height]="size()"
+    [style]="iconStyle()"
+    [attr.aria-hidden]="true"
+    class="spark-icon"
+  >
+    <!-- Use same-document #id so icons work in simulator (external SVG use fails in WebView) -->
+    <use
+      [attr.href]="'#' + sparkIconHref()"
+      [attr.xlink:href]="'#' + sparkIconHref()"
+    ></use>
+  </svg>
+</ng-container>
+
+<ng-template #materialIcon>
+  <span
+    [class]="iconClass()"
+    [style]="iconStyle()"
+    [attr.aria-hidden]="true"
+  >
+    {{ iconName() }}
+  </span>
+</ng-template>

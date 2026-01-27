@@ -11,19 +11,61 @@
 
 <ion-content [fullscreen]="true" *ngIf="item">
   <div class="detail-container column-stack-md pad-all-md">
-    <!-- Success Banner -->
-    <div class="success-banner pad-all-md row-stack-sm items-center" *ngIf="showSuccessMessage">
-      <app-icon name="checkmark-circle" [size]="24" [color]="'var(--text-primary)'"></app-icon>
-      <span class="body1-medium">Garment image updated</span>
-    </div>
+    <ion-toast
+      [isOpen]="showSuccessMessage"
+      message="Garment image updated"
+      [duration]="5000"
+      color="success"
+      icon="checkmark-outline"
+      position="top"
+      cssClass="success-toast"
+      (didDismiss)="onSuccessToastDismiss()"
+    ></ion-toast>
 
     <!-- Garment Image -->
     <div class="image-container" 
          (touchstart)="onTouchStart($event)" 
          (touchend)="onTouchEnd($event)">
       <img [src]="currentImage" [alt]="item.subtype" class="garment-image" />
+
+      <!-- Upload overlay when replacing image via autorenew -->
+      <div *ngIf="isReplacingImage" class="replace-image-overlay">
+        <ion-spinner name="crescent" color="primary"></ion-spinner>
+        <p class="replace-image-text body1-medium">Uploading image...</p>
+      </div>
+
+      <!-- Image actions: autorenew = replace image, delete = remove AI-enhanced image. Always visible when image is shown. -->
+      <div class="image-actions" *ngIf="currentImage">
+        <button
+          type="button"
+          class="image-action-button"
+          *ngIf="showAutorenewIcon"
+          (click)="onReplaceImage()"
+        >
+          <app-icon
+            name="autorenew"
+            [size]="24"
+            [color]="'var(--ion-color-primary)'"
+          ></app-icon>
+        </button>
+        <button
+          type="button"
+          class="image-action-button"
+          *ngIf="showDeleteAiIcon"
+          (click)="onDeleteAiImage()"
+        >
+          <app-icon
+            name="delete-image"
+            [size]="24"
+            [color]="'var(--ion-color-primary)'"
+          ></app-icon>
+        </button>
+      </div>
       
-      <!-- Pagination Dots - Overlay on bottom of image -->
+      <!-- Badge: "AI enhanced" (blue) for non-last slides, "Original" (dark) for last slide -->
+      <div class="ai-enhanced-badge-wrapper" *ngIf="hasMultipleImages" [class.badge-original]="currentImageIndex === images.length - 1">
+        <span class="carousel-badge body1-bold">{{ currentImageIndex === images.length - 1 ? 'Original' : 'AI enhanced' }}</span>
+      </div>
       <div class="pagination-dots row-stack-xs items-center justify-center" *ngIf="hasMultipleImages">
         <span
           *ngFor="let image of images; let i = index"
@@ -34,48 +76,138 @@
       </div>
     </div>
 
-    <!-- Actions -->
-    <div class="actions-container row-stack-md">
+    <!-- AI Photo Upgrade Card -->
+    <app-photo-upgrade-card (upgrade)="onAICleanup()"></app-photo-upgrade-card>
+
+    <div class="use-outfit-button" *ngIf="linkedOutfits.length > 0">
       <app-button
         variant="primary"
         size="medium"
         [fullWidth]="false"
-        (click)="onAICleanup()"
-        class="ai-cleanup-button"
+        (click)="onUseInOutfit()"
       >
-        <app-icon name="magic-wand" [size]="20" [color]="'var(--ion-color-primary-contrast)'" class="mr-sm"></app-icon>
-        AI cleanup
-      </app-button>
-      <app-button
-        variant="tertiary"
-        size="medium"
-        [fullWidth]="false"
-        (click)="onEdit()"
-        class="edit-button"
-      >
-        <app-icon name="edit" [size]="20" [color]="'var(--ion-color-primary)'" class="mr-sm"></app-icon>
-        Edit
+        Use in outfit
+        <app-icon name="add" [size]="20" [color]="'var(--ion-color-primary-contrast)'" class="mr-sm"></app-icon>
+
       </app-button>
     </div>
 
-    <!-- Details -->
-    <div class="details-container">
-      <div class="details-column column-stack-md">
-        <app-detail-item label="Color(s)" [value]="item.color"></app-detail-item>
-        <app-detail-item label="Climate fit" [value]="item.climateFit.join(', ')"></app-detail-item>
+    <!-- Tabs -->
+    <app-detail-tabs
+      [tabs]="detailTabs"
+      [activeTab]="activeTab"
+      (tabChange)="setActiveTab($event)"
+    ></app-detail-tabs>
+
+    <!-- Outfits Tab -->
+    <div *ngIf="activeTab === 'outfits'">
+      <div *ngIf="isLoadingOutfits" class="loading-container">
+        <ion-spinner name="crescent" color="primary"></ion-spinner>
       </div>
-      <div class="details-column column-stack-md">
-        <app-detail-item label="Brand" [value]="item.brand || 'N/A'"></app-detail-item>
-        <app-detail-item label="Added on" [value]="formattedDate"></app-detail-item>
+
+      <app-empty-state
+        *ngIf="!isLoadingOutfits && linkedOutfits.length === 0"
+        [compact]="true"
+        [disableColumnStackNone]="true"
+        icon="accessibility"
+        [iconSize]="72"
+        iconColor="var(--red-extra-light-muted)"
+        title="Not used in any outfits yet."
+        description=""
+        buttonText="Use garment in outfit"
+        [showButton]="true"
+        (onButtonClick)="onUseInOutfit()"
+      ></app-empty-state>
+
+      <div *ngIf="!isLoadingOutfits && linkedOutfits.length > 0" class="column-stack-md">
+        <div class="row-stack-none items-center justify-between">
+          <span class="body1-bold">Featured in {{ linkedOutfits.length }} outfits</span>
+        </div>
+        <div
+          *ngFor="let outfit of linkedOutfits"
+          class="outfit-item row-stack-none items-center justify-between"
+          (click)="onOutfitClick(outfit)"
+        >
+          <div class="column-stack-xs">
+            <span class="body1-medium">{{ outfit.name || 'Untitled Outfit' }}</span>
+            <div class="row-stack-xs outfit-garments">
+              <img
+                *ngFor="let garment of getOutfitGarments(outfit) | slice:0:5"
+                [src]="getGarmentImage(garment)"
+                [alt]="garment.subtype || 'Garment'"
+                class="outfit-garment-thumb"
+              />
+              <app-count-badge
+                *ngIf="getOutfitGarments(outfit).length > 5"
+                [count]="getOutfitGarments(outfit).length - 5"
+                [size]="40"
+              ></app-count-badge>
+            </div>
+          </div>
+          <app-icon name="chevron-forward" [size]="20" [color]="'var(--ion-color-primary)'"></app-icon>
+        </div>
+      </div>
+    </div>
+
+    <!-- Details Tab -->
+    <div *ngIf="activeTab === 'details'" class="form-fields column-stack-lg">
+      <div class="body1-bold">Garment details</div>
+      <div class="column-stack-sm">
+        <div class="input-border-full row-stack-none items-center justify-between select-field" (click)="onEditSubtype()">
+          <span class="label-default">Subtype</span>
+          <div class="row-stack-xs items-center">
+            <span [class.text-placeholder]="!item.subtype" class="body1-regular value-text ion-text-end">
+              {{ item.subtype || 'Select subtype' }}
+            </span>
+            <app-icon name="chevron-forward" [size]="20" [color]="'var(--text-color-600)'"></app-icon>
+          </div>
+        </div>
+      </div>
+      <div class="column-stack-sm">
+        <div
+          class="input-border-full row-stack-none items-center justify-between select-field color-field"
+          [class.color-selected]="!!colorBackground"
+          [style.backgroundColor]="colorBackground || null"
+          [style.borderColor]="colorBackground || null"
+          (click)="onEditColor()"
+        >
+          <span class="label-default" [style.color]="colorBackground ? colorTextColor : null">Color</span>
+          <div class="row-stack-xs items-center">
+            <span
+              [class.text-placeholder]="!item.color"
+              class="body1-regular value-text ion-text-end"
+              [style.color]="colorBackground ? colorTextColor : null"
+            >
+              {{ item.color || 'Select color' }}
+            </span>
+            <app-icon name="chevron-forward" [size]="20" [color]="colorBackground ? colorTextColor : 'var(--text-color-600)'"></app-icon>
+          </div>
+        </div>
+      </div>
+      <div class="column-stack-sm">
+        <div class="input-border-full row-stack-none items-center justify-between brand-field">
+          <span class="label-default">Brand</span>
+          <input
+            #brandInput
+            type="text"
+            [(ngModel)]="brandDraft"
+            placeholder="Name brand"
+            class="body1-regular brand-input ion-text-end"
+            enterkeyhint="done"
+            (keydown.enter)="brandInput.blur(); dismissKeyboard()"
+            (blur)="onBrandBlur(); dismissKeyboard()"
+          />
+        </div>
+      </div>
+      <div class="delete-container">
+        <button class="delete-link body1-regular" (click)="onDelete()">
+         Delete garment from wardrobe
+        </button>
       </div>
     </div>
   </div>
 
   <!-- Delete Action - Bottom Center -->
-  <div class="delete-container">
-    <button class="delete-link body1-regular" (click)="onDelete()">
-      Delete from wardrobe
-    </button>
-  </div>
+  
 </ion-content>
 

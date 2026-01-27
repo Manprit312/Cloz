@@ -1,4 +1,4 @@
-import { Component, Input, output } from '@angular/core';
+import { Component, HostBinding, Input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IconComponent } from '../icon/icon.component';
 import { ButtonComponent } from '../button/button.component';
@@ -19,6 +19,13 @@ export class EmptyStateComponent {
   @Input() description: string = 'Get started by adding your first item.';
   @Input() buttonText: string = 'Add item';
   @Input() showButton: boolean = true;
+  @Input() compact: boolean = false;
+  @Input() disableColumnStackNone: boolean = false;
+
+  @HostBinding('class.compact')
+  get isCompact(): boolean {
+    return this.compact;
+  }
 
   onButtonClick = output<void>();
 

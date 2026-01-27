@@ -242,11 +242,20 @@ export class AICleanupPage implements OnInit {
           imageUrls = [generatedImageUrl];
     }
     
+        // Always make the AI-cleaned image the first image
+        imageUrls = [
+          generatedImageUrl,
+          ...imageUrls.filter((url) => url !== generatedImageUrl),
+        ].filter(Boolean);
+
+        // Persist the AI-cleaned image preference for this item
+        localStorage.setItem(`aiCleanedImage:${this.item.id}`, generatedImageUrl);
+    
     const updatedItem: UpperGarmentItem = {
       ...this.item,
           ...updatedWardrobe,
           // Ensure imageUrl and imageUrls are set correctly
-          imageUrl: updatedWardrobe.imageUrl || imageUrls[0] || generatedImageUrl,
+          imageUrl: generatedImageUrl,
           imageUrls: imageUrls,
     };
     
@@ -343,6 +352,7 @@ export class AICleanupPage implements OnInit {
       componentProps: {
         previousDescription: this.previousDescription,
       },
+      showBackdrop: true,
       breakpoints: [0, 0.6, 0.9],
       initialBreakpoint: 0.4,
       backdropBreakpoint: 0.6,
@@ -373,9 +383,6 @@ export class AICleanupPage implements OnInit {
       this.regenerateCount++;
       this.previousDescription = data.description;
       this.isProcessing = true;
-      // TODO: Pass description to AI service
-      console.log('Regenerating with description:', data.description);
-      
       // Start processing - image will be replaced after completion
       this.startRegeneration();
     }
@@ -393,9 +400,15 @@ export class AICleanupPage implements OnInit {
     this.isProcessing = true;
     this.errorMessage = null;
     
-    // Get the image URL to send to the API
-    // Use the original image URL for regeneration
-    const imageUrl = this.item.originalImageUrl || this.item.imageUrl;
+    const prompt = this.previousDescription?.trim();
+    if (!prompt) {
+      this.errorMessage = 'Prompt is required to regenerate';
+      this.isProcessing = false;
+      return;
+    }
+
+    // Prefer last generated image if available, otherwise fallback to original
+    const imageUrl = this.generatedImageUrl || this.item.originalImageUrl || this.item.imageUrl;
     
     if (!imageUrl) {
       console.error('AICleanupPage: Cannot start regeneration - imageUrl is missing');
@@ -404,10 +417,8 @@ export class AICleanupPage implements OnInit {
       return;
     }
     
-    // Call the cleanup API for regeneration
-    // Note: If the API supports regeneration with description, you might need to pass
-    // the previousDescription as an additional parameter
-    this.wardrobeService.cleanupItem(this.item.id, imageUrl).subscribe({
+    // Call regenerate API with prompt + imageUrl
+    this.wardrobeService.regenerateItem(prompt, imageUrl).subscribe({
       next: (response) => {
         console.log('AICleanupPage: Regeneration API response:', response);
         

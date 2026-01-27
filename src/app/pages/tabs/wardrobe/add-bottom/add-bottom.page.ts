@@ -9,7 +9,6 @@ import {
   IonButtons,
   IonButton,
   IonContent,
-  AlertController,
   IonSpinner,
   ActionSheetController,
 } from '@ionic/angular/standalone';
@@ -28,13 +27,13 @@ import { Keyboard } from '@capacitor/keyboard';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { addIcons } from 'ionicons';
 import { camera, images, close } from 'ionicons/icons';
+import { COLOR_FAMILIES, PRIMARY_COLORS, ColorToken } from '@shared/constants/color-tokens';
 
 export interface BottomData {
   id?: string;
   imageUrl?: string;
   subtype?: string;
   color?: string;
-  climateFit?: string[];
   brand?: string;
 }
 
@@ -67,7 +66,6 @@ export class AddBottomPage implements OnInit, AfterViewInit, OnDestroy {
   imageFile: File | null = null; // Store original file for upload
   subtype: string = '';
   color: string = '';
-  climateFit: string[] = [];
   brand: string = '';
   showErrorMessage = false;
   errorMessageText = '';
@@ -81,18 +79,26 @@ export class AddBottomPage implements OnInit, AfterViewInit, OnDestroy {
   private keyboardListeners: any[] = [];
   private keyboardHeight: number = 300; // Default keyboard height, will be updated from event
 
-  climateOptions = [
-    { value: 'Cold', label: 'Cold' },
-    { value: 'Mild', label: 'Mild' },
-    { value: 'Warm', label: 'Warm' },
-    { value: 'Hot', label: 'Hot' },
-  ];
+  get colorBackground(): string | null {
+    const token = this.findColorToken(this.color);
+    if (!token || !token.hex || token.hex === 'print') {
+      return null;
+    }
+    return token.hex;
+  }
+
+  get colorTextColor(): string {
+    const background = this.colorBackground;
+    if (!background) {
+      return 'var(--ion-text-color)';
+    }
+    return this.getContrastTextColor(background);
+  }
 
   constructor(
     private location: Location,
     private router: Router,
     private modalController: ModalController,
-    private alertController: AlertController,
     private actionSheetController: ActionSheetController,
     private profileService: ProfileService,
     private wardrobeService: WardrobeService,
@@ -100,6 +106,41 @@ export class AddBottomPage implements OnInit, AfterViewInit, OnDestroy {
   ) {
     // Register icons for action sheet
     addIcons({ camera, images, close });
+  }
+
+  private findColorToken(colorValue: string): ColorToken | undefined {
+    if (!colorValue) {
+      return undefined;
+    }
+    const normalized = colorValue.trim().toLowerCase();
+    for (const family of COLOR_FAMILIES) {
+      for (const level of family.levels) {
+        const token = level.variations.find(
+          (variation) =>
+            variation.value.toLowerCase() === normalized ||
+            variation.label.toLowerCase() === normalized
+        );
+        if (token) {
+          return token;
+        }
+      }
+    }
+    return PRIMARY_COLORS.find(
+      (token) =>
+        token.value.toLowerCase() === normalized ||
+        token.label.toLowerCase() === normalized
+    );
+  }
+
+  private getContrastTextColor(hexColor: string): string {
+    if (!hexColor.startsWith('#') || hexColor.length !== 7) {
+      return 'var(--ion-text-color)';
+    }
+    const r = parseInt(hexColor.slice(1, 3), 16);
+    const g = parseInt(hexColor.slice(3, 5), 16);
+    const b = parseInt(hexColor.slice(5, 7), 16);
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    return luminance > 0.6 ? '#111111' : '#ffffff';
   }
 
   ngOnInit() {
@@ -115,7 +156,6 @@ export class AddBottomPage implements OnInit, AfterViewInit, OnDestroy {
       this.originalImageUrl = data.imageUrl || ''; // Store original for comparison
       this.subtype = data.subtype || '';
       this.color = data.color || '';
-      this.climateFit = data.climateFit || [];
       this.brand = data.brand || '';
     }
   }
@@ -169,6 +209,7 @@ export class AddBottomPage implements OnInit, AfterViewInit, OnDestroy {
         category: 'bottoms',
         gender: this.profileService.profile().gender,
       },
+      showBackdrop: true,
       breakpoints: [0, 0.6, 1],
       initialBreakpoint: 0.6,
       backdropBreakpoint: 0.6,
@@ -192,9 +233,10 @@ export class AddBottomPage implements OnInit, AfterViewInit, OnDestroy {
       componentProps: {
         currentColor: this.color,
       },
-      breakpoints: [0, 0.6, 1],
-      initialBreakpoint: 0.6,
-      backdropBreakpoint: 0.6,
+      showBackdrop: true,
+      breakpoints: [0.27, 0.4, 0.8],
+      initialBreakpoint: 0.8,
+      backdropBreakpoint: 0.27,
       handle: true,
       handleBehavior: 'cycle',
     });
@@ -208,44 +250,8 @@ export class AddBottomPage implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  async openClimateFitSelection() {
-    const inputs = this.climateOptions.map(option => ({
-      type: 'checkbox' as const,
-      label: option.label,
-      value: option.value,
-      checked: this.climateFit.includes(option.value),
-    }));
-
-    const alert = await this.alertController.create({
-      header: 'Select climate fit',
-      subHeader: 'For which temperatures is it comfortable to wear this garment?',
-      inputs: inputs,
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel',
-          handler: () => {
-            // Do nothing on cancel
-          },
-        },
-        {
-          text: 'Confirm',
-          handler: (selectedValues: string[]) => {
-            this.climateFit = selectedValues || [];
-          },
-        },
-      ],
-    });
-
-    await alert.present();
-  }
-
-  get climateFitDisplay(): string {
-    return this.climateFit.length > 0 ? this.climateFit.join(', ') : '';
-  }
-
   get isFormValid(): boolean {
-    return !!(this.imageUrl && this.subtype && this.color && this.climateFit.length > 0);
+    return !!(this.imageUrl && this.subtype && this.color);
   }
 
   dismissKeyboard() {
@@ -290,21 +296,11 @@ export class AddBottomPage implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    if (this.climateFit.length === 0) {
-      this.showErrorMessage = true;
-      this.errorMessageText = 'Please select a climate fit';
-      setTimeout(() => {
-        this.showErrorMessage = false;
-      }, 5000);
-      return;
-    }
-
     // Prepare data for wardrobe service
     const wardrobeItemData: any = {
       type: 'bottoms',
       subtype: this.subtype,
       color: this.color,
-      climatefit: this.climateFit.join(','), // Convert array to comma-separated string
       brand: this.brand.trim() || undefined,
     };
     

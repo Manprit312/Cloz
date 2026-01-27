@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild, ChangeDetectorRef, ElementRef } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, ViewChild, ChangeDetectorRef, ElementRef, HostBinding } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
@@ -14,6 +14,8 @@ import {
   IonList,
 } from '@ionic/angular/standalone';
 import { IconComponent } from '../icon/icon.component';
+import { Keyboard, KeyboardInfo } from '@capacitor/keyboard';
+import type { PluginListenerHandle } from '@capacitor/core';
 
 @Component({
   selector: 'app-outfit-naming-modal',
@@ -35,14 +37,19 @@ import { IconComponent } from '../icon/icon.component';
     IconComponent,
   ],
 })
-export class OutfitNamingModalComponent implements OnInit {
+export class OutfitNamingModalComponent implements OnInit, OnDestroy {
   @Input() suggestedNames: string[] = [];
   @ViewChild('customNameInput', { read: ElementRef }) customNameInput?: ElementRef<HTMLInputElement>;
+  @ViewChild(IonContent) content?: IonContent;
+
+  @HostBinding('style.--keyboard-height') keyboardHeight = '0px';
   
   selectedName: string = '';
   customName: string = '';
   isCustomName: boolean = false;
   private isDismissing = false; // Prevent multiple dismissals
+  private keyboardShowListener?: PluginListenerHandle;
+  private keyboardHideListener?: PluginListenerHandle;
 
   constructor(
     private modalController: ModalController,
@@ -54,6 +61,11 @@ export class OutfitNamingModalComponent implements OnInit {
     if (this.suggestedNames && this.suggestedNames.length > 0) {
       this.selectedName = this.suggestedNames[0];
     }
+  }
+
+  ngOnDestroy() {
+    this.keyboardShowListener?.remove();
+    this.keyboardHideListener?.remove();
   }
 
   selectName(name: string, event?: Event) {
@@ -94,6 +106,9 @@ export class OutfitNamingModalComponent implements OnInit {
       this.selectedName = ''; // Clear selected name when switching to custom
       // Force change detection
       this.cdr.detectChanges();
+      // Start listening for keyboard height so we can pad the content
+      void this.startKeyboardListeners();
+
       // Focus on input after a brief delay to ensure it's rendered
       setTimeout(() => {
         if (this.customNameInput?.nativeElement) {
@@ -108,17 +123,7 @@ export class OutfitNamingModalComponent implements OnInit {
               inline: 'nearest'
             });
             
-            // Also try to scroll the parent container
-            const container = input.closest('ion-content');
-            if (container) {
-              const scrollElement = container.shadowRoot?.querySelector('.inner-scroll') || container;
-              if (scrollElement && 'scrollTo' in scrollElement) {
-                (scrollElement as any).scrollTo({
-                  top: input.offsetTop - 100,
-                  behavior: 'smooth'
-                });
-              }
-            }
+            this.scrollInputIntoView();
           }, 500);
         }
       }, 200);
@@ -128,15 +133,9 @@ export class OutfitNamingModalComponent implements OnInit {
   onCustomNameFocus() {
     // Scroll input into view when it gets focus (keyboard appears)
     setTimeout(() => {
-      if (this.customNameInput?.nativeElement) {
-        const input = this.customNameInput.nativeElement;
-        input.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'center',
-          inline: 'nearest'
-        });
-      }
+      this.scrollInputIntoView();
     }, 300);
+    void this.expandModalForKeyboard();
   }
 
   async onCustomNameBlur() {
@@ -147,6 +146,7 @@ export class OutfitNamingModalComponent implements OnInit {
       this.assignName();
     }
     }, 100);
+    void this.resetModalBreakpoint();
   }
 
   onCustomNameEnter() {
@@ -176,6 +176,63 @@ export class OutfitNamingModalComponent implements OnInit {
       this.modalController.dismiss(finalName, 'confirm').catch(() => {
         this.isDismissing = false;
       });
+    }
+  }
+
+  private async startKeyboardListeners() {
+    if (this.keyboardShowListener || this.keyboardHideListener) {
+      return;
+    }
+    this.keyboardShowListener = await Keyboard.addListener('keyboardWillShow', (info: KeyboardInfo) => {
+      this.keyboardHeight = `${info.keyboardHeight || 0}px`;
+      this.cdr.detectChanges();
+    });
+    this.keyboardHideListener = await Keyboard.addListener('keyboardWillHide', () => {
+      this.keyboardHeight = '0px';
+      this.cdr.detectChanges();
+    });
+  }
+
+  private async scrollInputIntoView() {
+    if (!this.customNameInput?.nativeElement) {
+      return;
+    }
+    const input = this.customNameInput.nativeElement;
+    input.scrollIntoView({ 
+      behavior: 'smooth', 
+      block: 'center',
+      inline: 'nearest'
+    });
+
+    if (this.content) {
+      const scrollTop = Math.max(input.offsetTop - 120, 0);
+      try {
+        await this.content.scrollToPoint(0, scrollTop, 300);
+      } catch {
+        // Ignore scroll errors
+      }
+    }
+  }
+
+  private async expandModalForKeyboard() {
+    try {
+      const modal = await this.modalController.getTop();
+      if (modal && typeof (modal as HTMLIonModalElement).setCurrentBreakpoint === 'function') {
+        await (modal as HTMLIonModalElement).setCurrentBreakpoint(0.9);
+      }
+    } catch {
+      // Ignore modal errors
+    }
+  }
+
+  private async resetModalBreakpoint() {
+    try {
+      const modal = await this.modalController.getTop();
+      if (modal && typeof (modal as HTMLIonModalElement).setCurrentBreakpoint === 'function') {
+        await (modal as HTMLIonModalElement).setCurrentBreakpoint(0.5);
+      }
+    } catch {
+      // Ignore modal errors
     }
   }
 }

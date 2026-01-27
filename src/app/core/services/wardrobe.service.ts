@@ -169,7 +169,19 @@ export class WardrobeService {
     }
     
     // Set primary imageUrl (first image or existing imageUrl)
-    const imageUrl = imageUrls.length > 0 ? imageUrls[0] : item.imageUrl || '';
+    let imageUrl = imageUrls.length > 0 ? imageUrls[0] : item.imageUrl || '';
+
+    // Ensure AI-cleaned image is first if we have a stored preference
+    if (item.id) {
+      const aiCleanedImage =
+        localStorage.getItem(`aiCleanedImage:${item.id}`) ||
+        sessionStorage.getItem(`aiCleanedImage:${item.id}`);
+      if (aiCleanedImage && imageUrls.includes(aiCleanedImage)) {
+        imageUrls.splice(imageUrls.indexOf(aiCleanedImage), 1);
+        imageUrls.unshift(aiCleanedImage);
+        imageUrl = aiCleanedImage;
+      }
+    }
     
     return {
       ...item,
@@ -324,6 +336,31 @@ export class WardrobeService {
     // The interceptor will automatically add the Authorization header to all requests
     console.log('WardrobeService.cleanupItem - Making request, interceptor should add Authorization header');
     
+    return this.http.post<any>(url, body);
+  }
+
+  /**
+   * Regenerate a garment image using a text prompt
+   * @param prompt The prompt describing the change
+   * @param imageUrl The URL of the image to regenerate
+   * @returns Observable with the regeneration response (should contain new image URL)
+   */
+  regenerateItem(prompt: string, imageUrl: string): Observable<any> {
+    const url = `${environment.backendBaseUrl}/wardrobe/regenerate`;
+    const body = { prompt, imageUrl };
+
+    const token = this.authService.getAccessToken();
+    console.log('WardrobeService.regenerateItem - token retrieved:', token ? 'Token exists' : 'Token is null/undefined');
+
+    if (!token || token.trim() === '') {
+      console.warn('WardrobeService.regenerateItem - No access token available!');
+      throw new Error('Access token is required to regenerate wardrobe items');
+    }
+
+    console.log('WardrobeService.regenerateItem - Making POST request to:', url);
+    console.log('WardrobeService.regenerateItem - Request body:', body);
+    console.log('WardrobeService.regenerateItem - Making request, interceptor should add Authorization header');
+
     return this.http.post<any>(url, body);
   }
 

@@ -15,6 +15,7 @@ import {
   IonCol,
   IonItem,
   ViewWillEnter,
+  ActionSheetController,
 } from '@ionic/angular/standalone';
 import { Location } from '@angular/common';
 import { inject } from '@angular/core';
@@ -26,6 +27,7 @@ import { SkeletonLoaderComponent } from '../../../../shared/components/skeleton-
 import { WardrobeService, WardrobeItem } from '../../../../core/services/wardrobe.service';
 import { SubtypesService } from '../../../../core/services/subtypes.service';
 import { ProfileService } from '../../../../core/services/profile.service';
+import { compareColors } from '../../../../shared/utils/color-sorting.util';
 
 export interface BottomItem {
   id: string;
@@ -71,6 +73,7 @@ export class BottomsPage implements OnInit, ViewWillEnter {
   private wardrobeService = inject(WardrobeService);
   private subtypesService = inject(SubtypesService);
   private profileService = inject(ProfileService);
+  private actionSheetController = inject(ActionSheetController);
   
   // Track current image index for each item in carousel
   itemImageIndices: Map<string, number> = new Map();
@@ -89,6 +92,7 @@ export class BottomsPage implements OnInit, ViewWillEnter {
   error: string | null = null;
 
   selectedSubtype: string = 'All';
+  sortMode: 'color' | 'newest' | 'subtype' = 'color';
 
   /**
    * Get available subtypes for bottoms based on user's gender
@@ -185,10 +189,30 @@ export class BottomsPage implements OnInit, ViewWillEnter {
   }
 
   get filteredItems(): BottomItem[] {
-    if (this.selectedSubtype === 'All') {
-      return this.items;
+    let result = [...this.items];
+    
+    // Apply subtype filter
+    if (this.selectedSubtype !== 'All') {
+      result = result.filter(item => item.subtype === this.selectedSubtype);
     }
-    return this.items.filter(item => item.subtype === this.selectedSubtype);
+    
+    // Apply sorting
+    if (this.sortMode === 'color') {
+      // Sort by color using token-based order
+      result.sort((a, b) => compareColors(a.color, b.color));
+    } else if (this.sortMode === 'newest') {
+      // Sort by creation date: newest → oldest
+      result.sort((a, b) => this.getDateValue(b.createdAt) - this.getDateValue(a.createdAt));
+    } else if (this.sortMode === 'subtype') {
+      // Sort alphabetically A-Z by subtype
+      result.sort((a, b) => {
+        const subtypeA = (a.subtype || '').toLowerCase();
+        const subtypeB = (b.subtype || '').toLowerCase();
+        return subtypeA.localeCompare(subtypeB);
+      });
+    }
+    
+    return result;
   }
 
   goBack(): void {
@@ -209,15 +233,59 @@ export class BottomsPage implements OnInit, ViewWillEnter {
     this.selectedSubtype = subtype;
   }
 
+  async openSortMenu(): Promise<void> {
+    const actionSheet = await this.actionSheetController.create({
+      header: 'Sort by',
+      buttons: [
+        {
+          text: 'Color',
+          cssClass: this.sortMode === 'color' ? 'sort-option-active' : '',
+          handler: () => {
+            this.sortMode = 'color';
+          },
+        },
+        {
+          text: 'Newest',
+          cssClass: this.sortMode === 'newest' ? 'sort-option-active' : '',
+          handler: () => {
+            this.sortMode = 'newest';
+          },
+        },
+        {
+          text: 'Subtype',
+          cssClass: this.sortMode === 'subtype' ? 'sort-option-active' : '',
+          handler: () => {
+            this.sortMode = 'subtype';
+          },
+        },
+        {
+          text: 'Cancel',
+          role: 'cancel',
+        },
+      ],
+    });
+    await actionSheet.present();
+  }
+
+  private getDateValue(date?: string): number {
+    if (!date) return 0;
+    const parsed = Date.parse(date);
+    return Number.isNaN(parsed) ? 0 : parsed;
+  }
+
   hasMultipleImages(item: BottomItem): boolean {
-    return !!(item.imageUrls && item.imageUrls.length > 1);
+    return this.getImages(item).length > 1;
   }
 
   getImages(item: BottomItem): string[] {
-    if (item.imageUrls && item.imageUrls.length > 0) {
-      return item.imageUrls;
+    const images: string[] = [];
+    if (item.imageUrl) {
+      images.push(item.imageUrl);
     }
-    return [item.imageUrl];
+    if (item.imageUrls && item.imageUrls.length > 0) {
+      images.push(...item.imageUrls);
+    }
+    return [...new Set(images.filter(url => url && url.trim() !== ''))];
   }
 
   getCurrentImageIndex(item: BottomItem): number {

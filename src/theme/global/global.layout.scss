@@ -78,7 +78,12 @@
 .pad-all-lg {
   padding: var(--padding-lg, var(--x6, 24px));
 }
-
+.pad-only-left-lg {
+  padding-left: var(--padding-lg, var(--x6, 24px));
+  padding-right: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
 // Asymmetric Padding
 .pad-v-lg-h-none {
   padding-top: var(--padding-lg, var(--x6, 24px));

@@ -185,9 +185,11 @@ ion-list {
     }
   }
   
-  // Remove border line
+  // Show full-width separators between rows
   &[lines="full"]::after {
-    display: none;
+    left: 0;
+    right: 0;
+    display: block;
   }
   
   // Remove item inner padding

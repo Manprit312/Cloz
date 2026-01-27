@@ -30,3 +30,11 @@
   margin-top: var(--gap-md);
 }
 
+:host(.compact) .empty-state {
+  min-height: unset;
+  padding: var(--gap-md) 0;
+}
+
+:host(.compact) .empty-state-icon {
+  margin-bottom: var(--gap-md);
+}

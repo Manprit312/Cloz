@@ -14,12 +14,121 @@
   }
 }
 
+.wardrobe-container {
+  padding-bottom: var(--gap-lg);
+  background:#f5f4f4;
+  height: 100%;
+}
+
+ion-content {
+  --background: #f5f4f4;
+}
+
+.wardrobe-list {
+  padding: 0;
+}
+
+.wardrobe-item {
+  --padding-end: 0;
+  --min-height: var(--x14);
+
+  &[lines="full"]::after {
+    left: var(--padding-md);
+    right: 0 !important;
+  }
+
+  ion-icon.item-detail-icon {
+    color: var(--text-color-600);
+    font-size: var(--font-size-md);
+    opacity: 1;
+  }
+}
+
+.wardrobe-cards {
+  width: 100%;
+}
+
+.wardrobe-card {
+  background: var(--ion-background-color);
+  border-radius: var(--radius-sm);
+ 
+  padding: var(--gap-md);
+  position: relative;
+}
+
+.wardrobe-card.skeleton-card {
+  box-shadow: none;
+  border: 1px solid var(--ion-color-step-150);
+}
+
+.card-header {
+  padding-right: calc(var(--x8, 32px));
+}
+
+.card-chevron {
+  position: absolute;
+  right: var(--gap-md);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.preview-row {
+  padding-right: calc(var(--x8, 32px));
+}
+
+.preview-strip {
+
+  border-radius: var(--radius-md);
+
+  gap: 0;
+}
+
+.preview-strip.preview-empty {
+  min-height: 72px;
+  padding-left: var(--gap-md);
+  padding-right: var(--gap-md);
+}
+
+.preview-image {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  background: var(--ion-color-step-150);
+  border: 2px solid var(--ion-color-step-100, #f2f2f2);
+  position: relative;
+  z-index: 3;
+}
+
+.preview-image + .preview-image {
+  margin-left: -20px;
+}
+
+.preview-strip app-count-badge {
+  margin-left: -20px;
+  position: relative;
+  z-index: 4;
+}
+
+// Ensure stacking order for the three previews
+
+
+.preview-strip .preview-image:nth-child(2) {
+  z-index: 3;
+}
+
+
+.preview-strip .preview-image:nth-child(4) {
+  z-index: 1;
+}
+
+
 // Header title typography
 ion-header {
-  --background: var(--ion-background-color);
+  --background: #f5f4f4;
   
   ion-toolbar {
-    --background: var(--ion-background-color);
+    --background: #f5f4f4;
     --color: var(--ion-text-color);
     
     ion-title {
@@ -29,46 +138,26 @@ ion-header {
   }
 }
 
-.dark {
+// Dark theme: body.dark is applied by profile/settings; scope styles to when host is inside it
+:host-context(body.dark) {
+  .wardrobe-container {
+    background: var(--ion-background-color) !important;
+  }
+
+  ion-content {
+    --background: var(--ion-background-color) !important;
+  }
+
   ion-header {
-    --background: var(--ion-background-color);
-    
+    --background: var(--ion-background-color) !important;
+
     ion-toolbar {
-      --background: var(--ion-background-color);
+      --background: var(--ion-background-color) !important;
       --color: var(--ion-text-color);
-      
+
       ion-title {
         color: var(--ion-text-color);
       }
     }
   }
 }
-
-// List styles - ensure lines touch right edge
-
-
-// Item styles - proper spacing and typography
-.wardrobe-item {
-  --padding-end: 0;
-  --min-height: var(--x14);
-
-  
-  // Border line: starts from container's left padding, extends to right edge
-  &[lines="full"]::after {
-    left: var(--padding-md);
-    right: 0 !important;
-  }
-  
-  // Content padding - remove duplicate left padding since container provides it
-
-  
-  // Style Ionic's default chevron icon
-  ion-icon.item-detail-icon {
-    color: var(--text-color-600);
-    font-size: var(--font-size-md);
-    opacity: 1;
-  }
-  
- 
-}
-

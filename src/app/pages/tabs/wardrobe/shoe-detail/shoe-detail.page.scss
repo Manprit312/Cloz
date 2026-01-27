@@ -47,7 +47,7 @@ ion-header {
   position: relative;
   width: 100%;
   height: 400px; // Fixed height to prevent content from being pushed down
-  margin-bottom: var(--gap-lg);
+
   overflow: hidden;
   border-radius: var(--radius-md);
   
@@ -59,6 +59,102 @@ ion-header {
     display: block;
     transition: opacity 0.3s ease;
   }
+}
+
+.replace-image-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(var(--ion-background-color-rgb, 255, 255, 255), 0.9);
+  z-index: 10;
+  border-radius: var(--radius-md);
+
+  .dark & {
+    background-color: rgba(var(--ion-background-color-rgb, 18, 18, 18), 0.9);
+  }
+
+  ion-spinner {
+    width: 48px;
+    height: 48px;
+    margin-bottom: var(--gap-sm);
+  }
+
+  .replace-image-text {
+    color: var(--ion-color-primary);
+  }
+}
+
+.image-actions {
+  position: absolute;
+  top: var(--gap-md);
+  right: var(--gap-md);
+  display: flex;
+  gap: var(--gap-xs);
+  z-index: 6;
+}
+
+.image-action-button {
+  border: none;
+  background-color: var(--ion-background-color);
+  border-radius: var(--radius-lg);
+  padding: var(--gap-xs) ;
+  border: 2px solid var(--ion-color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 84, 233, 0.25);
+}
+
+.ai-enhanced-badge-wrapper {
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--gap-xl, 24px) + var(--gap-md, 16px));
+  transform: translateX(-50%);
+  z-index: 6;
+}
+
+.carousel-badge {
+  display: inline-block;
+  border-radius: 999px;
+  padding: var(--gap-xs, 4px) var(--gap-md, 16px);
+  background-color: var(--ion-color-primary);
+  color: var(--ion-color-primary-contrast);
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.ai-enhanced-badge-wrapper.badge-original .carousel-badge {
+  background-color: #2b2b2b;
+  color: #ffffff;
+}
+
+// AI Photo Upgrade Card
+.ai-upgrade-card {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--ion-color-step-200);
+  background-color: var(--ion-background-color);
+  padding: var(--gap-md);
+  margin-top: var(--gap-lg);
+}
+
+.ai-upgrade-title {
+  color: var(--ion-text-color);
+}
+
+.ai-upgrade-subtitle {
+  color: var(--ion-color-step-600);
+}
+
+.ai-upgrade-actions {
+  display: flex;
+  align-items: center;
+}
+
+.ai-upgrade-button app-icon {
+  margin-right: var(--gap-xs);
 }
 
 // Pagination Dots - Simple circles below image
@@ -83,9 +179,34 @@ ion-header {
   }
 }
 
-// Actions container - using global classes in HTML
-.actions-container {
-  margin-bottom: var(--gap-lg);
+
+
+
+
+.loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 160px;
+}
+
+.outfit-item {
+  padding: var(--gap-sm) 0;
+  border-bottom: 1px solid var(--red-extra-light-muted);
+  margin-right: calc(-1 * (var(--padding-md) + env(safe-area-inset-right)));
+  padding-right: calc(var(--padding-md) + env(safe-area-inset-right));
+}
+
+.outfit-garments {
+  margin-top: var(--gap-sm);
+}
+
+.outfit-garment-thumb {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  border: 1px solid var(--grey-extra-light);
 }
 
 .delete-container {
@@ -93,15 +214,52 @@ ion-header {
 padding:(var(--x6))
 }
 
-.details-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--gap-lg);
-  margin-bottom: var(--gap-lg);
+// Select Field Styling - match add garment pages
+.select-field {
+  padding-top: var(--gap-sm);
+  padding-bottom: var(--gap-sm);
+  cursor: pointer;
+  
+  app-icon {
+    margin-left: var(--gap-sm);
+  }
 }
 
-// Details column - using global classes in HTML
-// Detail item - using global classes in HTML
+.color-field.color-selected {
+  border: none;
+  padding-left: 0;
+  padding-right: 0;
+  margin-left: calc(-1 * var(--x4, 16px));
+  margin-right: calc(-1 * var(--x4, 16px));
+  width: calc(100% + (var(--x4, 16px) * 2));
+  border-radius: 0;
+
+  .label-default {
+    padding-left: var(--x4, 16px);
+  }
+
+  .value-text {
+    padding-left: var(--x4, 16px);
+  }
+
+  app-icon {
+    margin-right: var(--x4, 16px);
+  }
+}
+
+.input-border-full {
+  padding-right: var(--gap-md);
+  padding-top: var(--gap-sm);
+  padding-bottom: var(--gap-sm);
+  
+  input {
+    border: none;
+    outline: none;
+    width: 100%;
+    padding: 0;
+    background: transparent;
+  }
+}
 
 .delete-link {
   background: none;
@@ -122,3 +280,9 @@ padding:(var(--x6))
   }
 }
 
+
+
+
+.input-border-full.color-field.color-selected {
+  padding-right: 0;
+}

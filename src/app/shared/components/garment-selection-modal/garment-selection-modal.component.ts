@@ -93,10 +93,13 @@ export class GarmentSelectionModalComponent implements OnInit, OnChanges {
   }
 
   getCurrentImage(garment: GarmentItem): string {
+    if (garment.imageUrl) {
+      return garment.imageUrl;
+    }
     if (garment.imageUrls && garment.imageUrls.length > 0) {
       return garment.imageUrls[0];
     }
-    return garment.imageUrl;
+    return '';
   }
 
   getLoadingText(): string {

@@ -1,0 +1,11 @@
+<div class="detail-tabs row-stack-sm">
+  <button
+    *ngFor="let tab of tabs"
+    type="button"
+    class="tab-button body2-medium"
+    [class.active]="tab.id === activeTab"
+    (click)="selectTab(tab.id)"
+  >
+    {{ tab.label }}
+  </button>
+</div>

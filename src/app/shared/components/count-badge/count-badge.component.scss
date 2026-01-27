@@ -1,0 +1,19 @@
+:host {
+  display: inline-flex;
+}
+
+.count-badge {
+    background: var(--grey-extra-light);
+  min-width: var(--badge-size, 44px);
+  height: var(--badge-size, 44px);
+  border-radius: var(--radius-sm);
+
+  color: var(--badge-color, var(--ion-color-primary));
+  font-size: var(--badge-font-size, var(--font-size-md));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 var(--gap-xs);
+  border: 1px solid var(--badge-border, transparent);
+  box-sizing: border-box;
+}

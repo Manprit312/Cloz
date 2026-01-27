@@ -80,34 +80,41 @@
     <div class="column-stack-lg">
       <!-- Subtype -->
       <div class="column-stack-sm">
-        <label class="label-default">Subtype</label>
         <div class="input-border-full row-stack-none items-center justify-between select-field" (click)="openSubtypeSelection()">
-          <span [class.text-placeholder]="!subtype" class="body1-regular flex-1">
-            {{ subtype || 'Select subtype' }}
-          </span>
-          <app-icon name="unfold-more" [size]="20" [color]="'var(--text-color-600)'"></app-icon>
+          <span class="label-default">Subtype</span>
+          <div class="row-stack-xs items-center">
+            <span [class.text-placeholder]="!subtype" class="body1-regular value-text ion-text-end">
+              {{ subtype || 'Select subtype' }}
+            </span>
+            <app-icon name="chevron-forward" [size]="20" [color]="'var(--text-color-600)'"></app-icon>
+          </div>
         </div>
       </div>
 
       <!-- Color -->
       <div class="column-stack-sm">
-        <label class="label-default">Color</label>
-        <div class="input-border-full row-stack-none items-center justify-between select-field" (click)="openColorSelection()">
-          <span [class.text-placeholder]="!color" class="body1-regular flex-1">
-            {{ color || 'Select color' }}
-          </span>
-          <app-icon name="unfold-more" [size]="20" [color]="'var(--text-color-600)'"></app-icon>
-        </div>
-      </div>
-
-      <!-- Climate Fit -->
-      <div class="column-stack-sm">
-        <label class="label-default">Climate fit</label>
-        <div class="input-border-full row-stack-none items-center justify-between select-field" (click)="openClimateFitSelection()">
-          <span [class.text-placeholder]="climateFit.length === 0" class="body1-regular flex-1">
-            {{ climateFitDisplay || 'Select climate fit' }}
-          </span>
-          <app-icon name="unfold-more" [size]="20" [color]="'var(--text-color-600)'"></app-icon>
+        <div
+          class="input-border-full row-stack-none items-center justify-between select-field color-field"
+          [class.color-selected]="!!colorBackground"
+          [style.backgroundColor]="colorBackground || null"
+          [style.borderColor]="colorBackground || null"
+          (click)="openColorSelection()"
+        >
+          <span class="label-default" [style.color]="color ? colorTextColor : null">Color</span>
+          <div class="row-stack-xs items-center">
+            <span
+              [class.text-placeholder]="!color"
+              class="body1-regular value-text ion-text-end"
+              [style.color]="color ? colorTextColor : null"
+            >
+              {{ color || 'Select color' }}
+            </span>
+            <app-icon
+              name="chevron-forward"
+              [size]="20"
+              [color]="color ? colorTextColor : 'var(--text-color-600)'"
+            ></app-icon>
+          </div>
         </div>
       </div>
 

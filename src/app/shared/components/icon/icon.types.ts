@@ -30,7 +30,12 @@ export type IconName =
   | 'image'
   | 'unfold-more'
   | 'magic-wand'
-  | 'accessibility';
+  | 'ai-cleanup'
+  | 'sort'
+  | 'accessibility'
+  | 'back-modal'
+  | 'autorenew'
+  | 'delete-image';
 
 // Mapping from logical names to Material Symbols icon names
 // Material Symbols uses lowercase with hyphens
@@ -65,5 +70,18 @@ export const MATERIAL_SYMBOLS_MAPPING: Record<IconName, string> = {
   image: 'image',
   'unfold-more': 'unfold_more',
   'magic-wand': 'auto_awesome',
+  'ai-cleanup': 'auto_awesome',
+  sort: 'sort',
   accessibility: 'accessibility',
+  'back-modal': 'chevron_left',
+  autorenew: 'autorenew',
+  'delete-image': 'delete',
 } as const;
+
+export const SPARK_ICONS_MAPPING: Partial<Record<IconName, string>> = {
+  'ai-cleanup': '_Toolbar-buttons',
+  sort: 'format-line-spacing',
+  'back-modal': 'Toolbar-buttons-back',
+  autorenew: 'autorenew',
+  'delete-image': 'Content',
+};

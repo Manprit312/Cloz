@@ -1,6 +1,6 @@
 import { Component, input, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IconName, MATERIAL_SYMBOLS_MAPPING } from './icon.types';
+import { IconName, MATERIAL_SYMBOLS_MAPPING, SPARK_ICONS_MAPPING } from './icon.types';
 
 @Component({
   selector: 'app-icon',
@@ -38,6 +38,19 @@ export class IconComponent {
     return MATERIAL_SYMBOLS_MAPPING[iconName] || MATERIAL_SYMBOLS_MAPPING['add'];
   });
 
+  sparkIconId = computed(() => {
+    return SPARK_ICONS_MAPPING[this.name()] || '';
+  });
+
+  sparkIconHref = computed(() => {
+    const id = this.sparkIconId();
+    return id ? encodeURIComponent(id) : '';
+  });
+
+  isSparkIcon = computed(() => {
+    return !!this.sparkIconId();
+  });
+
   /**
    * Computed style object for the icon
    */
@@ -46,12 +59,9 @@ export class IconComponent {
       'font-size': `${this.size()}px`,
       'width': `${this.size()}px`,
       'height': `${this.size()}px`,
+      // Theme-aware default so icons are visible in light and dark on iOS simulator/device
+      'color': this.color() || 'var(--ion-text-color)',
     };
-
-    if (this.color()) {
-      styles['color'] = this.color();
-    }
-
     return styles;
   });
 

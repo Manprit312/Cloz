@@ -5,15 +5,17 @@
     </ion-toolbar>
   </ion-header>
 
-  <div class="pad-none-l-md">
-    <!-- Success Message -->
-    <div class="row-stack-sm items-center success-banner pad-all-md" *ngIf="showSuccessMessage">
-      <app-icon name="checkmark-circle" [size]="24" [color]="'var(--text-primary)'"></app-icon>
-      <span class="body1-medium">{{ successMessageText }}</span>
-    </div>
-
+  <div class="wardrobe-container pad-all-md">
     <!-- Skeleton Loading -->
-    <ion-list *ngIf="isLoading" [class.pad-top-lg]="!showSuccessMessage" class="wardrobe-list">
+    <div *ngIf="isLoading && useCardView" class="wardrobe-cards column-stack-md">
+      <div *ngFor="let item of [1,2,3,4]" class="wardrobe-card skeleton-card column-stack-md">
+        <app-skeleton-loader type="text" [width]="'140px'" [height]="'18px'" [borderRadius]="'4px'"></app-skeleton-loader>
+        <div class="row-stack-none items-center">
+          <app-skeleton-loader type="text" [width]="'160px'" [height]="'56px'" [borderRadius]="'12px'"></app-skeleton-loader>
+        </div>
+      </div>
+    </div>
+    <ion-list *ngIf="isLoading && !useCardView" class="wardrobe-list">
       <ion-item
         *ngFor="let item of [1,2,3,4]"
         lines="full"
@@ -29,7 +31,39 @@
     </ion-list>
 
     <!-- Category List -->
-    <ion-list *ngIf="!isLoading" [class.pad-top-lg]="!showSuccessMessage" class="wardrobe-list">
+    <div *ngIf="!isLoading && useCardView" class="wardrobe-cards column-stack-md">
+      <div
+        *ngFor="let category of categories"
+        class="wardrobe-card column-stack-sm"
+        role="button"
+        (click)="goToCategory(category.route)"
+      >
+        <div class="card-header row-stack-none items-center justify-between">
+          <span class="body1-bold">{{ category.name }}</span>
+        </div>
+        <div class="preview-row row-stack-none items-center">
+          <div class="preview-strip row-stack-none items-center" *ngIf="category.previewImages.length > 0">
+            <img
+              *ngFor="let image of category.previewImages"
+              [src]="image"
+              [alt]="category.name"
+              class="preview-image"
+            />
+            <app-count-badge
+              *ngIf="category.remainingCount > 0"
+              [count]="category.remainingCount"
+              [size]="64"
+              [fontSize]="24"
+            ></app-count-badge>
+          </div>
+          <div class="preview-strip preview-empty" *ngIf="category.previewImages.length === 0">
+            <span class="body2-regular text-color-600">No items yet</span>
+          </div>
+        </div>
+        <app-icon name="chevron-forward" [size]="22" [color]="'var(--ion-color-primary)'" class="card-chevron"></app-icon>
+      </div>
+    </div>
+    <ion-list *ngIf="!isLoading && !useCardView" class="wardrobe-list">
       <ion-item
         *ngFor="let category of categories"
         button
@@ -42,7 +76,6 @@
         </ion-label>
         <div slot="end" class="row-stack-sm items-center">
           <span class="body1-regular text-color-600">{{ category.count }}</span>
-       
         </div>
       </ion-item>
     </ion-list>

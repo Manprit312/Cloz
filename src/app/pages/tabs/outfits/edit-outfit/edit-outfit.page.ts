@@ -12,7 +12,7 @@ import {
   IonItem,
   IonInput,
   ModalController,
-  ToastController,
+  IonToast,
 } from '@ionic/angular/standalone';
 import { Location } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -48,6 +48,7 @@ import { OutfitsService, Outfit, OutfitWardrobeItem } from '../../../../core/ser
     IonButton,
     IonItem,
     IonInput,
+    IonToast,
     IconComponent,
     ButtonComponent,
     SkeletonLoaderComponent,
@@ -58,7 +59,6 @@ export class EditOutfitPage implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private modalController = inject(ModalController);
-  private toastController = inject(ToastController);
   private wardrobeService = inject(WardrobeService);
   private outfitsService = inject(OutfitsService);
 
@@ -82,6 +82,10 @@ export class EditOutfitPage implements OnInit {
   isLoading = false;
   isSavingOutfit = false; // Track if outfit save is in progress
   isLoadingGarments = false; // Track if garments are being loaded
+  isToastOpen = false;
+  toastMessage = '';
+  toastColor: 'medium' | 'danger' = 'medium';
+  toastDuration = 3000;
 
   constructor() {}
 
@@ -100,6 +104,17 @@ export class EditOutfitPage implements OnInit {
         this.loadOutfitData(state.outfit);
       }
     }
+  }
+
+  private showToast(message: string, color: 'medium' | 'danger' = 'medium', duration = 3000): void {
+    this.toastMessage = message;
+    this.toastColor = color;
+    this.toastDuration = duration;
+    this.isToastOpen = true;
+  }
+
+  onToastDidDismiss(): void {
+    this.isToastOpen = false;
   }
 
   loadOutfit(outfitId: string): void {
@@ -395,13 +410,7 @@ export class EditOutfitPage implements OnInit {
       // If no garments available, show message and return
       if (garments.length === 0) {
         const categoryName = this.getCategoryDisplayName(category);
-        const toast = await this.toastController.create({
-          message: `All ${categoryName} are already selected`,
-          duration: 2000,
-          position: 'bottom',
-          color: 'medium',
-        });
-        await toast.present();
+        this.showToast(`All ${categoryName} are already selected`, 'medium', 2000);
         return;
       }
 
@@ -413,6 +422,7 @@ export class EditOutfitPage implements OnInit {
           garments,
           isLoading: false,
         },
+        showBackdrop: true,
       });
 
       await modal.present();
@@ -426,13 +436,7 @@ export class EditOutfitPage implements OnInit {
       console.error('Error loading garments:', error);
       this.isLoadingGarments = false;
       
-      const toast = await this.toastController.create({
-        message: 'Failed to load garments. Please try again.',
-        duration: 3000,
-        position: 'bottom',
-        color: 'danger',
-      });
-      await toast.present();
+      this.showToast('Failed to load garments. Please try again.', 'danger', 3000);
     }
   }
 
@@ -458,20 +462,38 @@ export class EditOutfitPage implements OnInit {
   }
 
   private handleGarmentSelection(category: GarmentCategory, garment: GarmentItem) {
+    const normalizedGarment = this.normalizeSelectedGarment(garment);
     switch (category) {
       case 'upper-garments':
-        this.selectedUpperGarments.push(garment as UpperGarmentItem);
+        this.selectedUpperGarments.push(normalizedGarment as UpperGarmentItem);
         break;
       case 'bottoms':
-        this.selectedBottoms.push(garment as BottomItem);
+        this.selectedBottoms.push(normalizedGarment as BottomItem);
         break;
       case 'shoes':
-        this.selectedShoes.push(garment as ShoeItem);
+        this.selectedShoes.push(normalizedGarment as ShoeItem);
         break;
       case 'accessories':
-        this.selectedAccessories.push(garment as AccessoryItem);
+        this.selectedAccessories.push(normalizedGarment as AccessoryItem);
         break;
     }
+  }
+
+  private normalizeSelectedGarment(garment: GarmentItem): GarmentItem {
+    const aiCleanedImage = localStorage.getItem(`aiCleanedImage:${garment.id}`);
+    const imageUrls = garment.imageUrls && garment.imageUrls.length > 0
+      ? [...garment.imageUrls]
+      : (garment.imageUrl ? [garment.imageUrl] : []);
+
+    const primaryImage = (aiCleanedImage && imageUrls.includes(aiCleanedImage))
+      ? aiCleanedImage
+      : imageUrls[0] || garment.imageUrl || '';
+
+    return {
+      ...garment,
+      imageUrl: primaryImage,
+      imageUrls: imageUrls.length > 0 ? imageUrls : garment.imageUrls,
+    };
   }
 
   removeGarment(category: GarmentCategory, garmentId: string): void {

@@ -1,4 +1,7 @@
-<div class="empty-state column-stack-none items-center justify-center">
+<div
+  class="empty-state items-center justify-center"
+  [class.column-stack-none]="!disableColumnStackNone"
+>
   <div class="empty-state-icon row-stack-none items-center justify-center">
     <app-icon [name]="icon" [size]="iconSize" [color]="iconColor"></app-icon>
   </div>
@@ -10,7 +13,7 @@
   <div class="empty-state-button" *ngIf="showButton">
     <app-button
       variant="primary"
-      size="large"
+      size="medium"
       [fullWidth]="false"
       (click)="handleButtonClick()"
     >

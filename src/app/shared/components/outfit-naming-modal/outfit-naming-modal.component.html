@@ -10,7 +10,7 @@
 </ion-header>
 
 <ion-content [fullscreen]="false" [scrollY]="true" class="naming-modal-content">
-  <div class="naming-modal-container pad-all-md">
+  <div class="naming-modal-container pad-only-left-lg">
     <ion-list>
       <!-- Suggested Names -->
       <ion-item 
@@ -21,13 +21,15 @@
         [class.selected]="selectedName === name && !isCustomName"
       >
         <span slot="start" class="icon-slot">
-          <app-icon 
-            *ngIf="selectedName === name && !isCustomName"
-            name="checkmark-circle" 
-            [size]="24" 
-            [color]="'var(--ion-color-primary)'"
-          ></app-icon>
-          <span *ngIf="selectedName !== name || isCustomName" class="icon-placeholder"></span>
+          <span class="selection-circle">
+            <app-icon
+              *ngIf="selectedName === name && !isCustomName"
+              name="check"
+              [size]="18"
+              [color]="'var(--ion-color-primary-contrast)'"
+              class="selection-check"
+            ></app-icon>
+          </span>
         </span>
         <ion-label>
           <span class="body1-regular">{{ name }}</span>
@@ -42,13 +44,15 @@
         [class.selected]="isCustomName"
       >
         <span slot="start" class="icon-slot">
-          <app-icon 
-            *ngIf="isCustomName"
-            name="checkmark-circle" 
-            [size]="24" 
-            [color]="'var(--ion-color-primary)'"
-          ></app-icon>
-          <span *ngIf="!isCustomName" class="icon-placeholder"></span>
+          <span class="selection-circle">
+            <app-icon
+              *ngIf="isCustomName"
+              name="check"
+              [size]="16"
+              [color]="'var(--ion-color-primary-contrast)'"
+              class="selection-check"
+            ></app-icon>
+          </span>
         </span>
         <ion-label>
           <span class="body1-regular">Custom name</span>

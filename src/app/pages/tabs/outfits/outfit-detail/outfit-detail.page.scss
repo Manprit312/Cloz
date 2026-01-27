@@ -65,8 +65,8 @@ ion-header {
   
   // Border line: starts from container's left padding, extends to right edge
   &[lines="full"]::after {
-    left: var(--padding-md);
-    right: var(--padding-md);
+    left: calc(var(--padding-md) + var(--x12, 50px) + var(--gap-md));
+    right: 0;
   }
 }
 
@@ -92,10 +92,6 @@ ion-header {
   --padding-start: var(--padding-md);
   --padding-end: var(--padding-md);
   --min-height: var(--x16);
-  
-  .garment-label-skeleton {
-    // Utility classes used in HTML: flex-1 items-center
-  }
 }
 
 // Delete container

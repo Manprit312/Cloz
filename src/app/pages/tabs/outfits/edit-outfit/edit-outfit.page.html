@@ -248,3 +248,12 @@
 
   </div>
 </ion-content>
+
+<ion-toast
+  [isOpen]="isToastOpen"
+  [message]="toastMessage"
+  [duration]="toastDuration"
+  [color]="toastColor"
+  position="bottom"
+  (didDismiss)="onToastDidDismiss()"
+></ion-toast>

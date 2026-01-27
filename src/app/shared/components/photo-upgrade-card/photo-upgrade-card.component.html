@@ -1,0 +1,26 @@
+<div class="ai-upgrade-card column-stack-sm">
+  <div class="column-stack-xxs">
+    <p class="ai-upgrade-title body1-bold">{{ title }}</p>
+    <span class="ai-upgrade-subtitle body2-regular">
+      {{ subtitle }}
+    </span>
+  </div>
+  <div class="ai-upgrade-actions">
+    <app-button
+      variant="secondary"
+      size="small"
+      [fullWidth]="false"
+      class="ai-upgrade-button"
+      [disabled]="disabled"
+      (click)="onClick()"
+    >
+        <app-icon
+        name="ai-cleanup"
+        [size]="28"
+        [color]="'var(--ion-color-primary)'"
+      ></app-icon>
+      <span class="ml-xs">Upgrade image</span>
+    </app-button>
+  </div>
+</div>
+

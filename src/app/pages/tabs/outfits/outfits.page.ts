@@ -8,13 +8,14 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
 import { OutfitsService, Outfit } from '../../../core/services/outfits.service';
 import { IconComponent } from '../../../shared/components/icon/icon.component';
 import { SkeletonLoaderComponent } from '../../../shared/components/skeleton-loader/skeleton-loader.component';
+import { CountBadgeComponent } from '../../../shared/components/count-badge/count-badge.component';
 
 @Component({
   selector: 'app-outfits',
   templateUrl: './outfits.page.html',
   styleUrls: ['./outfits.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, IonFab, IonFabButton, CommonModule, FormsModule, EmptyStateComponent, IconComponent, SkeletonLoaderComponent]
+  imports: [IonContent, IonHeader, IonTitle, IonToolbar, IonFab, IonFabButton, CommonModule, FormsModule, EmptyStateComponent, IconComponent, SkeletonLoaderComponent, CountBadgeComponent]
 })
 export class OutfitsPage implements OnInit {
   private router = inject(Router);

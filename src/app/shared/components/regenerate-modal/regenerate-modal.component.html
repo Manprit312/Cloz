@@ -19,12 +19,15 @@
           placeholder="Describe what should be improved"
           rows="4"
           autofocus
+          enterkeyhint="done"
+          (keydown.enter)="onEnterKey($event)"
+          #descriptionInput
         ></textarea>
       </div>
     </div>
 
     <!-- Regenerate Button - Positioned at bottom -->
-    <div class="button-container">
+    <!-- <div class="button-container">
       <app-button
         variant="primary"
         size="xlarge"
@@ -33,7 +36,7 @@
       >
         Regenerate
       </app-button>
-    </div>
+    </div> -->
   </div>
 </ion-content>
 

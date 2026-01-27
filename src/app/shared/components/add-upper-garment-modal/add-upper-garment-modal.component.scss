@@ -191,7 +191,7 @@ ion-header {
   padding-bottom: var(--gap-sm, var(--x2, 8px));
   cursor: pointer;
   
-  span {
+  .value-text {
     flex: 1;
   }
   

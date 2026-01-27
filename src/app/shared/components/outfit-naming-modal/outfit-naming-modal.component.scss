@@ -1,15 +1,58 @@
 .naming-modal-container {
   display: flex;
   flex-direction: column;
-  padding-top: var(--gap-sm, var(--x2, 8px));
+  padding-top: 0;
   padding-bottom: var(--gap-xl, var(--x8, 32px)); // Extra padding for keyboard
   min-height: fit-content;
+}
+
+ion-header {
+  --background: var(--ion-background-color);
+  position: relative;
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: var(--ion-color-step-200);
+  }
+
+  ion-toolbar {
+    --background: var(--ion-background-color);
+    --color: var(--ion-text-color);
+    --min-height: var(--x14);
+    --padding-start: var(--x2);
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+
+    ion-title {
+      font-weight: var(--font-weight-bold);
+      font-size: var(--font-size-md);
+      line-height: 1.2;
+    }
+
+    ion-buttons {
+      ion-button {
+        font-size: var(--font-size-md);
+        font-weight: var(--font-weight-regular);
+        --color: var(--ion-color-primary);
+      }
+    }
+  }
 }
 
 ion-content.naming-modal-content {
   --background: var(--ion-background-color);
   --overflow: auto;
   --keyboard-offset: 0px;
+  --padding-bottom: calc(var(--keyboard-height, 0px) + var(--gap-xl, 32px));
+  --padding-start: 0;
+  --padding-end: 0;
   max-height: 100%;
   overflow-y: auto !important;
   
@@ -32,11 +75,13 @@ ion-list {
 }
 
 .name-option-item {
-  --padding-start: var(--padding-md, var(--x4, 16px));
-  --padding-end: var(--padding-md, var(--x4, 16px));
+  --padding-start: 0;
+  --padding-end: 0;
   --inner-padding-end: 0;
   --inner-padding-start: 0;
   --min-height: var(--x14, 56px);
+  --border-color: var(--ion-color-step-200, #e0e0e0);
+  --inner-border-width: 0;
   margin-bottom: 0;
   cursor: pointer;
   
@@ -50,18 +95,25 @@ ion-list {
   }
 
   .icon-slot {
-    width: 24px;
-    height: 24px;
+    width: 28px;
+    height: 28px;
     display: flex;
     align-items: center;
     justify-content: flex-start;
     margin-inline-end: var(--gap-md, var(--x4, 16px));
+    margin-inline-start: var(--padding-md, var(--x4, 16px));
     flex-shrink: 0;
     
-    .icon-placeholder {
-      width: 24px;
-      height: 24px;
-      display: inline-block;
+    .selection-circle {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1px solid var(--ion-color-step-300, #d1d1d1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      transition: background-color 0.2s ease, border-color 0.2s ease;
     }
   }
 
@@ -69,6 +121,18 @@ ion-list {
   ion-label {
     flex: 1;
     color: var(--ion-text-color);
+    padding-right: 0;
+  }
+}
+
+.name-option-item::part(native) {
+  border-bottom: 1px solid var(--ion-color-step-200, #e0e0e0);
+}
+
+.name-option-item.selected {
+  .icon-slot .selection-circle {
+    background: var(--ion-color-primary);
+    border-color: var(--ion-color-primary);
   }
 }
 

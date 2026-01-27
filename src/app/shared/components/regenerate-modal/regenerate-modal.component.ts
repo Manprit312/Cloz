@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
@@ -10,7 +10,8 @@ import {
   IonContent,
   ModalController,
 } from '@ionic/angular/standalone';
-import { ButtonComponent } from '../button/button.component';
+
+import { Keyboard } from '@capacitor/keyboard';
 
 @Component({
   selector: 'app-regenerate-modal',
@@ -26,11 +27,12 @@ import { ButtonComponent } from '../button/button.component';
     IonButtons,
     IonButton,
     IonContent,
-    ButtonComponent,
+  
   ],
 })
 export class RegenerateModalComponent implements OnInit {
   @Input() previousDescription: string = '';
+  @ViewChild('descriptionInput', { read: ElementRef }) descriptionInput?: ElementRef<HTMLTextAreaElement>;
 
   description: string = '';
 
@@ -49,6 +51,12 @@ export class RegenerateModalComponent implements OnInit {
       { description: this.description.trim() },
       'confirm'
     );
+  }
+
+  async onEnterKey(event: Event) {
+    event.preventDefault();
+    this.descriptionInput?.nativeElement.blur();
+    await Keyboard.hide();
   }
 }
 

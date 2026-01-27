@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-        <string>Cloz</string>
+	<string>Cloz</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -22,6 +22,12 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Cloz needs access to your camera to take photos of your garments.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Cloz needs permission to save photos to your library.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Cloz needs access to your photo library to select garment images.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -43,13 +49,9 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>UIUserInterfaceStyle</key>
+	<string>Automatic</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
-	<key>NSCameraUsageDescription</key>
-	<string>Cloz needs access to your camera to take photos of your garments.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Cloz needs access to your photo library to select garment images.</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Cloz needs permission to save photos to your library.</string>
 </dict>
 </plist>

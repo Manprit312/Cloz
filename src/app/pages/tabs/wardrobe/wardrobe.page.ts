@@ -9,11 +9,13 @@ import {
   IonItem,
   IonLabel,
   IonList,
+  ToastController,
 } from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
 import { IconComponent } from '../../../shared/components/icon/icon.component';
+import { CountBadgeComponent } from '../../../shared/components/count-badge/count-badge.component';
 import { SkeletonLoaderComponent } from '../../../shared/components/skeleton-loader/skeleton-loader.component';
-import { WardrobeService } from '../../../core/services/wardrobe.service';
+import { WardrobeService, WardrobeItem } from '../../../core/services/wardrobe.service';
 import { inject } from '@angular/core';
 
 interface WardrobeCategory {
@@ -21,6 +23,8 @@ interface WardrobeCategory {
   count: number;
   route: string;
   type: string; // API type identifier
+  previewImages: string[];
+  remainingCount: number;
 }
 
 @Component({
@@ -37,43 +41,72 @@ interface WardrobeCategory {
     IonLabel,
     IonList,
     IconComponent,
+    CountBadgeComponent,
     SkeletonLoaderComponent,
     CommonModule,
     FormsModule,
   ],
 })
 export class WardrobePage implements OnInit {
-  showSuccessMessage = false;
-  successMessageText = 'Successfully logged in';
   isLoading = false;
+  useCardView = false;
   categories: WardrobeCategory[] = [
-    { name: 'Upper garments', count: 0, route: '/tabs/wardrobe/upper-garments', type: 'upper_garments' },
-    { name: 'Bottoms', count: 0, route: '/tabs/wardrobe/bottoms', type: 'bottoms' },
-    { name: 'Shoes', count: 0, route: '/tabs/wardrobe/shoes', type: 'shoes' },
-    { name: 'Accessories', count: 0, route: '/tabs/wardrobe/accessories', type: 'accessories' },
+    {
+      name: 'Top garments',
+      count: 0,
+      route: '/tabs/wardrobe/upper-garments',
+      type: 'upper_garments',
+      previewImages: [],
+      remainingCount: 0,
+    },
+    {
+      name: 'Bottoms',
+      count: 0,
+      route: '/tabs/wardrobe/bottoms',
+      type: 'bottoms',
+      previewImages: [],
+      remainingCount: 0,
+    },
+    {
+      name: 'Shoes',
+      count: 0,
+      route: '/tabs/wardrobe/shoes',
+      type: 'shoes',
+      previewImages: [],
+      remainingCount: 0,
+    },
+    {
+      name: 'Accessories',
+      count: 0,
+      route: '/tabs/wardrobe/accessories',
+      type: 'accessories',
+      previewImages: [],
+      remainingCount: 0,
+    },
   ];
 
   private router = inject(Router);
   private wardrobeService = inject(WardrobeService);
+  private toastController = inject(ToastController);
 
-  ngOnInit() {
-    // Check if we should show success message
+  async ngOnInit() {
+    // Show login/signup success as toast
     const showLoginSuccess = sessionStorage.getItem('showLoginSuccess');
     const isSignup = sessionStorage.getItem('isSignup');
-    
+
     if (showLoginSuccess === 'true') {
-      this.showSuccessMessage = true;
-      this.successMessageText = isSignup === 'true' 
-        ? 'Successfully signed up' 
-        : 'Successfully logged in';
-      
+      const message = isSignup === 'true' ? 'Successfully signed up' : 'Successfully logged in';
       sessionStorage.removeItem('showLoginSuccess');
       sessionStorage.removeItem('isSignup');
 
-      // Hide message after 5 seconds
-      setTimeout(() => {
-        this.showSuccessMessage = false;
-      }, 5000);
+      const toast = await this.toastController.create({
+        message,
+        color: 'success',
+        duration: 5000,
+        position: 'top',
+        icon: 'checkmark-outline',
+      });
+      await toast.present();
     }
 
     // Load category counts
@@ -117,10 +150,14 @@ export class WardrobePage implements OnInit {
             if (category) {
               if (Array.isArray(items)) {
                 category.count = items.length;
+                category.previewImages = this.getPreviewImages(items);
+                category.remainingCount = Math.max(0, category.count - category.previewImages.length);
                 console.log(`WardrobePage - ${category.name} count set to:`, category.count);
               } else {
                 console.warn(`WardrobePage - ${category.name} items is not an array:`, items);
                 category.count = 0;
+                category.previewImages = [];
+                category.remainingCount = 0;
               }
             }
             
@@ -128,6 +165,7 @@ export class WardrobePage implements OnInit {
             // Set loading to false after all requests complete
             if (completedCount === totalRequests) {
               this.isLoading = false;
+              this.updateViewMode();
             }
           },
           error: (err) => {
@@ -135,12 +173,15 @@ export class WardrobePage implements OnInit {
             const category = this.categories.find((cat) => cat.type === categoryLoader.type);
             if (category) {
               category.count = 0; // Set to 0 on error
+              category.previewImages = [];
+              category.remainingCount = 0;
             }
             
             completedCount++;
             // Set loading to false after all requests complete (even on errors)
             if (completedCount === totalRequests) {
               this.isLoading = false;
+              this.updateViewMode();
             }
           },
         });
@@ -150,5 +191,28 @@ export class WardrobePage implements OnInit {
 
   goToCategory(route: string): void {
     this.router.navigate([route]);
+  }
+
+  private updateViewMode(): void {
+    const totalCount = this.categories.reduce((sum, category) => sum + category.count, 0);
+    this.useCardView = totalCount > 5;
+  }
+
+  private getPreviewImages(items: WardrobeItem[]): string[] {
+    return items
+      .map((item) => this.getItemImage(item))
+      .filter((url): url is string => Boolean(url))
+      .slice(0, 3);
+  }
+
+  private getItemImage(item: WardrobeItem): string | null {
+    if (item.imageUrl && item.imageUrl.trim() !== '') {
+      return item.imageUrl;
+    }
+    if (item.imageUrls && item.imageUrls.length > 0) {
+      const first = item.imageUrls.find((url) => url && url.trim() !== '');
+      return first || null;
+    }
+    return null;
   }
 }

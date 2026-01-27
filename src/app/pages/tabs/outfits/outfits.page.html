@@ -46,7 +46,7 @@
   ></app-empty-state>
 
   <!-- Show outfits cards when outfits exist -->
-  <div *ngIf="!isLoading && !error && outfits.length > 0" class="column-stack-md outfits-container pad-all-md">
+  <div *ngIf="!isLoading && !error && outfits.length > 0" class="column-stack-sm outfits-container">
     <div *ngFor="let outfit of outfits" class="outfit-card" (click)="onOutfitClick(outfit)">
       <div class="row-stack-none justify-between items-center outfit-card-header">
         <h3 class="outfit-title body2-bold">{{ outfit.name || 'Untitled Outfit' }}</h3>
@@ -55,7 +55,7 @@
       <div class="outfit-garments-scroll">
         <div class="row-stack-sm outfit-garments-container">
           <div 
-            *ngFor="let item of getOutfitGarments(outfit)" 
+            *ngFor="let item of getOutfitGarments(outfit) | slice:0:3" 
             class="outfit-garment-item"
           >
             <img 
@@ -64,6 +64,12 @@
               class="outfit-garment-image"
             />
           </div>
+          <app-count-badge
+            *ngIf="getOutfitGarments(outfit).length > 3"
+            [count]="getOutfitGarments(outfit).length - 3"
+            [size]="60"
+            [fontSize]="22"
+          ></app-count-badge>
         </div>
       </div>
     </div>

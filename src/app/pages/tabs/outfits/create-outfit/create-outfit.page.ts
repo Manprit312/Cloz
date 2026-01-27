@@ -11,9 +11,10 @@ import {
   IonButton,
   IonSpinner,
   ModalController,
-  ToastController,
+  IonToast,
 } from '@ionic/angular/standalone';
 import { Location } from '@angular/common';
+import { Router } from '@angular/router';
 import { inject } from '@angular/core';
 import { IconComponent } from '../../../../shared/components/icon/icon.component';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
@@ -45,14 +46,15 @@ import { OutfitsService } from '../../../../core/services/outfits.service';
     IonButtons,
     IonButton,
     IonSpinner,
+    IonToast,
     IconComponent,
     ButtonComponent,
   ],
 })
 export class CreateOutfitPage implements OnInit, OnDestroy {
   private location = inject(Location);
+  private router = inject(Router);
   private modalController = inject(ModalController);
-  private toastController = inject(ToastController);
   private wardrobeService = inject(WardrobeService);
   private outfitsService = inject(OutfitsService);
 
@@ -76,11 +78,16 @@ export class CreateOutfitPage implements OnInit, OnDestroy {
   isLoadingOutfitNames = false; // Track if outfit names are being fetched
   private namingModal?: any; // Track naming modal instance
   private isNamingModalOpen = false; // Track if naming modal is currently open
+  isToastOpen = false;
+  toastMessage = '';
+  toastColor: 'medium' | 'danger' = 'medium';
+  toastDuration = 3000;
 
   constructor() {}
 
   ngOnInit() {
     // Don't load all garments upfront - load on demand when modal opens
+    this.applyPrefillFromState();
   }
 
   ngOnDestroy() {
@@ -186,6 +193,17 @@ export class CreateOutfitPage implements OnInit, OnDestroy {
     this.location.back();
   }
 
+  private showToast(message: string, color: 'medium' | 'danger' = 'medium', duration = 3000): void {
+    this.toastMessage = message;
+    this.toastColor = color;
+    this.toastDuration = duration;
+    this.isToastOpen = true;
+  }
+
+  onToastDidDismiss(): void {
+    this.isToastOpen = false;
+  }
+
   async openGarmentModal(category: GarmentCategory) {
     // Prevent multiple clicks while loading
     if (this.isLoadingGarments) {
@@ -222,14 +240,11 @@ export class CreateOutfitPage implements OnInit, OnDestroy {
       // If user doesn't have any garments in this category, show empty state message
       if (allGarments.length === 0) {
         const categoryName = this.getCategoryDisplayName(category);
-        const toast = await this.toastController.create({
-          message: `You don't have any ${categoryName} yet.\nAdd ${categoryName} to your wardrobe to use them in outfits`,
-          duration: 3000,
-          position: 'bottom',
-          color: 'medium',
-          cssClass: 'empty-state-toast',
-        });
-        await toast.present();
+        this.showToast(
+          `You don't have any ${categoryName} yet.\nAdd ${categoryName} to your wardrobe to use them in outfits`,
+          'medium',
+          3000
+        );
         return;
       }
 
@@ -241,13 +256,7 @@ export class CreateOutfitPage implements OnInit, OnDestroy {
       // If all garments are already selected, show message and return
       if (garments.length === 0) {
         const categoryName = this.getCategoryDisplayName(category);
-        const toast = await this.toastController.create({
-          message: `All ${categoryName} are already selected`,
-          duration: 2000,
-          position: 'bottom',
-          color: 'medium',
-        });
-        await toast.present();
+        this.showToast(`All ${categoryName} are already selected`, 'medium', 2000);
         return;
       }
 
@@ -259,6 +268,7 @@ export class CreateOutfitPage implements OnInit, OnDestroy {
           garments,
           isLoading: false,
         },
+        showBackdrop: true,
       });
 
       await modal.present();
@@ -272,13 +282,7 @@ export class CreateOutfitPage implements OnInit, OnDestroy {
       console.error('Error loading garments:', error);
       this.isLoadingGarments = false;
       
-      const toast = await this.toastController.create({
-        message: 'Failed to load garments. Please try again.',
-        duration: 3000,
-        position: 'bottom',
-        color: 'danger',
-      });
-      await toast.present();
+      this.showToast('Failed to load garments. Please try again.', 'danger', 3000);
     }
   }
 
@@ -377,20 +381,38 @@ export class CreateOutfitPage implements OnInit, OnDestroy {
   }
 
   private handleGarmentSelection(category: GarmentCategory, garment: GarmentItem) {
+    const normalizedGarment = this.normalizeSelectedGarment(garment);
     switch (category) {
       case 'upper-garments':
-        this.selectedUpperGarments.push(garment as UpperGarmentItem);
+        this.selectedUpperGarments.push(normalizedGarment as UpperGarmentItem);
         break;
       case 'bottoms':
-        this.selectedBottoms.push(garment as BottomItem);
+        this.selectedBottoms.push(normalizedGarment as BottomItem);
         break;
       case 'shoes':
-        this.selectedShoes.push(garment as ShoeItem);
+        this.selectedShoes.push(normalizedGarment as ShoeItem);
         break;
       case 'accessories':
-        this.selectedAccessories.push(garment as AccessoryItem);
+        this.selectedAccessories.push(normalizedGarment as AccessoryItem);
         break;
     }
+  }
+
+  private normalizeSelectedGarment(garment: GarmentItem): GarmentItem {
+    const aiCleanedImage = localStorage.getItem(`aiCleanedImage:${garment.id}`);
+    const imageUrls = garment.imageUrls && garment.imageUrls.length > 0
+      ? [...garment.imageUrls]
+      : (garment.imageUrl ? [garment.imageUrl] : []);
+
+    const primaryImage = (aiCleanedImage && imageUrls.includes(aiCleanedImage))
+      ? aiCleanedImage
+      : imageUrls[0] || garment.imageUrl || '';
+
+    return {
+      ...garment,
+      imageUrl: primaryImage,
+      imageUrls: imageUrls.length > 0 ? imageUrls : garment.imageUrls,
+    };
   }
 
   removeGarment(category: GarmentCategory, garmentId: string): void {
@@ -447,6 +469,27 @@ export class CreateOutfitPage implements OnInit, OnDestroy {
       this.selectedShoes.length +
       this.selectedAccessories.length;
     return totalGarments >= 2;
+  }
+
+  private applyPrefillFromState(): void {
+    const state = history.state;
+    const prefill = state?.prefillGarment;
+    if (!prefill || !prefill.category || !prefill.item) {
+      return;
+    }
+
+    const category = prefill.category as GarmentCategory;
+    const garment = prefill.item as GarmentItem;
+    if (!garment?.id) {
+      return;
+    }
+
+    const alreadySelected = this.getSelectedGarments(category).some(item => item.id === garment.id);
+    if (alreadySelected) {
+      return;
+    }
+
+    this.handleGarmentSelection(category, garment);
   }
 
   async onCreateOutfit(): Promise<void> {
@@ -524,6 +567,7 @@ export class CreateOutfitPage implements OnInit, OnDestroy {
         },
         breakpoints: [0, 0.5, 0.9],
         initialBreakpoint: 0.5,
+        showBackdrop: true,
         backdropDismiss: false, // Prevent backdrop dismissal
         keyboardClose: false, // Keep modal open when keyboard appears
       });
@@ -584,7 +628,14 @@ export class CreateOutfitPage implements OnInit, OnDestroy {
         console.log('Outfit created successfully:', outfit);
         this.isLoading = false;
         this.isCreatingOutfit = false;
-        // Navigate back after creation
+        if (outfit?.id) {
+          this.router.navigate(['/tabs/outfits/outfit-detail', outfit.id], {
+            state: { outfit },
+            replaceUrl: true,
+          });
+          return;
+        }
+        // Fallback if no ID returned
         this.location.back();
       },
       error: (err) => {

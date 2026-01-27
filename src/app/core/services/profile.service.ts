@@ -15,6 +15,8 @@ export class ProfileService {
   constructor(private authService: AuthService) {
     // Initialize profile from user data if available
     this.syncFromAuthService();
+    // Apply theme on init so iOS simulator/device matches stored or system preference
+    this.applyDarkMode();
   }
 
   syncFromAuthService(): void {
@@ -70,22 +72,21 @@ export class ProfileService {
       const raw = localStorage.getItem(this.PROFILE_STORAGE_KEY);
       if (raw) {
         const profile = JSON.parse(raw);
-        // Apply dark mode on load
-        if (profile.darkMode) {
-          document.body.classList.add('dark');
-        }
         return profile;
       }
     } catch {
       // Ignore errors
     }
 
-    // Default profile
+    // Default profile: follow system appearance so iOS light/dark works out of the box
+    const prefersDark =
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches;
     return {
       name: 'Luisa Monsalve',
       email: 'luisa@zerena.nl',
       gender: 'Female',
-      darkMode: false,
+      darkMode: prefersDark,
     };
   }
 

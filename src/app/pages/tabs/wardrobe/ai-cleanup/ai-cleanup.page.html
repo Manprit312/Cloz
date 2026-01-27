@@ -14,18 +14,11 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" *ngIf="item">
-  <div class="ai-cleanup-container column-stack-none h-full">
+<ion-content *ngIf="item">
+
     <!-- Full Screen Image -->
-    <div class="image-wrapper items-center justify-center">
+
       <img [src]="displayImage" [alt]="item.subtype" class="garment-image-full" />
-      
-      <!-- Loading Overlay -->
-      <div class="loading-overlay column-stack-none items-center justify-center" *ngIf="isProcessing">
-        <ion-spinner name="lines" color="light"></ion-spinner>
-        <p class="loading-text body1-medium">AI is enhancing your photo...</p>
-      </div>
-    </div>
 
     <!-- Action Buttons - Show only after processing completes -->
     <div class="actions-bottom column-stack-md" *ngIf="!isProcessing && hasGeneratedImage">
@@ -37,10 +30,10 @@
         class="set-image-button w-full"
       >
         <app-icon name="check" [size]="20" [color]="'var(--ion-color-primary-contrast)'" class="mr-sm"></app-icon>
-        Set as generated image
+        Set as Garment image
       </app-button>
       
-      <app-button
+      <!-- <app-button
         variant="tertiary"
         size="large"
         [fullWidth]="true"
@@ -50,8 +43,13 @@
       >
         <app-icon name="refresh" [size]="20" [color]="'var(--ion-color-primary)'" class="mr-sm"></app-icon>
         {{ regenerateText }}
-      </app-button>
+      </app-button> -->
     </div>
-  </div>
+
 </ion-content>
 
+<!-- Loading Overlay - outside ion-content so it sits above header -->
+<div class="loading-overlay column-stack-none items-center justify-center" *ngIf="isProcessing">
+  <ion-spinner name="lines-sharp" size="medium" color="light"></ion-spinner>
+  <p class="loading-text body1-medium">AI is enhancing your photo...</p>
+</div>

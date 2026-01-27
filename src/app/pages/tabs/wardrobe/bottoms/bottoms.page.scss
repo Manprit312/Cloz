@@ -39,17 +39,16 @@ ion-header {
 }
 
 // Ensure grid aligns with filter buttons - remove any default grid padding
-// Container already has pad-all-md, so grid should have no padding
+// Use a small, even gap between tiles so color sorting doesn’t show ragged spaces
 .items-grid {
   --padding-start: var(--x0);
   --padding-end: var(--x0);
   padding: var(--x0);
-  
-  // Add gaps between thumbnails using padding on columns
+
   ion-col {
     --padding-start: var(--x0);
     --padding-end: var(--x0);
-    padding: var(--gap-xs);
+    padding: 4px;
   }
 }
 

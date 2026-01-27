@@ -9,9 +9,8 @@ import {
   IonButtons,
   IonButton,
   IonContent,
-
+  IonToast,
   ModalController,
-  ToastController,
 } from '@ionic/angular/standalone';
 import { Keyboard } from '@capacitor/keyboard';
 import { ButtonComponent } from '../button/button.component';
@@ -30,6 +29,7 @@ import { ButtonComponent } from '../button/button.component';
     IonButtons,
     IonButton,
     IonContent,
+    IonToast,
 
     ButtonComponent,
   ],
@@ -41,10 +41,11 @@ export class PasswordEditModalComponent implements OnInit {
   newPassword: string = '';
   confirmPassword: string = '';
 
-  constructor(
-    private modalController: ModalController,
-    private toastController: ToastController
-  ) {}
+  isToastOpen = false;
+  toastMessage = '';
+  toastDuration = 2000;
+
+  constructor(private modalController: ModalController) {}
 
   ngOnInit() {}
 
@@ -54,6 +55,15 @@ export class PasswordEditModalComponent implements OnInit {
 
   dismissKeyboard(): void {
     Keyboard.hide();
+  }
+
+  private showToast(message: string): void {
+    this.toastMessage = message;
+    this.isToastOpen = true;
+  }
+
+  onToastDidDismiss(): void {
+    this.isToastOpen = false;
   }
 
   async save() {
@@ -77,12 +87,7 @@ export class PasswordEditModalComponent implements OnInit {
 
     // In a real app, verify current password and update
     // For demo, just dismiss with success
-    const toast = await this.toastController.create({
-      message: 'Password updated successfully',
-      duration: 2000,
-      position: 'bottom',
-    });
-    await toast.present();
+    this.showToast('Password updated successfully');
 
     this.modalController.dismiss({ newPassword: this.newPassword }, 'confirm');
   }

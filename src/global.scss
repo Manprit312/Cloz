@@ -65,6 +65,9 @@
   /* Background Colors - From Figma Design System */
   --background-primary: #ffffff;
   --background-250: #f5f5f5;
+
+  /* Grey scale - light medium base (e.g. Original badge) */
+  --grey-light-medium-base: #5F5F5F;
   
   /* Border Radius */
   --radius-sm: 4px;
@@ -295,6 +298,42 @@ ion-modal {
 ion-tab-bar {
   --padding-bottom: 0 !important;
 }
+
+/**
+ * Tab bar + icons: theme-aware for iOS light/dark
+ * Ensures tab icons and labels are visible in both themes (simulator/device)
+ */
+ion-tab-bar {
+  --color: var(--text-color-600, #666666);
+  --color-selected: var(--ion-color-primary);
+  --background: var(--background-primary, #ffffff);
+}
+ion-tab-button {
+  --color: var(--text-color-600, #666666);
+  --color-selected: var(--ion-color-primary);
+}
+ion-tab-button app-icon,
+ion-tab-bar app-icon {
+  color: var(--text-color-600, #666666);
+}
+ion-tab-button.tab-selected app-icon,
+ion-tab-button[aria-selected='true'] app-icon {
+  color: var(--ion-color-primary) !important;
+}
+body.dark ion-tab-bar {
+  --background: var(--ion-background-color, #121212);
+  --color: var(--text-color-600, #cccccc);
+  --color-selected: var(--ion-color-primary);
+}
+body.dark ion-tab-button app-icon,
+body.dark ion-tab-bar app-icon {
+  color: var(--text-color-600, #cccccc);
+}
+body.dark ion-tab-button.tab-selected app-icon,
+body.dark ion-tab-button[aria-selected='true'] app-icon {
+  color: var(--ion-color-primary) !important;
+}
+
 /* Specific targeting for toolbars if the above root variable isn't enough */
 ion-header ion-toolbar {
   padding-top: 0 !important;
@@ -868,5 +907,111 @@ ion-list {
   .alert-button {
     color: var(--ion-color-primary-contrast);
     font-weight: var(--font-weight-medium);
+  }
+}
+
+/* Sorting sheets */
+.sorting-sheet .action-sheet-title {
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-md);
+  color: var(--text-color-600, #666666);
+  text-align: left;
+  padding-left: var(--padding-md);
+  padding-right: var(--padding-md);
+}
+
+.sorting-sheet .action-sheet-group {
+  padding: 0;
+}
+
+.sorting-sheet .action-sheet-button {
+  position: relative;
+  justify-content: flex-start;
+  text-align: left;
+  color: var(--ion-text-color) !important;
+  font-weight: var(--font-weight-regular);
+  font-size: var(--font-size-md);
+  --padding-start: var(--padding-md);
+  --padding-end: var(--padding-md);
+  --padding-top: var(--gap-sm);
+  --padding-bottom: var(--gap-sm);
+  width: 100%;
+}
+
+.sorting-sheet .action-sheet-button .action-sheet-button-inner {
+  justify-content: flex-start;
+  gap: var(--gap-md);
+  width: 100%;
+}
+
+.sorting-sheet-color .action-sheet-button .action-sheet-button-inner {
+  flex-direction: row;
+  align-items: center;
+}
+
+.sorting-sheet-color .action-sheet-button {
+  display:flex !important;
+  align-items: center;
+}
+
+.sorting-sheet .action-sheet-button::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--ion-color-step-200);
+}
+
+.sorting-sheet .action-sheet-button:last-of-type::after {
+  display: none;
+}
+
+.sorting-sheet .action-sheet-button.sort-color::before {
+  content: '';
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+  border: none;
+  margin-right: var(--gap-md);
+}
+
+.sorting-sheet .action-sheet-button.sort-color-red::before { background: var(--red-mid-soft); }
+.sorting-sheet .action-sheet-button.sort-color-orange::before { background: var(--orange-mid-soft); }
+.sorting-sheet .action-sheet-button.sort-color-yellow::before { background: var(--yellow-mid-soft); }
+.sorting-sheet .action-sheet-button.sort-color-green::before { background: var(--green-mid-soft); }
+.sorting-sheet .action-sheet-button.sort-color-teal::before { background: var(--teal-mid-soft); }
+.sorting-sheet .action-sheet-button.sort-color-blue::before { background: var(--blue-mid-soft); }
+.sorting-sheet .action-sheet-button.sort-color-purple::before { background: var(--purple-mid-soft); }
+.sorting-sheet .action-sheet-button.sort-color-pink::before { background: var(--pink-mid-soft); }
+.sorting-sheet .action-sheet-button.sort-color-brown::before { background: var(--brown-mid-soft); }
+.sorting-sheet .action-sheet-button.sort-color-grey::before { background: var(--grey-mid-soft, #9e9e9e); }
+.sorting-sheet .action-sheet-button.sort-color-black::before { background: #000000; }
+.sorting-sheet .action-sheet-button.sort-color-white::before { background: #ffffff; }
+.sorting-sheet .action-sheet-button.sort-color-print::before {
+  background: url('/assets/images/print.png') center / cover no-repeat;
+}
+
+.sorting-sheet .action-sheet-button.sort-color-white::before {
+  border: 1px solid var(--ion-color-step-200);
+}
+
+.sorting-sheet .action-sheet-button.sort-cancel {
+  color: var(--ion-color-primary) !important;
+}
+
+/**
+ * Sort Menu Active State
+ * Active sort option is visually indicated with a light grey background
+ */
+.action-sheet-button.sort-option-active {
+  --background: var(--ion-color-step-50, #f5f5f5) !important;
+  --color: var(--ion-color-primary, #1860FA) !important;
+  
+  &:hover {
+    --background: var(--ion-color-step-100, #ebebeb) !important;
   }
 }

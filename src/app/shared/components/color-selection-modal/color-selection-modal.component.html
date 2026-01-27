@@ -1,13 +1,12 @@
 <ion-header class="ion-no-border">
   <ion-toolbar>
-    <ion-buttons *ngIf="viewingShades || viewingVariations" slot="start">
-      <ion-button (click)="viewingVariations ? backToShades() : backToColors()" fill="clear" class="body1-regular">
-        <ion-icon name="chevron-back-outline" slot="start"></ion-icon>
-        Back
-      </ion-button>
-    </ion-buttons>
+
+
+        <app-icon *ngIf="viewingShades || viewingVariations" slot="start" (click)="viewingVariations ? backToShades() : backToColors()" name="back-modal" [size]="28" [color]="'var(--ion-color-primary)'" class="ion-margin-end"></app-icon>
+
+
     <ion-title class="ion-text-center">
-      {{ viewingVariations ? selectedShadeLevel : (viewingShades ? selectedColorFamily : 'Hue + Lightness Gradient') }}
+      {{ viewingVariations ? 'Select Saturation' : (viewingShades ? 'Select Shade' : 'Select Color') }}
     </ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="cancel()" fill="clear" class="body1-regular">
@@ -47,6 +46,11 @@
               [style.background-color]="color.hex"
             >
               <span class="body1-regular color-label" [class.dark-text]="color.hex === '#FFFFFF'">{{ color.label }}</span>
+              <ion-icon
+                name="chevron-forward-outline"
+                class="chevron-icon"
+                [class.dark-icon]="color.hex === '#FFFFFF'"
+              ></ion-icon>
             </div>
             
             <!-- For Print pattern - no chevron as it has no shades -->
@@ -58,6 +62,7 @@
                 <img src="assets/images/print.png" alt="Print pattern" class="print-icon" />
                 <span class="body1-regular color-label dark-text">{{ color.label }}</span>
               </div>
+              <ion-icon name="chevron-forward-outline" class="chevron-icon dark-icon"></ion-icon>
             </div>
           </div>
         </ion-label>
@@ -81,7 +86,7 @@
               class="gradient-bar solid-bar" 
               [style.background-color]="shade.hex"
             >
-              <span class="body1-regular color-label" [class.dark-text]="isLightColor(shade.label)">{{ shade.label }}</span>
+              <span class="body1-regular color-label" [class.dark-text]="isLightColor(shade.label)">{{ formatShadeLabel(shade.label) }}</span>
               <ion-icon name="chevron-forward-outline" class="chevron-icon" [class.dark-icon]="isLightColor(shade.label)"></ion-icon>
             </div>
           </div>
@@ -106,7 +111,7 @@
               class="gradient-bar solid-bar" 
               [style.background-color]="variation.hex"
             >
-              <span class="body1-regular color-label" [class.dark-text]="isLightColor(variation.label)">{{ variation.label }}</span>
+              <span class="body1-regular color-label" [class.dark-text]="isLightColor(variation.label)">{{ formatVariationLabel(variation.label) }}</span>
               <ion-icon name="chevron-forward-outline" class="chevron-icon" [class.dark-icon]="isLightColor(variation.label)"></ion-icon>
             </div>
           </div>

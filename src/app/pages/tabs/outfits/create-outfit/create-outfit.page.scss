@@ -109,3 +109,24 @@
   margin-top: var(--gap-sm, var(--x2, 8px));
 }
 
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  backdrop-filter: blur(var(--x1));
+
+  ion-spinner {
+    margin-bottom: var(--gap-md);
+  }
+}
+
+.loading-text {
+  color: var(--ion-color-primary-contrast);
+  text-align: center;
+  margin: var(--x0);
+  text-shadow: 0 var(--x2) var(--x4) rgba(0, 0, 0, 0.5);
+}

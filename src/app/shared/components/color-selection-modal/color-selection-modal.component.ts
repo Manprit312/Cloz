@@ -16,12 +16,14 @@ import {
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { chevronForwardOutline, chevronBackOutline } from 'ionicons/icons';
+import { IconComponent } from '../icon/icon.component';
 import { 
   PRIMARY_COLORS, 
   COLOR_FAMILIES, 
   ColorToken,
   getColorVariations,
-  getBaseLevelColor 
+  getBaseLevelColor,
+  getColorFamilyAndLevel,
 } from '@shared/constants/color-tokens';
 
 
@@ -51,9 +53,22 @@ export interface ColorOption {
     IonLabel,
     IonList,
     IonIcon,
+    IconComponent,
   ],
 })
 export class ColorSelectionModalComponent implements OnInit {
+  private normalizeColorName(value: string): string {
+    return (value || '').trim().toLowerCase();
+  }
+
+  private collapseSpaces(value: string): string {
+    return (value || '').replace(/\s+/g, ' ').trim();
+  }
+
+  private escapeRegExp(value: string): string {
+    return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
   @Input() currentColor: string = '';
 
   selectedColor: string = '';
@@ -70,7 +85,9 @@ export class ColorSelectionModalComponent implements OnInit {
   // Generate primary colors with gradients from Figma tokens
   private generatePrimaryColors(): ColorOption[] {
     const colors = PRIMARY_COLORS.map((token: ColorToken) => {
-      const family = COLOR_FAMILIES.find((f: any) => f.name === token.value);
+      const family = COLOR_FAMILIES.find(
+        (f: any) => this.normalizeColorName(f.name) === this.normalizeColorName(token.value)
+      );
       let gradient = '';
       
       if (family) {
@@ -100,7 +117,9 @@ export class ColorSelectionModalComponent implements OnInit {
 
   // Generate shade display data from Figma tokens
   getShadeDisplayData(colorFamily: string): ColorOption[] {
-    const family = COLOR_FAMILIES.find(f => f.name === colorFamily);
+    const family = COLOR_FAMILIES.find(
+      f => this.normalizeColorName(f.name) === this.normalizeColorName(colorFamily)
+    );
     if (!family) return [];
     
     return family.levels.map(level => {
@@ -120,7 +139,9 @@ export class ColorSelectionModalComponent implements OnInit {
 
   // Get color variations for a specific shade level
   getColorVariations(colorFamily: string, levelName: string): ColorOption[] {
-    const family = COLOR_FAMILIES.find(f => f.name === colorFamily);
+    const family = COLOR_FAMILIES.find(
+      f => this.normalizeColorName(f.name) === this.normalizeColorName(colorFamily)
+    );
     if (!family) return [];
     
     const level = family.levels.find(l => l.name === levelName);
@@ -137,7 +158,28 @@ export class ColorSelectionModalComponent implements OnInit {
 
   // Check if color family has shade levels
   hasShades(colorValue: string): boolean {
-    return COLOR_FAMILIES.some((f: any) => f.name === colorValue);
+    return COLOR_FAMILIES.some(
+      (f: any) => this.normalizeColorName(f.name) === this.normalizeColorName(colorValue)
+    );
+  }
+
+  formatShadeLabel(label: string): string {
+    let cleaned = this.collapseSpaces(label);
+    const family = this.collapseSpaces(this.selectedColorFamily);
+    if (family) {
+      cleaned = cleaned.replace(new RegExp(`\\b${this.escapeRegExp(family)}\\b`, 'ig'), '').trim();
+    }
+    cleaned = cleaned.replace(/\b(soft|vivid|muted)\b/ig, '').trim();
+    return this.collapseSpaces(cleaned);
+  }
+
+  formatVariationLabel(label: string): string {
+    const match = (label || '').match(/\b(Vivid|Soft|Muted)\b/i);
+    if (match) {
+      const word = match[0].toLowerCase();
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    }
+    return this.collapseSpaces(label);
   }
 
   // Removed hardcoded colorVariations - now generated dynamically from Figma tokens
@@ -147,8 +189,33 @@ export class ColorSelectionModalComponent implements OnInit {
     addIcons({ chevronForwardOutline, chevronBackOutline });
   }
 
+  private async setModalBreakpoint(value: number): Promise<void> {
+    try {
+      const modal = await this.modalController.getTop();
+      if (modal && typeof (modal as any).setCurrentBreakpoint === 'function') {
+        await (modal as any).setCurrentBreakpoint(value);
+      }
+    } catch (error) {
+      // Ignore breakpoint changes if modal is not available.
+    }
+  }
+
   ngOnInit() {
     this.selectedColor = this.currentColor;
+    // When opened from garment details with an existing full token (e.g. "Extra Dark Blue Vivid"),
+    // open directly at the saturation step so the user can change saturation without re-picking hue/shade.
+    const resolved = getColorFamilyAndLevel(this.currentColor);
+    if (resolved) {
+      this.selectedColorFamily = resolved.family;
+      this.selectedShadeLevel = resolved.level;
+      this.currentShades = this.getShadeDisplayData(resolved.family);
+      this.currentVariations = this.getColorVariations(resolved.family, resolved.level);
+      this.viewingShades = true;
+      this.viewingVariations = this.currentVariations.length > 0;
+      if (this.viewingVariations) {
+        this.setModalBreakpoint(0.27);
+      }
+    }
   }
 
   cancel() {
@@ -162,6 +229,7 @@ export class ColorSelectionModalComponent implements OnInit {
       this.currentShades = this.getShadeDisplayData(color.value);
       this.viewingShades = true;
       this.viewingVariations = false;
+      this.setModalBreakpoint(0.4);
     } else {
       // For White, Black, Print - select directly (no shades)
       // Gray has shades, so it will go through the shades view
@@ -181,6 +249,7 @@ export class ColorSelectionModalComponent implements OnInit {
         this.selectedShadeLevel = shade.value;
         this.currentVariations = variations;
         this.viewingVariations = true;
+        this.setModalBreakpoint(0.27);
       }
     }
   }
@@ -197,12 +266,14 @@ export class ColorSelectionModalComponent implements OnInit {
     this.selectedShadeLevel = '';
     this.currentShades = [];
     this.currentVariations = [];
+    this.setModalBreakpoint(0.8);
   }
 
   backToShades() {
     this.viewingVariations = false;
     this.selectedShadeLevel = '';
     this.currentVariations = [];
+    this.setModalBreakpoint(0.4);
   }
 
   onColorChange(value: string) {

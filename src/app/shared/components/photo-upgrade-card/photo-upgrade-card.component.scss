@@ -1,0 +1,25 @@
+.ai-upgrade-card {
+  border-radius: var(--radius-lg);
+  border: 2px solid var(--red-extra-light-muted);
+  background-color: var(--ion-background-color);
+  padding: var(--gap-md);
+
+}
+
+.ai-upgrade-title {
+  color: var(--ion-text-color);
+}
+
+.ai-upgrade-subtitle {
+  color: var(--ion-color-step-600);
+}
+
+.ai-upgrade-actions {
+  display: flex;
+  align-items: center;
+}
+
+.ai-upgrade-button app-icon {
+  margin-right: var(--gap-xs);
+}
+
