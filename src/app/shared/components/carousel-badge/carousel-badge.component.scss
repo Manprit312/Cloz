@@ -1,0 +1,25 @@
+/**
+ * Carousel badge: "AI enhanced" (blue) or "Original" (dark grey).
+ * Used on garment detail image carousels when there are multiple images.
+ */
+:host {
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--gap-xl, 14px) + var(--gap-md, 16px));
+  transform: translateX(-50%);
+  z-index: 6;
+}
+
+.carousel-badge {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 1px var(--gap-sm, 5px);
+  background-color: var(--ion-color-primary);
+  color: var(--ion-color-primary-contrast);
+  white-space: nowrap;
+
+  &.badge-original {
+    background-color: var(--grey-light-medium-base, #5F5F5F);
+    color: #ffffff;
+  }
+}

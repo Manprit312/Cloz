@@ -13,7 +13,7 @@
   <div class="detail-container column-stack-md pad-all-md">
     <ion-toast
       [isOpen]="showSuccessMessage"
-      message="Garment image updated"
+      [message]="successToastMessage"
       [duration]="5000"
       color="success"
       icon="checkmark-outline"
@@ -62,10 +62,10 @@
         </button>
       </div>
       
-      <!-- Badge: "AI enhanced" (blue) for non-last slides, "Original" (dark) for last slide -->
-      <div class="ai-enhanced-badge-wrapper" *ngIf="hasMultipleImages" [class.badge-original]="currentImageIndex === images.length - 1">
-        <span class="carousel-badge body1-bold">{{ currentImageIndex === images.length - 1 ? 'Original' : 'AI enhanced' }}</span>
-      </div>
+      <app-carousel-badge
+        *ngIf="hasMultipleImages"
+        [variant]="currentImageIndex === images.length - 1 ? 'original' : 'ai-enhanced'"
+      ></app-carousel-badge>
       <div class="pagination-dots row-stack-xs items-center justify-center" *ngIf="hasMultipleImages">
         <span
           *ngFor="let image of images; let i = index"
@@ -150,7 +150,7 @@
     </div>
 
     <!-- Details Tab -->
-    <div *ngIf="activeTab === 'details'" class="form-fields column-stack-lg">
+    <div *ngIf="activeTab === 'details'" class="form-fields column-stack-none">
       <div class="body1-bold">Garment details</div>
       <div class="column-stack-sm">
         <div class="input-border-full row-stack-none items-center justify-between select-field" (click)="onEditSubtype()">

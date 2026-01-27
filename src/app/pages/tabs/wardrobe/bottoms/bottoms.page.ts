@@ -33,6 +33,7 @@ export interface BottomItem {
   id: string;
   imageUrl: string;
   imageUrls?: string[]; // For multiple images (carousel)
+  imageIds?: string[]; // Parallel to imageUrls for DELETE /wardrobe/{id}/image/{imageId}
   originalImageUrl?: string; // Original image before AI cleanup
   subtype: string;
   color: string;
@@ -180,6 +181,7 @@ export class BottomsPage implements OnInit, ViewWillEnter {
       id: item.id,
       imageUrl: item.imageUrl || item.imageUrls?.[0] || '',
       imageUrls: item.imageUrls || (item.imageUrl ? [item.imageUrl] : undefined),
+      imageIds: item.imageIds,
       subtype: item.subtype,
       color: item.color,
       climateFit: climateFit,

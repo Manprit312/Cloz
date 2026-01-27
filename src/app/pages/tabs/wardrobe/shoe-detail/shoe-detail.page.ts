@@ -35,6 +35,7 @@ import { inject } from '@angular/core';
 import { Keyboard } from '@capacitor/keyboard';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { PhotoUpgradeCardComponent } from '../../../../shared/components/photo-upgrade-card/photo-upgrade-card.component';
+import { CarouselBadgeComponent } from '../../../../shared/components/carousel-badge/carousel-badge.component';
 
 @Component({
   selector: 'app-shoe-detail',
@@ -59,13 +60,16 @@ import { PhotoUpgradeCardComponent } from '../../../../shared/components/photo-u
     EmptyStateComponent,
     CountBadgeComponent,
     PhotoUpgradeCardComponent,
+    CarouselBadgeComponent,
   ],
 })
 export class ShoeDetailPage implements OnInit, ViewWillEnter {
   item: ShoeItem | null = null;
   showSuccessMessage = false;
+  successToastMessage = 'Garment image updated';
   currentImageIndex = 0;
   images: string[] = [];
+  imageIds: string[] = [];
   brandDraft = '';
   activeTab: 'outfits' | 'details' = 'outfits';
   detailTabs = [
@@ -206,6 +210,7 @@ export class ShoeDetailPage implements OnInit, ViewWillEnter {
       id: item.id,
       imageUrl: item.imageUrl || item.imageUrls?.[0] || '',
       imageUrls: item.imageUrls || (item.imageUrl ? [item.imageUrl] : undefined),
+      imageIds: item.imageIds,
       subtype: item.subtype,
       color: item.color,
       climateFit: climateFit,
@@ -218,6 +223,7 @@ export class ShoeDetailPage implements OnInit, ViewWillEnter {
     if (this.item) {
       const images = this.getOrderedImages();
       this.images = images;
+      this.imageIds = this.getOrderedImageIds();
       this.currentImageIndex = 0;
       
       // Log for debugging
@@ -241,8 +247,21 @@ export class ShoeDetailPage implements OnInit, ViewWillEnter {
     return [...new Set(images.filter(url => url && url.trim() !== ''))];
   }
 
+  /** Image ids in same order as getOrderedImages() for DELETE /wardrobe/{id}/image/{imageId}. */
+  private getOrderedImageIds(): string[] {
+    const urls = this.getOrderedImages();
+    return urls.map(url => {
+      const idx = this.item?.imageUrls?.indexOf(url) ?? -1;
+      return idx >= 0 && this.item?.imageIds?.[idx] ? this.item.imageIds![idx] : undefined;
+    }).filter((id): id is string => !!id);
+  }
+
   get currentImage(): string {
     return this.images[this.currentImageIndex] || '';
+  }
+
+  get currentImageId(): string | undefined {
+    return this.imageIds[this.currentImageIndex];
   }
 
   get hasMultipleImages(): boolean {
@@ -596,9 +615,10 @@ export class ShoeDetailPage implements OnInit, ViewWillEnter {
         quality: 0.7,
         maxSizeMB: 1,
       });
-      this.wardrobeService.updateItem(this.item.id, { image: compressed }).subscribe({
+      this.wardrobeService.updateItem(this.item.id, { image: compressed, imageId: this.currentImageId ?? undefined }).subscribe({
         next: () => {
           this.isReplacingImage = false;
+          this.successToastMessage = 'Garment image updated';
           this.showSuccessMessage = true;
           this.reloadItemFromAPI(this.item!.id);
         },
@@ -672,17 +692,20 @@ export class ShoeDetailPage implements OnInit, ViewWillEnter {
   }
 
   onDeleteAiImage(): void {
-    if (!this.item?.id || !this.currentImage) return;
-    this.wardrobeService.cancelGarmentImage(this.currentImage).subscribe({
+    const imageId = this.currentImageId;
+    if (!this.item?.id || !imageId) return;
+    this.wardrobeService.deleteWardrobeImage(this.item.id, imageId).subscribe({
       next: () => {
         try {
           localStorage.removeItem(`aiCleanedImage:${this.item!.id}`);
           sessionStorage.removeItem(`aiCleanedImage:${this.item!.id}`);
         } catch {}
+        this.successToastMessage = 'Image deleted';
+        this.showSuccessMessage = true;
         this.reloadItemFromAPI(this.item!.id);
       },
       error: (err) => {
-        console.error('Shoe detail page - Error deleting AI image:', err);
+        console.error('Shoe detail page - Error deleting image:', err);
       },
     });
   }
