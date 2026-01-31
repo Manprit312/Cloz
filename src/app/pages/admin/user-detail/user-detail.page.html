@@ -1,0 +1,60 @@
+<app-admin-header
+  variant="back"
+  [title]="displayTitle()"
+  [userName]="currentUserName()"
+  backLink="/admin/users"
+></app-admin-header>
+
+<ion-content [fullscreen]="true">
+  <div class="container-main user-detail-page">
+    @if (loading()) {
+      <p class="user-detail-loading">Loading…</p>
+    } @else if (error()) {
+      <p class="user-detail-error">{{ error() }}</p>
+    } @else if (user()) {
+      <section class="user-detail-info">
+        <h2 class="user-detail-section-title">User</h2>
+        <dl class="user-detail-dl">
+          <dt>Name</dt>
+          <dd>{{ user()?.name ?? user()?.username ?? '—' }}</dd>
+          <dt>Email</dt>
+          <dd>{{ user()?.email ?? '—' }}</dd>
+          <dt>Sign up date</dt>
+          <dd>{{ formatDate(user()?.signUpDate) }}</dd>
+          <dt>Last login</dt>
+          <dd>{{ formatDate(user()?.lastLogin) }}</dd>
+        </dl>
+      </section>
+
+      <section class="user-detail-wardrobe">
+        <h2 class="user-detail-section-title">Wardrobe ({{ wardrobe().length }})</h2>
+        @if (wardrobe().length === 0) {
+          <p class="user-detail-empty">No wardrobe items</p>
+        } @else {
+          <ul class="user-detail-list">
+            @for (item of wardrobe(); track item.id) {
+              <li class="user-detail-list-item">
+                <span class="user-detail-item-type">{{ item.type }}</span>
+                <span class="user-detail-item-subtype">{{ item.subtype }}</span>
+                <span class="user-detail-item-color">{{ item.color }}</span>
+              </li>
+            }
+          </ul>
+        }
+      </section>
+
+      <section class="user-detail-outfits">
+        <h2 class="user-detail-section-title">Outfits ({{ outfits().length }})</h2>
+        @if (outfits().length === 0) {
+          <p class="user-detail-empty">No outfits</p>
+        } @else {
+          <ul class="user-detail-list">
+            @for (o of outfits(); track o.id) {
+              <li class="user-detail-list-item">{{ o.name }}</li>
+            }
+          </ul>
+        }
+      </section>
+    }
+  </div>
+</ion-content>

@@ -77,8 +77,11 @@
       </div>
     </div>
 
-    <!-- AI Photo Upgrade Card -->
-    <app-photo-upgrade-card (upgrade)="onAICleanup()"></app-photo-upgrade-card>
+    <!-- AI Photo Upgrade Card: only show when there is a single image (no AI variant yet) -->
+    <app-photo-upgrade-card
+      *ngIf="images.length === 1"
+      (upgrade)="onAICleanup()"
+    ></app-photo-upgrade-card>
 
     <div class="use-outfit-button" *ngIf="linkedOutfits.length > 0">
       <app-button

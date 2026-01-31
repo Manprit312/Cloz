@@ -1,5 +1,5 @@
 .detail-tabs {
-  background: var(--ion-color-step-100, #f3f3f3);
+  background: var(--ion-color-step-100, var(--border-color-light));
   border-radius: var(--radius-md);
   padding: var(--gap-xs);
 }

@@ -1,0 +1,20 @@
+/**
+ * Admin area: main content background per design
+ * Full-width scroll area so .container-main can center with void space on desktop.
+ */
+.admin-content {
+  --background: var(--background-admin, var(--background-250));
+
+  &::part(scroll) {
+    width: 100%;
+    min-width: 100%;
+    display: block;
+    box-sizing: border-box;
+  }
+
+  .admin-content-inner {
+    display: block;
+    width: 100%;
+    min-width: 100%;
+  }
+}

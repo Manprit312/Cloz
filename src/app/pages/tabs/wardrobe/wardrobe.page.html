@@ -1,9 +1,11 @@
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense" >
-    <ion-toolbar>
-      <ion-title size="large">Wardrobe</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  @if (!isAdminMode) {
+    <ion-header collapse="condense">
+      <ion-toolbar>
+        <ion-title size="large">Wardrobe</ion-title>
+      </ion-toolbar>
+    </ion-header>
+  }
 
   <div class="wardrobe-container pad-all-md">
     <!-- Skeleton Loading -->

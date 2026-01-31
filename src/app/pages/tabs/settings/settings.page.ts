@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
-import { TranslationService } from '@app-core';
+import { Component, inject, computed } from '@angular/core';
+import { AuthService, TranslationService } from '@app-core';
 import {
   IonContent,
   IonHeader,
@@ -12,6 +12,7 @@ import {
   IonLabel,
   IonToggle,
 } from '@ionic/angular/standalone';
+import { RouterLink } from '@angular/router';
 import { SupportedLang } from '@models/language.model';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -32,11 +33,14 @@ import { TranslateModule } from '@ngx-translate/core';
     IonItem,
     IonLabel,
     IonToggle,
+    RouterLink,
   ],
 })
 export class SettingsPage {
   private ts = inject(TranslationService);
+  private auth = inject(AuthService);
 
+  isAdmin = computed(() => this.auth.userRole() === 'admin');
   currentLang = this.ts.getActiveLanguage();
   availableLangs = this.ts.getAvailableLanguages();
   isDark = localStorage.getItem('theme') === 'dark';

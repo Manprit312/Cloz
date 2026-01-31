@@ -1,0 +1,25 @@
+<app-admin-header
+  variant="back"
+  [title]="userName()"
+  [userName]="currentUserName()"
+  backLink="/admin/users"
+  [profileLink]="'/admin'"
+></app-admin-header>
+
+<ion-content [fullscreen]="true" class="admin-wardrobe-content">
+  <ion-router-outlet></ion-router-outlet>
+
+  <div class="admin-wardrobe-tabs">
+    <a class="admin-tab" [routerLink]="['/admin/wardrobe', userId()]" routerLinkActive="admin-tab-active" [routerLinkActiveOptions]="{exact: true}">
+      <app-icon name="wardrobe" [size]="24" [color]="'var(--ion-color-medium)'"></app-icon>
+      <span class="admin-tab-label">Wardrobe</span>
+    </a>
+    <a class="admin-tab" [routerLink]="['/admin/wardrobe', userId(), 'outfits']" routerLinkActive="admin-tab-active">
+      <app-icon name="accessibility" [size]="24" [color]="'var(--ion-color-medium)'"></app-icon>
+      <span class="admin-tab-label">Outfits</span>
+    </a>
+    <a class="admin-tab admin-tab-avatar" routerLink="/admin">
+      <div class="admin-tab-avatar-circle">{{ adminInitials() }}</div>
+    </a>
+  </div>
+</ion-content>

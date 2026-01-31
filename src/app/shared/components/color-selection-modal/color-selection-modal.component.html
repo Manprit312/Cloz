@@ -84,7 +84,7 @@
           <div class="gradient-color-row">
             <div 
               class="gradient-bar solid-bar" 
-              [style.background-color]="shade.hex"
+              [style.background]="shade.gradient || shade.hex"
             >
               <span class="body1-regular color-label" [class.dark-text]="isLightColor(shade.label)">{{ formatShadeLabel(shade.label) }}</span>
               <ion-icon name="chevron-forward-outline" class="chevron-icon" [class.dark-icon]="isLightColor(shade.label)"></ion-icon>
@@ -109,7 +109,7 @@
           <div class="gradient-color-row">
             <div 
               class="gradient-bar solid-bar" 
-              [style.background-color]="variation.hex"
+              [style.background]="variation.hex"
             >
               <span class="body1-regular color-label" [class.dark-text]="isLightColor(variation.label)">{{ formatVariationLabel(variation.label) }}</span>
               <ion-icon name="chevron-forward-outline" class="chevron-icon" [class.dark-icon]="isLightColor(variation.label)"></ion-icon>

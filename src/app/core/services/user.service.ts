@@ -52,6 +52,17 @@ export interface LogoutResponse {
   [key: string]: any;
 }
 
+/** Response from GET /user/profile - used for currentUser and userProfile */
+export interface GetProfileResponse {
+  username?: string;
+  email?: string;
+  name?: string;
+  gender?: string;
+  role?: string;
+  darkMode?: boolean;
+  [key: string]: any;
+}
+
 /** Body for PATCH /user/profile - send only fields being updated */
 export interface UpdateProfileRequest {
   name?: string;
@@ -165,6 +176,16 @@ export class UserService {
           'X-Session-Id': sessionId,
         }
       }
+    );
+  }
+
+  /**
+   * Get user profile. GET {{baseurl}}/user/profile.
+   * Auth interceptor adds Bearer token. Call after verify to populate currentUser and userProfile.
+   */
+  getProfile(): Observable<GetProfileResponse> {
+    return this.http.get<GetProfileResponse>(
+      `${environment.backendBaseUrl}/user/profile`
     );
   }
 

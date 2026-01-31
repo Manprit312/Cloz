@@ -78,6 +78,16 @@
 .pad-all-lg {
   padding: var(--padding-lg, var(--x6, 24px));
 }
+
+/* Desktop only (≥1240px): same as .pad-all-lg; mobile/tablet: no padding */
+.pad-all-lg-desktop {
+  padding: 0;
+
+  @media (min-width: 1240px) {
+    padding: var(--padding-lg, var(--x6, 24px));
+  }
+}
+
 .pad-only-left-lg {
   padding-left: var(--padding-lg, var(--x6, 24px));
   padding-right: 0;

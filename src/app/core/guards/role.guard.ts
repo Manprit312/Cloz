@@ -8,23 +8,26 @@ export const roleGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);
 
   const allowedRoles = (route.data?.['allowedRoles'] as UserRole[]) ?? [];
-  const currentRole = auth.userRole();
+  const allowedSet = new Set(allowedRoles.map((r) => r.toLowerCase()));
 
-  if (!auth.isLoggedIn()) {
-    //if user is not logged in we then redirect them to login page
-    router.navigate(['/login'], {
-      queryParams: { returnUrl: state.url },
-    });
-    return false;
-  }
+  return auth.whenReady().then(() => {
+    const currentRole = auth.userRole();
+    const currentRoleLower = (currentRole ?? '').toLowerCase();
 
-  if (!currentRole || !allowedRoles.includes(currentRole)) {
-    // User is logged in but not allowed — redirect based on their role
-    const fallbackRoute = currentRole === 'admin' ? '/admin' : '/tabs/wardrobe';
-    router.navigateByUrl(fallbackRoute);
-    return false;
-  }
+    if (!auth.isLoggedIn()) {
+      router.navigate(['/login'], {
+        queryParams: { returnUrl: state.url },
+      });
+      return false;
+    }
 
-  // Access granted
-  return true;
+    if (!currentRoleLower || !allowedSet.has(currentRoleLower)) {
+      const fallbackRoute =
+        currentRoleLower === 'admin' ? '/admin' : '/tabs/wardrobe';
+      router.navigateByUrl(fallbackRoute);
+      return false;
+    }
+
+    return true;
+  });
 };

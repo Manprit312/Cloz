@@ -123,16 +123,24 @@ export class ColorSelectionModalComponent implements OnInit {
     if (!family) return [];
     
     return family.levels.map(level => {
-      // Use "Soft" variant as the base color for display
-      const softVariation = level.variations.find(v => v.label.includes('Soft'));
-      const baseColor = softVariation || level.variations[1] || level.variations[0];
-      
+      const vivid = level.variations.find(v => /vivid/i.test(v.label));
+      const soft = level.variations.find(v => /soft/i.test(v.label));
+      const muted = level.variations.find(v => /muted/i.test(v.label));
+
+      // Fallback for families/levels that don't have all three variants:
+      const base = soft || vivid || muted || level.variations[0];
+
+      let gradient = '';
+      if (vivid && soft && muted) {
+        gradient = `linear-gradient(90deg, ${vivid.hex} 0%, ${soft.hex} 50%, ${muted.hex} 100%)`;
+      }
+
       return {
         value: level.name,
         label: level.name,
-        hex: baseColor.hex,
-        gradient: '',
-        cssVar: baseColor.cssVar
+        hex: base.hex,
+        gradient,
+        cssVar: base.cssVar
       };
     });
   }

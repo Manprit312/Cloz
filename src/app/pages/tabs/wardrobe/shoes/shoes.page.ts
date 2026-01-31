@@ -15,7 +15,6 @@ import {
   IonCol,
   IonItem,
   ViewWillEnter,
-  ActionSheetController,
 } from '@ionic/angular/standalone';
 import { Location } from '@angular/common';
 import { inject } from '@angular/core';
@@ -28,6 +27,7 @@ import { WardrobeService, WardrobeItem } from '../../../../core/services/wardrob
 import { SubtypesService } from '../../../../core/services/subtypes.service';
 import { ProfileService } from '../../../../core/services/profile.service';
 import { compareColors } from '../../../../shared/utils/color-sorting.util';
+import { SortActionSheetService, SortMode } from '../../../../shared/services/sort-action-sheet.service';
 
 export interface ShoeItem {
   id: string;
@@ -74,10 +74,10 @@ export class ShoesPage implements OnInit, ViewWillEnter {
   private wardrobeService = inject(WardrobeService);
   private subtypesService = inject(SubtypesService);
   private profileService = inject(ProfileService);
-  private actionSheetController = inject(ActionSheetController);
+  private sortActionSheetService = inject(SortActionSheetService);
   
   selectedSubtype: string = 'All';
-  sortMode: 'color' | 'newest' | 'subtype' = 'color';
+  sortMode: SortMode = 'color';
   // Track current image index for each item in carousel
   itemImageIndices: Map<string, number> = new Map();
   // Track which items have loaded their images
@@ -235,37 +235,7 @@ export class ShoesPage implements OnInit, ViewWillEnter {
   }
 
   async openSortMenu(): Promise<void> {
-    const actionSheet = await this.actionSheetController.create({
-      header: 'Sort by',
-      buttons: [
-        {
-          text: 'Color',
-          cssClass: this.sortMode === 'color' ? 'sort-option-active' : '',
-          handler: () => {
-            this.sortMode = 'color';
-          },
-        },
-        {
-          text: 'Newest',
-          cssClass: this.sortMode === 'newest' ? 'sort-option-active' : '',
-          handler: () => {
-            this.sortMode = 'newest';
-          },
-        },
-        {
-          text: 'Subtype',
-          cssClass: this.sortMode === 'subtype' ? 'sort-option-active' : '',
-          handler: () => {
-            this.sortMode = 'subtype';
-          },
-        },
-        {
-          text: 'Cancel',
-          role: 'cancel',
-        },
-      ],
-    });
-    await actionSheet.present();
+    this.sortMode = await this.sortActionSheetService.openSortActionSheet(this.sortMode);
   }
 
   private getDateValue(date?: string): number {

@@ -11,11 +11,13 @@ import {
   IonList,
   ToastController,
 } from '@ionic/angular/standalone';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { IconComponent } from '../../../shared/components/icon/icon.component';
 import { CountBadgeComponent } from '../../../shared/components/count-badge/count-badge.component';
 import { SkeletonLoaderComponent } from '../../../shared/components/skeleton-loader/skeleton-loader.component';
 import { WardrobeService, WardrobeItem } from '../../../core/services/wardrobe.service';
+import { AdminWardrobeContextService } from '../../../core/services/admin-wardrobe-context.service';
+import { AdminService } from '../../../core/services/admin.service';
 import { inject } from '@angular/core';
 
 interface WardrobeCategory {
@@ -51,65 +53,45 @@ export class WardrobePage implements OnInit {
   isLoading = false;
   useCardView = false;
   categories: WardrobeCategory[] = [
-    {
-      name: 'Top garments',
-      count: 0,
-      route: '/tabs/wardrobe/upper-garments',
-      type: 'upper_garments',
-      previewImages: [],
-      remainingCount: 0,
-    },
-    {
-      name: 'Bottoms',
-      count: 0,
-      route: '/tabs/wardrobe/bottoms',
-      type: 'bottoms',
-      previewImages: [],
-      remainingCount: 0,
-    },
-    {
-      name: 'Shoes',
-      count: 0,
-      route: '/tabs/wardrobe/shoes',
-      type: 'shoes',
-      previewImages: [],
-      remainingCount: 0,
-    },
-    {
-      name: 'Accessories',
-      count: 0,
-      route: '/tabs/wardrobe/accessories',
-      type: 'accessories',
-      previewImages: [],
-      remainingCount: 0,
-    },
+    { name: 'Upper garments', count: 0, route: '/tabs/wardrobe/upper-garments', type: 'upper_garments', previewImages: [], remainingCount: 0 },
+    { name: 'Bottoms', count: 0, route: '/tabs/wardrobe/bottoms', type: 'bottoms', previewImages: [], remainingCount: 0 },
+    { name: 'Shoes', count: 0, route: '/tabs/wardrobe/shoes', type: 'shoes', previewImages: [], remainingCount: 0 },
+    { name: 'Accessories', count: 0, route: '/tabs/wardrobe/accessories', type: 'accessories', previewImages: [], remainingCount: 0 },
   ];
 
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private wardrobeService = inject(WardrobeService);
+  private adminService = inject(AdminService);
+  private adminContext = inject(AdminWardrobeContextService);
   private toastController = inject(ToastController);
 
+  get isAdminMode(): boolean {
+    return this.adminContext.isAdminMode();
+  }
+
+  private get adminUserId(): string | null {
+    return this.adminContext.userId();
+  }
+
   async ngOnInit() {
-    // Show login/signup success as toast
-    const showLoginSuccess = sessionStorage.getItem('showLoginSuccess');
-    const isSignup = sessionStorage.getItem('isSignup');
-
-    if (showLoginSuccess === 'true') {
-      const message = isSignup === 'true' ? 'Successfully signed up' : 'Successfully logged in';
-      sessionStorage.removeItem('showLoginSuccess');
-      sessionStorage.removeItem('isSignup');
-
-      const toast = await this.toastController.create({
-        message,
-        color: 'success',
-        duration: 5000,
-        position: 'top',
-        icon: 'checkmark-outline',
-      });
-      await toast.present();
+    if (!this.isAdminMode) {
+      const showLoginSuccess = sessionStorage.getItem('showLoginSuccess');
+      const isSignup = sessionStorage.getItem('isSignup');
+      if (showLoginSuccess === 'true') {
+        const message = isSignup === 'true' ? 'Successfully signed up' : 'Successfully logged in';
+        sessionStorage.removeItem('showLoginSuccess');
+        sessionStorage.removeItem('isSignup');
+        const toast = await this.toastController.create({
+          message,
+          color: 'success',
+          duration: 5000,
+          position: 'top',
+          icon: 'checkmark-outline',
+        });
+        await toast.present();
+      }
     }
-
-    // Load category counts
     this.loadCategoryCounts();
   }
 
@@ -122,75 +104,94 @@ export class WardrobePage implements OnInit {
 
   /**
    * Load counts for all wardrobe categories
-   * Makes requests sequentially with delays to avoid rate limiting (429 errors)
    */
   loadCategoryCounts(): void {
     this.isLoading = true;
 
-    // Create an array of category load functions with their types
+    if (this.isAdminMode && this.adminUserId) {
+      this.adminService.getAdminWardrobe(this.adminUserId).subscribe({
+        next: (items) => {
+          this.buildCategoriesFromItems(items);
+          this.isLoading = false;
+          this.updateViewMode();
+        },
+        error: () => {
+          this.categories.forEach((c) => { c.count = 0; c.previewImages = []; c.remainingCount = 0; });
+          this.isLoading = false;
+          this.updateViewMode();
+        },
+      });
+      return;
+    }
+
     const categoryLoaders = [
       { type: 'upper_garments', loader: () => this.wardrobeService.getUpperGarments() },
       { type: 'bottoms', loader: () => this.wardrobeService.getBottoms() },
       { type: 'shoes', loader: () => this.wardrobeService.getShoes() },
       { type: 'accessories', loader: () => this.wardrobeService.getAccessories() },
     ];
-
-    // Track how many requests have completed
     let completedCount = 0;
     const totalRequests = categoryLoaders.length;
 
-    // Process each category sequentially with 300ms delay between requests
-    categoryLoaders.forEach((categoryLoader, index) => {
-      const delayTime = index * 300; // 300ms delay between requests to avoid rate limiting
-      
+    categoryLoaders.forEach((cl, index) => {
       setTimeout(() => {
-        categoryLoader.loader().subscribe({
+        cl.loader().subscribe({
           next: (items) => {
-            const category = this.categories.find((cat) => cat.type === categoryLoader.type);
-            if (category) {
-              if (Array.isArray(items)) {
-                category.count = items.length;
-                category.previewImages = this.getPreviewImages(items);
-                category.remainingCount = Math.max(0, category.count - category.previewImages.length);
-                console.log(`WardrobePage - ${category.name} count set to:`, category.count);
-              } else {
-                console.warn(`WardrobePage - ${category.name} items is not an array:`, items);
-                category.count = 0;
-                category.previewImages = [];
-                category.remainingCount = 0;
-              }
-            }
-            
-            completedCount++;
-            // Set loading to false after all requests complete
-            if (completedCount === totalRequests) {
+            this.updateCategoryFromItems(cl.type, items);
+            if (++completedCount === totalRequests) {
               this.isLoading = false;
               this.updateViewMode();
             }
           },
-          error: (err) => {
-            console.error(`WardrobePage - Error loading ${categoryLoader.type}:`, err);
-            const category = this.categories.find((cat) => cat.type === categoryLoader.type);
-            if (category) {
-              category.count = 0; // Set to 0 on error
-              category.previewImages = [];
-              category.remainingCount = 0;
-            }
-            
-            completedCount++;
-            // Set loading to false after all requests complete (even on errors)
-            if (completedCount === totalRequests) {
+          error: () => {
+            this.updateCategoryFromItems(cl.type, []);
+            if (++completedCount === totalRequests) {
               this.isLoading = false;
               this.updateViewMode();
             }
           },
         });
-      }, delayTime);
+      }, index * 300);
     });
   }
 
+  private buildCategoriesFromItems(items: WardrobeItem[]): void {
+    const typeMap: Record<string, WardrobeItem[]> = {
+      upper_garments: [],
+      bottoms: [],
+      shoes: [],
+      accessories: [],
+    };
+    for (const item of items) {
+      const t = (item.type ?? item['type'] ?? '').toLowerCase().replace(/\s+/g, '_');
+      if (typeMap[t]) typeMap[t].push(item);
+    }
+    const uid = this.adminUserId ?? '';
+    for (const cat of this.categories) {
+      const list = typeMap[cat.type] ?? [];
+      cat.count = list.length;
+      cat.route = `/admin/wardrobe/${uid}/category/${cat.type}`;
+      cat.previewImages = this.getPreviewImages(list);
+      cat.remainingCount = Math.max(0, cat.count - cat.previewImages.length);
+    }
+  }
+
+  private updateCategoryFromItems(type: string, items: WardrobeItem[]): void {
+    const cat = this.categories.find((c) => c.type === type);
+    if (!cat) return;
+    if (this.isAdminMode && this.adminUserId) {
+      cat.route = `/admin/wardrobe/${this.adminUserId}/category/${type}`;
+    } else {
+      const path = type === 'upper_garments' ? 'upper-garments' : type;
+      cat.route = `/tabs/wardrobe/${path}`;
+    }
+    cat.count = Array.isArray(items) ? items.length : 0;
+    cat.previewImages = Array.isArray(items) ? this.getPreviewImages(items) : [];
+    cat.remainingCount = Math.max(0, cat.count - cat.previewImages.length);
+  }
+
   goToCategory(route: string): void {
-    this.router.navigate([route]);
+    if (route) this.router.navigateByUrl(route);
   }
 
   private updateViewMode(): void {

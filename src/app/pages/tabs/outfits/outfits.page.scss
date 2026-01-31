@@ -98,9 +98,9 @@ ion-header {
 
 .outfit-garment-item {
   flex-shrink: 0;
-  width: 60px;
-  height: 60px;
-  border-radius: var(--radius-sm, 4px);
+  width: var(--x10);
+  height: var(--x10);
+  border-radius: var(--radius-sm);
   border: 1px solid var( --grey-extra-light);
   overflow: hidden;
   background-color: var(--ion-color-light);

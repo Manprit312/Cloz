@@ -65,6 +65,8 @@
   /* Background Colors - From Figma Design System */
   --background-primary: #ffffff;
   --background-250: #f5f5f5;
+  --background-admin: #f6f6f6;
+  --background-wardrobe: #f5f4f4;
 
   /* Grey scale - light medium base (e.g. Original badge) */
   --grey-light-medium-base: #5F5F5F;
@@ -85,6 +87,28 @@
   --font-weight-regular: 400;
   --font-weight-medium: 500;
   --font-weight-bold: 700;
+
+  /* Layout - 4-8-12 column architecture breakpoints */
+  --breakpoint-tablet: 600px;
+  --breakpoint-desktop: 1240px;
+  --container-main-max-width: 1200px;
+
+  /* Modal heights */
+  --modal-list-height: 600px;
+
+  /* UI states */
+  --sort-selected-bg: #ebeef6;
+
+  /* Garment / detail page dimensions */
+  --garment-image-height: 400px;
+  --loading-container-min-height: 160px;
+
+  /* Admin Users Table - column widths */
+  --admin-col-garments: 160px;
+  --admin-col-outfits: 160px;
+  --admin-col-date: 200px;
+  --admin-col-user-tablet: 240px;
+  --admin-table-min-width: 960px;
 }
 
 .dark {
@@ -410,15 +434,7 @@ ion-modal {
   }
 }
 
-/**
- * Google Material Symbols (Rounded) - Global Styles
- * -----------------------------------------------------
- * Default styling for Material Symbols icons throughout the app
- * - Style: Rounded
- * - Optical Size: 24
- * - Weight: 400
- * - Fill: 0
- */
+
 .material-symbols-rounded {
   font-family: 'Material Symbols Rounded';
   font-weight: 400;
@@ -536,6 +552,199 @@ ion-modal {
   margin: 0 auto;
   padding: 0 var(--x4, 16px);
 }
+
+/**
+ * Main Container - Layout Standardization (4-8-12 column architecture)
+ * ----------------------------------------------------------------------------
+ * Primary wrapper for every page. Handles global spacing and max-width only;
+ * sub-containers manage their own grid logic.
+ *
+ * Breakpoints: Mobile < 600px | Tablet 600px–1239px | Desktop ≥ 1240px
+ */
+.container-main {
+  width: 100%;
+  /* Mobile (< breakpoint-tablet): padding.md = 16px */
+  padding: var(--padding-md, var(--x4, 16px));
+
+  @media (min-width: var(--breakpoint-tablet)) {
+    /* Tablet (600px – 1239px): 32px per 8pt grid */
+    padding: var(--x8, 32px);
+  }
+
+  @media (min-width: var(--breakpoint-desktop)) {
+    max-width: var(--container-main-max-width);
+    margin: 0 auto;
+    padding: 0;
+  }
+}
+
+/**
+ * Main Container Flush - Edge-to-edge on small screens
+ * ----------------------------------------------------------------------------
+ * For immersive experiences (full-bleed imagery, headers). No padding on
+ * mobile/tablet; same max-width and centering on desktop.
+ */
+.container-main-flush {
+  width: 100%;
+  padding: 0;
+
+  @media (min-width: var(--breakpoint-desktop)) {
+    max-width: var(--container-main-max-width);
+    margin: 0 auto;
+  }
+}
+
+
+.content-max-width {
+  max-width: var(--container-main-max-width);
+  margin-inline: auto;
+  width: 100%;
+}
+
+/**
+ * Admin Users Table - Grid-based layout (no nth-child)
+ * Uses table-scroll-x, table-inner, table-header, table-row, table-cell pattern
+ */
+.admin-users-container {
+  max-width: var(--container-main-max-width);
+  margin: 0 auto;
+}
+
+.admin-users-search-table-wrap {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--background-primary);
+  gap: 0;
+}
+
+.admin-users-container .search-wrapper {
+  position: relative;
+  background: var(--background-primary);
+}
+
+.admin-users-container .admin-users-searchbar {
+  --background: var(--background-250);
+  --border-radius: var(--radius-md);
+  --box-shadow: 0 0 0 1px var(--border-color);
+}
+
+.admin-users-container .table-scroll-x {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.admin-users-container .table-inner {
+  min-width: 900px;
+}
+
+.admin-users-container .table-header {
+  display: grid;
+  grid-template-columns: 1fr minmax(80px, 1fr) minmax(80px, 1fr) minmax(120px, 1fr) minmax(120px, 1fr);
+  align-items: center;
+  width: 100%;
+  background: var(--ion-background-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.admin-users-container .table-row {
+  display: grid;
+  grid-template-columns: 1fr minmax(80px, 1fr) minmax(80px, 1fr) minmax(120px, 1fr) minmax(120px, 1fr);
+  align-items: center;
+  width: 100%;
+}
+
+.admin-users-container .header-cell {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-xs);
+  padding: var(--padding-md) var(--padding-sm);
+  cursor: pointer;
+  user-select: none;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.admin-users-container .header-cell.col-user {
+  min-width: 180px;
+}
+
+.admin-users-container .header-cell.col-garments,
+.admin-users-container .header-cell.col-outfits {
+  justify-content: start;
+}
+
+.admin-users-container .header-cell.col-date {
+  justify-content: flex-start;
+  min-width: 100px;
+}
+
+.admin-users-container .users-table {
+  background: var(--ion-background-color);
+}
+
+.admin-users-container .user-row {
+  --padding-start: 0;
+  --inner-padding-end: 0;
+  --inner-padding-top: 0;
+  --inner-padding-bottom: 0;
+}
+
+.admin-users-container .table-cell {
+  display: flex;
+  align-items: center;
+  padding: var(--padding-md) var(--padding-sm);
+}
+
+.admin-users-container .table-cell.col-user {
+  min-width: 0;
+}
+
+.admin-users-container .table-cell.col-garments,
+.admin-users-container .table-cell.col-outfits {
+  justify-content: start;
+}
+
+.admin-users-container .table-column ion-label {
+  margin: 0;
+}
+
+.admin-users-user-link {
+  color: var(--ion-color-primary);
+  text-decoration: underline;
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-md);
+  display: block;
+}
+
+.admin-users-email-line {
+  font-size: var(--font-size-sm);
+  color: var(--text-color-600);
+  margin: var(--x1) 0 0 0;
+  max-width: 180px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admin-users-error-text {
+  color: var(--ion-color-danger);
+  margin: 0;
+}
+
+@media (max-width: 899px) {
+  .admin-users-container .table-inner {
+    min-width: 600px;
+  }
+
+  .admin-users-container .table-header,
+  .admin-users-container .table-row {
+    grid-template-columns: minmax(140px, 1.5fr) minmax(56px, 0.5fr) minmax(56px, 0.5fr) minmax(90px, 1fr) minmax(90px, 1fr);
+  }
+}
+
 
 /**
  * Form Input Styles - Global
@@ -913,22 +1122,24 @@ ion-list {
 /* Sorting sheets */
 .sorting-sheet .action-sheet-title {
   font-weight: var(--font-weight-medium);
-  font-size: var(--font-size-md);
+  font-size: var(--font-size-xs, 12px);
   color: var(--text-color-600, #666666);
-  text-align: left;
+  text-align: center;
   padding-left: var(--padding-md);
   padding-right: var(--padding-md);
 }
 
 .sorting-sheet .action-sheet-group {
   padding: 0;
+  /* Remove default iOS divider/border treatment */
+  background-image: none !important;
+  box-shadow: none !important;
 }
 
 .sorting-sheet .action-sheet-button {
   position: relative;
-  justify-content: flex-start;
-  text-align: left;
-  color: var(--ion-text-color) !important;
+  justify-content: center;
+  text-align: center;
   font-weight: var(--font-weight-regular);
   font-size: var(--font-size-md);
   --padding-start: var(--padding-md);
@@ -936,10 +1147,13 @@ ion-list {
   --padding-top: var(--gap-sm);
   --padding-bottom: var(--gap-sm);
   width: 100%;
+  /* Remove default separator lines */
+  background-image: none !important;
+  box-shadow: none !important;
 }
 
 .sorting-sheet .action-sheet-button .action-sheet-button-inner {
-  justify-content: flex-start;
+  justify-content: center;
   gap: var(--gap-md);
   width: 100%;
 }
@@ -952,20 +1166,6 @@ ion-list {
 .sorting-sheet-color .action-sheet-button {
   display:flex !important;
   align-items: center;
-}
-
-.sorting-sheet .action-sheet-button::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 1px;
-  background: var(--ion-color-step-200);
-}
-
-.sorting-sheet .action-sheet-button:last-of-type::after {
-  display: none;
 }
 
 .sorting-sheet .action-sheet-button.sort-color::before {
@@ -989,8 +1189,8 @@ ion-list {
 .sorting-sheet .action-sheet-button.sort-color-pink::before { background: var(--pink-mid-soft); }
 .sorting-sheet .action-sheet-button.sort-color-brown::before { background: var(--brown-mid-soft); }
 .sorting-sheet .action-sheet-button.sort-color-grey::before { background: var(--grey-mid-soft, #9e9e9e); }
-.sorting-sheet .action-sheet-button.sort-color-black::before { background: #000000; }
-.sorting-sheet .action-sheet-button.sort-color-white::before { background: #ffffff; }
+.sorting-sheet .action-sheet-button.sort-color-black::before { background: var(--text-primary); }
+.sorting-sheet .action-sheet-button.sort-color-white::before { background: var(--background-primary); }
 .sorting-sheet .action-sheet-button.sort-color-print::before {
   background: url('/assets/images/print.png') center / cover no-repeat;
 }
@@ -1003,15 +1203,23 @@ ion-list {
   color: var(--ion-color-primary) !important;
 }
 
+.sorting-sheet .action-sheet-title {
+  /* Remove bottom border line under "Sort by" */
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
 /**
  * Sort Menu Active State
- * Active sort option is visually indicated with a light grey background
+ * Use Ionic's CSS variables so the selected option
+ * gets a light blue background inside the shadow DOM.
  */
-.action-sheet-button.sort-option-active {
-  --background: var(--ion-color-step-50, #f5f5f5) !important;
-  --color: var(--ion-color-primary, #1860FA) !important;
-  
-  &:hover {
-    --background: var(--ion-color-step-100, #ebebeb) !important;
-  }
+.sorting-sheet {
+  --button-background-selected: var(--sort-selected-bg, #ebeef6); /* selected sort background */
+  --button-background-selected-opacity: 1;
+}
+
+.sorting-sheet .action-sheet-selected {
+  font-weight: var(--font-weight-regular, 400);
 }

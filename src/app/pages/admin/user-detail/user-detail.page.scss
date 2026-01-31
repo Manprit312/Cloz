@@ -1,0 +1,84 @@
+.user-detail-page {
+  padding-top: var(--x4, 16px);
+  padding-bottom: var(--x6, 24px);
+}
+
+.user-detail-loading,
+.user-detail-error {
+  margin: var(--x4, 16px) 0;
+  font-size: var(--font-size-md, 16px);
+  font-family: var(--font-family-primary);
+  color: var(--text-secondary);
+}
+
+.user-detail-error {
+  color: var(--ion-color-danger);
+}
+
+.user-detail-section-title {
+  margin: 0 0 var(--x2, 8px);
+  font-size: var(--font-size-lg, 20px);
+  font-weight: var(--font-weight-bold, 700);
+  font-family: var(--font-family-primary);
+  color: var(--text-primary);
+}
+
+.user-detail-info {
+  margin-bottom: var(--x6, 24px);
+}
+
+.user-detail-dl {
+  margin: 0;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--x2, 8px) var(--x4, 16px);
+  font-size: var(--font-size-sm, 14px);
+  font-family: var(--font-family-primary);
+}
+
+.user-detail-dl dt {
+  margin: 0;
+  font-weight: var(--font-weight-medium, 500);
+  color: var(--text-secondary);
+}
+
+.user-detail-dl dd {
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.user-detail-wardrobe,
+.user-detail-outfits {
+  margin-bottom: var(--x6, 24px);
+}
+
+.user-detail-empty {
+  margin: 0;
+  font-size: var(--font-size-sm, 14px);
+  color: var(--text-secondary);
+}
+
+.user-detail-list {
+  margin: 0;
+  padding-left: var(--x4, 16px);
+  list-style: disc;
+}
+
+.user-detail-list-item {
+  margin-bottom: var(--x2, 8px);
+  font-size: var(--font-size-sm, 14px);
+  color: var(--text-primary);
+}
+
+.user-detail-item-type {
+  font-weight: var(--font-weight-medium, 500);
+  margin-right: var(--x2, 8px);
+}
+
+.user-detail-item-subtype {
+  margin-right: var(--x2, 8px);
+}
+
+.user-detail-item-color {
+  color: var(--text-secondary);
+}

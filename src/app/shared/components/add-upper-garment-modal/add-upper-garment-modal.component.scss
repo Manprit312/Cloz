@@ -10,15 +10,15 @@
 
 // Header styles
 ion-header {
-  --background: var(--ion-background-color, #ffffff);
+  --background: var(--ion-background-color);
   padding-top: 0 !important; // Remove top padding from modal header
   margin-top: 0 !important;
   
   ion-toolbar {
     padding-top: 0 !important;
     margin-top: 0 !important;
-    --background: var(--ion-background-color, #ffffff);
-    --color: var(--ion-text-color, #000000);
+    --background: var(--ion-background-color);
+    --color: var(--ion-text-color);
     --min-height: var(--x14, 56px);
     --padding-start: var(--x2, 8px);
     
@@ -26,7 +26,7 @@ ion-header {
       font-weight: var(--font-weight-bold, 700);
       font-size: var(--font-size-md, 16px);
       line-height: 1.2;
-      color: var(--ion-text-color, #000000);
+      color: var(--ion-text-color);
     }
     
     ion-buttons {
@@ -67,9 +67,9 @@ ion-header {
   width: 100%;
   aspect-ratio: 1;
   max-width: 100%;
-  border: 2px dashed #e0e0e0;
-  border-radius: var(--radius-md, 8px);
-  background-color: #ffffff;
+  border: 2px dashed var(--border-color);
+  border-radius: var(--radius-md);
+  background-color: var(--background-primary);
   cursor: pointer;
   overflow: hidden;
   
@@ -94,8 +94,8 @@ ion-header {
     }
     
     ion-spinner {
-      width: 48px;
-      height: 48px;
+      width: var(--x12);
+      height: var(--x12);
       margin-bottom: var(--gap-sm, var(--x2, 8px));
     }
     
@@ -119,7 +119,7 @@ ion-header {
     animation: fadeInOut 3s ease-in-out;
     
     .success-text {
-      color: #4CAF50;
+      color: var(--ion-color-success);
       margin: 0;
     }
   }
@@ -127,7 +127,7 @@ ion-header {
   @keyframes fadeInOut {
     0%, 100% {
       opacity: 0;
-      transform: translateY(-10px);
+      transform: translateY(calc(-1 * var(--x2)));
     }
     10%, 90% {
       opacity: 1;
@@ -171,16 +171,16 @@ ion-header {
   position: absolute;
   bottom: var(--gap-md, var(--x4, 16px));
   z-index: 10;
-  left: 20px;
+  left: var(--x5);
   
   // Button content alignment handled by global button styles
   ::ng-deep button {
-    background: var(--ion-color-primary-contrast, #ffffff) !important;
+    background: var(--ion-color-primary-contrast) !important;
     
     &:active,
     &:focus,
     &:hover {
-      background: var(--ion-color-primary-contrast, #ffffff) !important;
+      background: var(--ion-color-primary-contrast) !important;
     }
   }
 }
@@ -227,8 +227,8 @@ ion-header {
 
 // Error banner using design tokens (similar to success banner)
 .error-banner {
-  background-color: #f44336; // Error red color
-  color: var(--ion-color-primary-contrast, #ffffff);
+  background-color: var(--ion-color-danger);
+  color: var(--ion-color-primary-contrast);
   border-radius: var(--radius-md, 8px);
   margin-bottom: var(--gap-lg, var(--x6, 24px));
   margin-left: var(--padding-md, var(--x4, 16px)); // Add left margin since parent has no left padding

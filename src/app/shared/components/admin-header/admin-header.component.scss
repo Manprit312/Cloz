@@ -1,0 +1,28 @@
+/* Admin header styles are in global.scss */
+:host ion-toolbar {
+  --background: var(--background-primary);
+}
+
+:host.admin-header-back ion-toolbar {
+  --background: var(--ion-color-primary);
+  --color: var(--ion-color-primary-contrast);
+}
+
+:host.admin-header-back .admin-header-back-btn,
+:host.admin-header-back h1,
+:host.admin-header-back .admin-header-avatar-initials {
+  color: var(--ion-color-primary-contrast);
+}
+
+:host.admin-header-back app-icon {
+  --color: var(--ion-color-primary-contrast);
+}
+
+.admin-header-avatar {
+  height: var(--x6);
+  width: var(--x6);
+  font-size: small;
+  border-radius: 50%;
+  background: var(--ion-color-primary);
+  color: var(--ion-color-primary-contrast);
+}

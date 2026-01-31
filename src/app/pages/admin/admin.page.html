@@ -1,21 +1,13 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>Admin Panel</ion-title>
-  </ion-toolbar>
-</ion-header>
+@if (showLogoHeader()) {
+  <app-admin-header
+    variant="logo"
+    logoLink="/admin"
+    [userName]="currentUserName()"
+  ></app-admin-header>
+}
 
-<ion-content>
-  <ion-tabs>
-    <ion-tab-bar slot="top">
-      <ion-tab-button tab="dashboard" [routerLink]="['/admin/dashboard']">
-        <ion-label>Dashboard</ion-label>
-      </ion-tab-button>
-
-      <ion-tab-button tab="users" [routerLink]="['/admin/users']">
-        <ion-label>Users</ion-label>
-      </ion-tab-button>
-    </ion-tab-bar>
-
+<ion-content class="admin-content">
+  <div class="admin-content-inner">
     <ion-router-outlet></ion-router-outlet>
-  </ion-tabs>
+  </div>
 </ion-content>

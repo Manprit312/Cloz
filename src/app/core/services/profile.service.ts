@@ -1,6 +1,7 @@
 import { Injectable, signal, computed } from '@angular/core';
 import { UserProfile, Gender } from '@models/user.model';
 import { AuthService } from './auth.service';
+import type { GetProfileResponse } from './user.service';
 
 @Injectable({
   providedIn: 'root',
@@ -19,20 +20,40 @@ export class ProfileService {
     this.applyDarkMode();
   }
 
+  /**
+   * Set profile from GET /user/profile API response. Used after verify.
+   * Same data is used for currentUser (AuthService) and userProfile (this service).
+   */
+  setProfileFromApi(data: GetProfileResponse): void {
+    const gender = this.normalizeGender(data.gender);
+    this._profile.update(() => ({
+      name: data.name ?? 'User',
+      email: data.email ?? '',
+      gender,
+      darkMode: data.darkMode ?? this._profile().darkMode,
+    }));
+    this.saveProfile();
+  }
+
+  /**
+   * Sync profile from currentUser (e.g. on app init when no profile API was called yet).
+   */
   syncFromAuthService(): void {
     const user = this.authService.user();
     if (user) {
-      // Always sync email and username from currentUser
-      // Use username as name if name is not available
-      // Only update gender if it exists in user, otherwise keep existing profile value
       this._profile.update((p) => ({
         ...p,
-        email: user.email || p.email || 'luisa@zerena.nl',
-        name: user.name || (user.username ? user.username : p.name) || 'User',
-        gender: user.gender || p.gender || 'Female',
+        email: user.email ?? p.email ?? '',
+        name: user.name ?? user.username ?? p.name ?? 'User',
+        gender: user.gender ?? p.gender,
       }));
       this.saveProfile();
     }
+  }
+
+  private normalizeGender(value: string | undefined): Gender {
+    if (value === 'Male' || value === 'Female') return value;
+    return value?.toLowerCase() === 'male' ? 'Male' : 'Female';
   }
 
   updateName(name: string): void {

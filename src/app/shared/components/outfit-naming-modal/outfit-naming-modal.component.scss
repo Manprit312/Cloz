@@ -80,7 +80,7 @@ ion-list {
   --inner-padding-end: 0;
   --inner-padding-start: 0;
   --min-height: var(--x14, 56px);
-  --border-color: var(--ion-color-step-200, #e0e0e0);
+  --border-color: var(--ion-color-step-200, var(--border-color));
   --inner-border-width: 0;
   margin-bottom: 0;
   cursor: pointer;
@@ -90,13 +90,13 @@ ion-list {
   
   &:active {
     opacity: 0.7;
-      background-color: var(--ion-color-light, #f4f5f8);
+      background-color: var(--ion-color-light, var(--background-250));
     }
   }
 
   .icon-slot {
-    width: 28px;
-    height: 28px;
+    width: var(--x7);
+    height: var(--x7);
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -105,10 +105,10 @@ ion-list {
     flex-shrink: 0;
     
     .selection-circle {
-      width: 28px;
-      height: 28px;
+      width: var(--x7);
+      height: var(--x7);
       border-radius: 50%;
-      border: 1px solid var(--ion-color-step-300, #d1d1d1);
+      border: 1px solid var(--ion-color-step-300, var(--border-color));
       display: flex;
       align-items: center;
       justify-content: center;
@@ -126,7 +126,7 @@ ion-list {
 }
 
 .name-option-item::part(native) {
-  border-bottom: 1px solid var(--ion-color-step-200, #e0e0e0);
+  border-bottom: 1px solid var(--ion-color-step-200, var(--border-color));
 }
 
 .name-option-item.selected {
@@ -146,7 +146,7 @@ ion-list {
 
 // Use the same input styling pattern as other pages
 .input-border-full {
-  border-bottom: 1px solid var(--ion-color-medium, #E0E0E0);
+  border-bottom: 1px solid var(--ion-color-medium, var(--border-color));
   padding-right: var(--gap-md, var(--x4, 16px));
   padding-top: var(--gap-sm, var(--x2, 8px));
   padding-bottom: var(--gap-sm, var(--x2, 8px));
@@ -161,7 +161,7 @@ ion-list {
     -webkit-text-fill-color: var(--ion-text-color) !important;
     
     &::placeholder {
-      color: var(--text-color-600, #757575) !important;
+      color: var(--text-color-600) !important;
       opacity: 1;
     }
     

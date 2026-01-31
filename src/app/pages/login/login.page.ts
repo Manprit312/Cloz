@@ -47,7 +47,9 @@ export class LoginPage implements OnInit {
 
   ngOnInit(): void {
     if (this.authService.isLoggedIn()) {
-      this.router.navigateByUrl('/tabs/wardrobe');
+      const role = this.authService.userRole();
+      const redirectUrl = role === 'admin' ? '/admin' : '/tabs/wardrobe';
+      this.router.navigateByUrl(redirectUrl);
     }
   }
 

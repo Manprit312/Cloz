@@ -16,6 +16,9 @@ export type IconName =
   | 'arrow-right'
   | 'arrow-up'
   | 'arrow-down'
+  | 'tailless-arrow-up'
+  | 'tailless-arrow-down'
+  | 'tailless-arrow-expand'
   | 'chevron-forward'
   | 'chevron-back'
   | 'checkmark-circle'
@@ -56,6 +59,9 @@ export const MATERIAL_SYMBOLS_MAPPING: Record<IconName, string> = {
   'arrow-right': 'arrow_forward',
   'arrow-up': 'arrow_upward',
   'arrow-down': 'arrow_downward',
+  'tailless-arrow-up': 'north',
+  'tailless-arrow-down': 'south',
+  'tailless-arrow-expand': 'unfold_more',
   'chevron-forward': 'chevron_right',
   'chevron-back': 'chevron_left',
   'checkmark-circle': 'check_circle',

@@ -26,4 +26,10 @@
       (ionChange)="toggleDarkMode($event)"
     ></ion-toggle>
   </ion-item>
+
+  @if (isAdmin()) {
+    <ion-item [routerLink]="['/admin']" button detail="true" lines="full">
+      <ion-label>Admin</ion-label>
+    </ion-item>
+  }
 </ion-content>

@@ -24,10 +24,19 @@ export class AuthService {
   private router = inject(Router);
   private userService = inject(UserService);
 
+  /** Resolves when user (and token) have been loaded from storage. Guard should wait for this. */
+  private readonly initPromise: Promise<void>;
+
   constructor() {
-    // Initialize signals asynchronously
-    this.loadUserAsync();
-    this.loadTokenAsync();
+    this.initPromise = Promise.all([
+      this.loadUserAsync(),
+      this.loadTokenAsync(),
+    ]).then(() => {});
+  }
+
+  /** Use in guards to avoid deciding before user is loaded from storage. */
+  whenReady(): Promise<void> {
+    return this.initPromise;
   }
 
   setUser(user: User): void {
@@ -131,27 +140,13 @@ export class AuthService {
   }
 
   /**
-   * Clear all storage and reset state
-   * IMPORTANT: Only clears auth-related data, not all localStorage
-   * This prevents clearing user preferences and other app data
+   * Clear all local storage and reset state (used on logout).
+   * Clears localStorage, sessionStorage, Capacitor Preferences, and in-memory signals.
    */
   private async clearAllData(): Promise<void> {
-    // Clear Capacitor Preferences (auth-related only)
-    await Preferences.remove({ key: this.TOKEN_STORAGE_KEY });
-    await Preferences.remove({ key: this.SESSION_ID_KEY });
-    await Preferences.remove({ key: this.EXPIRES_AT_STORAGE_KEY });
-    
-    // Clear only auth-related localStorage items, not all localStorage
-    // This preserves user preferences, profile data, etc.
-    localStorage.removeItem(this.STORAGE_KEY);
-    
-    // Clear auth-related sessionStorage items
-    sessionStorage.removeItem('mfaSessionId');
-    sessionStorage.removeItem('signupPassword');
-    sessionStorage.removeItem('loginPassword');
-    sessionStorage.removeItem('isSignup');
-    
-    // Reset signals
+    await Preferences.clear();
+    localStorage.clear();
+    sessionStorage.clear();
     this._user.set(null);
     this._accessToken.set(null);
   }
@@ -287,8 +282,22 @@ export class AuthService {
   private async loadUserAsync(): Promise<void> {
     try {
       const raw = localStorage.getItem(this.STORAGE_KEY);
-      const user = raw ? JSON.parse(raw) : null;
-      this._user.set(user);
+      const parsed = raw ? JSON.parse(raw) : null;
+      if (!parsed) {
+        this._user.set(null);
+        return;
+      }
+      // Normalize role: backend may use different keys/casing or roles array (e.g. Keycloak ['ROLE_ADMIN'])
+      const roleRaw =
+        parsed.role ??
+        parsed.userRole ??
+        parsed.authority ??
+        (Array.isArray(parsed.roles) && parsed.roles.length > 0
+          ? parsed.roles[0]
+          : 'user');
+      const roleStr = String(roleRaw).toLowerCase().replace(/^role_/, '');
+      const role: UserRole = roleStr === 'admin' ? 'admin' : 'user';
+      this._user.set({ ...parsed, role });
     } catch {
       this._user.set(null);
     }

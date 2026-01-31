@@ -1,0 +1,19 @@
+<div class="pad-all-md">
+  <h2 class="toolbar-title">{{ categoryName() }}</h2>
+  @if (loading()) {
+    <p class="body2-regular text-color-600">Loading…</p>
+  } @else if (items().length === 0) {
+    <p class="body2-regular text-color-600">No items in this category</p>
+  } @else {
+    <ion-list lines="full">
+      @for (item of items(); track item.id) {
+        <ion-item lines="full">
+          <ion-label>
+            <span class="body2-bold">{{ item.subtype ?? item['subtype'] ?? '—' }}</span>
+            <p class="body2-regular text-color-600">{{ item.color ?? item['color'] ?? '' }}</p>
+          </ion-label>
+        </ion-item>
+      }
+    </ion-list>
+  }
+</div>

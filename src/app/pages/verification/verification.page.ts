@@ -106,68 +106,84 @@ export class VerificationPage implements OnInit {
           sessionStorage.removeItem('mfaSessionId');
           sessionStorage.removeItem('signupPassword');
           sessionStorage.removeItem('loginPassword');
-          
-          console.log('VerificationPage - verifyMfa response:', response);
-          
-          // Extract accessToken, sessionId, and expiresIn from response
+
           const accessToken = response?.['accessToken'] || response?.['token'];
           const sessionId = response?.['sessionId'] || response?.['session'];
-          const expiresIn = response?.['expiresIn'] || 300; // Default to 5 minutes if not provided
-          
+          const expiresIn = response?.['expiresIn'] || 300;
+
           if (accessToken) {
             await this.authService.setAccessToken(accessToken, expiresIn);
           }
-          
           if (sessionId) {
             await this.authService.setSessionId(sessionId);
-            console.log('VerificationPage - SessionId saved to Capacitor Preferences');
           }
-          
-          // Session handling using Capacitor Preferences
-          // SessionId is stored in Capacitor Preferences and sent in X-Session-Id header
-          // The backend manages refresh tokens server-side, linked to the session ID
-          // When calling /auth/refresh, the sessionId header identifies the session
-          console.log('VerificationPage - MFA verification successful');
-          console.log('VerificationPage - SessionId and accessToken saved to Capacitor Preferences');
-          
-          // Extract user data from response or construct from email
-          // The API response might contain user data, or we construct it from email
-          const username = response?.['username'] || response?.['user']?.['username'] || this.email.split('@')[0] || 'user';
-          const email = response?.['email'] || response?.['user']?.['email'] || this.email;
-          const name = response?.['name'] || response?.['user']?.['name'];
-          const gender = response?.['gender'] || response?.['user']?.['gender'];
-          const roleFromResponse = response?.['role'] || response?.['user']?.['role'] || 'user';
-          const role: 'admin' | 'user' = roleFromResponse === 'admin' ? 'admin' : 'user';
-          
-          // Create user object to store in localStorage as currentUser
-          const user = {
-            username,
-            email,
-            role,
-            ...(name && { name }),
-            ...(gender && { gender }),
-          };
-          
-          // Set user in AuthService (this stores it in localStorage as 'currentUser')
-          this.authService.setUser(user);
-          
-          // Sync profile service with the currentUser data
-          this.profileService.syncFromAuthService();
-          
-          // Set a flag to show success message
-          const isSignup = sessionStorage.getItem('isSignup') === 'true';
-          sessionStorage.setItem('showLoginSuccess', 'true');
-          sessionStorage.setItem('isSignup', isSignup ? 'true' : 'false');
-          
-          // Redirect admin users to admin panel, regular users to wardrobe
-          const redirectUrl = user.role === 'admin' ? '/admin' : '/tabs/wardrobe';
-          this.router.navigateByUrl(redirectUrl);
+
+          // Get user data from GET /user/profile and use for both currentUser and userProfile
+          this.userService.getProfile().subscribe({
+            next: (profileData) => {
+              const roleRaw =
+                profileData.role ?? profileData['userRole'] ?? 'user';
+              const role: 'admin' | 'user' =
+                String(roleRaw).toLowerCase() === 'admin' ? 'admin' : 'user';
+              const user = {
+                username:
+                  profileData.username ?? this.email.split('@')[0] ?? 'user',
+                email: profileData.email ?? this.email,
+                role,
+                ...(profileData.name && { name: profileData.name }),
+                ...(profileData.gender && { gender: profileData.gender as 'Male' | 'Female' }),
+              };
+              this.authService.setUser(user);
+              this.profileService.setProfileFromApi(profileData);
+
+              const isSignup = sessionStorage.getItem('isSignup') === 'true';
+              sessionStorage.setItem('showLoginSuccess', 'true');
+              sessionStorage.setItem('isSignup', isSignup ? 'true' : 'false');
+
+              const redirectUrl =
+                user.role === 'admin' ? '/admin' : '/tabs/wardrobe';
+              this.router.navigateByUrl(redirectUrl);
+            },
+            error: (err) => {
+              console.error('VerificationPage - getProfile error:', err);
+              // Fallback: build user from verify response
+              const username =
+                response?.['username'] ||
+                response?.['user']?.['username'] ||
+                this.email.split('@')[0] ||
+                'user';
+              const email =
+                response?.['email'] ||
+                response?.['user']?.['email'] ||
+                this.email;
+              const roleFromResponse =
+                response?.['role'] || response?.['user']?.['role'] || 'user';
+              const role: 'admin' | 'user' =
+                roleFromResponse === 'admin' ? 'admin' : 'user';
+              const user = {
+                username,
+                email,
+                role,
+                ...(response?.['name'] && { name: response['name'] }),
+                ...(response?.['gender'] && { gender: response['gender'] as 'Male' | 'Female' }),
+              };
+              this.authService.setUser(user);
+              this.profileService.syncFromAuthService();
+
+              const isSignup = sessionStorage.getItem('isSignup') === 'true';
+              sessionStorage.setItem('showLoginSuccess', 'true');
+              sessionStorage.setItem('isSignup', isSignup ? 'true' : 'false');
+
+              const redirectUrl =
+                user.role === 'admin' ? '/admin' : '/tabs/wardrobe';
+              this.router.navigateByUrl(redirectUrl);
+            },
+          });
         },
         error: (err) => {
           console.error('MFA verification error:', err);
-          // Handle error - show error message to user
-          // You might want to add a toast or alert here
-          this.error = err.error?.message || 'Verification failed. Please try again.';
+          this.error =
+            err.error?.message || 'Verification failed. Please try again.';
         },
       });
       return;

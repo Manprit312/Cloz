@@ -1,0 +1,60 @@
+
+  <ion-toolbar>
+    <div class="row-stack-lg items-center justify-between pad-all-md ">
+      <div class="body1-bold">
+        @if (variant === 'logo') {
+          @if (logoLink) {
+            <div class="body2-bold" [routerLink]="logoLink">Clōz</div>
+          } @else {
+            <span>Clōz</span>
+          }
+        }
+        @if (variant === 'back') {
+          <button
+            type="button"
+            class="admin-header-back-btn"
+            aria-label="Go back"
+            (click)="onBackClick()"
+          >
+            <app-icon name="arrow-left" [size]="24" [color]="'var(--ion-color-primary-contrast)'"></app-icon>
+          </button>
+        }
+      </div>
+
+      <div >
+        @if (variant === 'back' && title) {
+          <h1 class="body1-bold">{{ title }}</h1>
+        }
+      </div>
+
+      <div >
+        @if (profileLink) {
+          <div
+            [routerLink]="profileLink"
+            class="admin-header-avatar column-stack-none items-center justify-center"
+            [attr.aria-label]="displayInitials ? 'User ' + displayInitials : 'Profile'"
+          >
+            @if (displayInitials) {
+              <span class="admin-header-avatar-initials">{{ displayInitials }}</span>
+            } @else {
+              <app-icon name="person" [size]="24" [color]="'var(--ion-color-primary-contrast)'"></app-icon>
+            }
+          </div>
+        } @else {
+          <button
+            type="button"
+            class="admin-header-avatar admin-header-avatar-btn"
+            (click)="onAvatarClick()"
+            [attr.aria-label]="displayInitials ? 'User ' + displayInitials : 'Profile'"
+          >
+            @if (displayInitials) {
+              <span class="admin-header-avatar-initials">{{ displayInitials }}</span>
+            } @else {
+              <app-icon name="person" [size]="24" [color]="'var(--ion-color-primary-contrast)'"></app-icon>
+            }
+          </button>
+        }
+      </div>
+    </div>
+  </ion-toolbar>
+

@@ -1,13 +1,95 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>users</ion-title>
-  </ion-toolbar>
-</ion-header>
+@if (loading()) {
+  <ion-loading [isOpen]="loading()"></ion-loading>
+} @else {
+  <div class="container-main container-main--white pad-all-md">
+    @if (error()) {
+      <div class="column-stack-md">
+        <p class="admin-users-error-text">{{ error() }}</p>
+        <ion-button fill="solid" color="primary" (click)="loadUsers()">
+          Retry
+        </ion-button>
+      </div>
+    } @else {
+      <div class="content-max-width column-stack-lg admin-users-container ">
+        <div class="row-stack-sm">
+          <h1 class="toolbar-title">Users</h1>
+        </div>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">users</ion-title>
-    </ion-toolbar>
-  </ion-header>
-</ion-content>
+        <div class="admin-users-search-table-wrap pad-all-lg-desktop">
+        <div class="search-wrapper">
+          <ion-searchbar
+            class="body2-regular admin-users-searchbar"
+            placeholder="Search user"
+            [value]="searchQuery()"
+            (ionInput)="onSearchChange($event)"
+          ></ion-searchbar>
+        </div>
+
+        <div class="table-scroll-x">
+          <div class="table-inner">
+            <div class="table-header body2-medium">
+              <div class="header-cell table-column col-user" (click)="onSortClick('user')">
+                <span>User</span>
+                <app-icon [name]="getSortIcon('user')" [size]="16" [color]="getSortIconColor('user')"></app-icon>
+              </div>
+              <div class="header-cell table-column col-garments" (click)="onSortClick('garments')">
+                <span>Garments</span>
+                <app-icon [name]="getSortIcon('garments')" [size]="16" [color]="getSortIconColor('garments')"></app-icon>
+              </div>
+              <div class="header-cell table-column col-outfits" (click)="onSortClick('outfits')">
+                <span>Outfits</span>
+                <app-icon [name]="getSortIcon('outfits')" [size]="16" [color]="getSortIconColor('outfits')"></app-icon>
+              </div>
+              <div class="header-cell table-column col-date" (click)="onSortClick('signupdate')">
+                <span>Sign up date</span>
+                <app-icon [name]="getSortIcon('signupdate')" [size]="16" [color]="getSortIconColor('signupdate')"></app-icon>
+              </div>
+              <div class="header-cell table-column col-date" (click)="onSortClick('lastlogin')">
+                <span>Last login</span>
+                <app-icon [name]="getSortIcon('lastlogin')" [size]="16" [color]="getSortIconColor('lastlogin')"></app-icon>
+              </div>
+            </div>
+
+            <ion-list class="users-table" lines="full">
+              @for (u of filteredUsers(); track u.id ?? u['id'] ?? u['userId']) {
+                <ion-item
+                  class="user-row"
+                  [routerLink]="['/admin/wardrobe', u.id ?? u['id'] ?? u['userId']]"
+                  button
+                  [detail]="false"
+                  lines="full"
+                >
+                  <div class="table-row">
+                    <div class="table-cell table-column col-user">
+                      <div class="column-stack-xs">
+                        <span class="admin-users-user-link">{{ displayName(u) }}</span>
+                        <span class="admin-users-email-line">{{ u.email ?? u['email'] ?? '—' }}</span>
+                      </div>
+                    </div>
+                    <div class="table-cell table-column col-garments">
+                      <span>{{ u.garmentsCount ?? u['garments_count'] ?? '—' }}</span>
+                    </div>
+                    <div class="table-cell table-column col-outfits">
+                      <span>{{ u.outfitsCount ?? u['outfits_count'] ?? '—' }}</span>
+                    </div>
+                    <div class="table-cell table-column col-date">
+                      <span>{{ formatDate(u.signUpDate ?? u['sign_up_date']) }}</span>
+                    </div>
+                    <div class="table-cell table-column col-date">
+                      <span>{{ formatDate(u.lastLogin ?? u['last_login']) }}</span>
+                    </div>
+                  </div>
+                </ion-item>
+              } @empty {
+                <ion-item lines="none">
+                  <ion-label class="ion-text-center">No users found</ion-label>
+                </ion-item>
+              }
+            </ion-list>
+          </div>
+        </div>
+        </div>
+      </div>
+    }
+  </div>
+}

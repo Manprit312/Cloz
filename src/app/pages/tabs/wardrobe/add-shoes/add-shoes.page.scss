@@ -138,7 +138,7 @@ ion-header {
     animation: fadeInOut 3s ease-in-out;
     
     .success-text {
-      color: var(--ion-color-success, #4CAF50);
+      color: var(--ion-color-success);
       margin: 0;
     }
   }
@@ -194,7 +194,7 @@ ion-header {
   // Ensure button content (icon + text) is properly aligned
   ::ng-deep button {
     display: flex;
-    background: var(--ion-background-color, #ffffff) !important;
+    background: var(--ion-background-color) !important;
     align-items: center;
     justify-content: center;
     gap: var(--gap-xs);

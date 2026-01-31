@@ -1,11 +1,11 @@
-
 <ion-content [fullscreen]="true">
-
-  <ion-header collapse="condense" >
-    <ion-toolbar>
-      <ion-title size="large">Outfits</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  @if (!isAdminMode) {
+    <ion-header collapse="condense">
+      <ion-toolbar>
+        <ion-title size="large">Outfits</ion-title>
+      </ion-toolbar>
+    </ion-header>
+  }
 
   <!-- Show loading state -->
   <div *ngIf="isLoading" class="column-stack-sm outfits-container pad-all-md">
@@ -41,7 +41,7 @@
     title="No outfits yet"
     description="Create your first outfit to get started."
     buttonText="Create outfit"
-    [showButton]="true"
+    [showButton]="!isAdminMode"
     (onButtonClick)="onCreateOutfit()"
   ></app-empty-state>
 
@@ -75,9 +75,9 @@
     </div>
   </div>
 
-  <!-- Floating Action Button - Only show when there are outfits -->
+  <!-- Floating Action Button - Only show when there are outfits and not in admin mode -->
   <ion-fab 
-    *ngIf="!isLoading && !error && outfits.length > 0"
+    *ngIf="!isAdminMode && !isLoading && !error && outfits.length > 0"
     vertical="bottom" 
     horizontal="end" 
     slot="fixed"

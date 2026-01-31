@@ -6,6 +6,8 @@ import { Router } from '@angular/router';
 import { inject } from '@angular/core';
 import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 import { OutfitsService, Outfit } from '../../../core/services/outfits.service';
+import { AdminWardrobeContextService } from '../../../core/services/admin-wardrobe-context.service';
+import { AdminService } from '../../../core/services/admin.service';
 import { IconComponent } from '../../../shared/components/icon/icon.component';
 import { SkeletonLoaderComponent } from '../../../shared/components/skeleton-loader/skeleton-loader.component';
 import { CountBadgeComponent } from '../../../shared/components/count-badge/count-badge.component';
@@ -20,9 +22,16 @@ import { CountBadgeComponent } from '../../../shared/components/count-badge/coun
 export class OutfitsPage implements OnInit {
   private router = inject(Router);
   private outfitsService = inject(OutfitsService);
+  private adminService = inject(AdminService);
+  private adminContext = inject(AdminWardrobeContextService);
+
   outfits: Outfit[] = [];
   isLoading = false;
   error: string | null = null;
+
+  get isAdminMode(): boolean {
+    return this.adminContext.isAdminMode();
+  }
 
   constructor() { }
 
@@ -31,13 +40,27 @@ export class OutfitsPage implements OnInit {
   }
 
   ionViewWillEnter(): void {
-    // Reload outfits when returning to this page (e.g., after creating a new outfit)
     this.loadOutfits();
   }
 
   loadOutfits(): void {
     this.isLoading = true;
     this.error = null;
+
+    if (this.isAdminMode && this.adminContext.userId()) {
+      this.adminService.getOutfitsForUser(this.adminContext.userId()!).subscribe({
+        next: (outfits) => {
+          this.outfits = outfits ?? [];
+          this.isLoading = false;
+        },
+        error: (err) => {
+          console.error('Error loading outfits:', err);
+          this.error = 'Failed to load outfits';
+          this.isLoading = false;
+        },
+      });
+      return;
+    }
 
     this.outfitsService.getOutfits().subscribe({
       next: (outfits) => {
@@ -53,10 +76,13 @@ export class OutfitsPage implements OnInit {
   }
 
   onCreateOutfit(): void {
-    this.router.navigate(['/tabs/outfits/create-outfit']);
+    if (!this.isAdminMode) {
+      this.router.navigate(['/tabs/outfits/create-outfit']);
+    }
   }
 
   onOutfitClick(outfit: Outfit): void {
+    if (this.isAdminMode) return; // Read-only in admin mode
     this.router.navigate(['/tabs/outfits/outfit-detail', outfit.id], {
       state: { outfit }
     });

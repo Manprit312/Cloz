@@ -1,12 +1,12 @@
 .skeleton {
   background: linear-gradient(
     90deg,
-    var(--background-300, #e0e0e0) 25%,
-    var(--background-200, #f0f0f0) 50%,
-    var(--background-300, #e0e0e0) 75%
+    var(--background-300, var(--border-color)) 25%,
+    var(--background-200, var(--border-color-light)) 50%,
+    var(--background-300, var(--border-color)) 75%
   );
   background-size: 200% 100%;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
 }
 
 .skeleton.animated {
@@ -30,7 +30,7 @@
 
 .skeleton-image {
   width: 100%;
-  height: 200px;
+  height: var(--loading-container-min-height);
   margin-bottom: 0.5rem;
 }
 
@@ -39,11 +39,11 @@
   flex-direction: column;
   gap: 0.75rem;
   padding: 1rem;
-  border-radius: 8px;
-  background: var(--background-100, #ffffff);
+  border-radius: var(--radius-md);
+  background: var(--background-100, var(--background-primary));
   
   .skeleton-image {
-    height: 150px;
+    height: 150px; /* Card-specific, no token */
     width: 100%;
   }
 }
@@ -55,11 +55,11 @@
   padding: 0.75rem 0;
   
   .skeleton-image {
-    width: 60px;
-    height: 60px;
-    min-width: 60px;
-    min-height: 60px;
-    border-radius: 8px;
+    width: var(--x10);
+    height: var(--x10);
+    min-width: var(--x10);
+    min-height: var(--x10);
+    border-radius: var(--radius-md);
     margin-bottom: 0;
   }
   

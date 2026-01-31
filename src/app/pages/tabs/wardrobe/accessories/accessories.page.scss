@@ -48,7 +48,7 @@ ion-header {
   ion-col {
     --padding-start: var(--x0);
     --padding-end: var(--x0);
-    padding: 4px;
+    padding: var(--x1);
   }
 }
 
@@ -155,12 +155,12 @@ ion-header {
   cursor: pointer;
 
   &.active {
-    background-color: var(--grey-light-medium-base, #5F5F5F);
-    border-color: #ffffff;
+    background-color: var(--grey-light-medium-base);
+    border-color: var(--background-primary);
   }
 }
 
 ion-fab {
   margin-bottom: var(--gap-lg);
-  margin-right: var(--gap-md, var(--x4, 16px));
+  margin-right: var(--gap-md);
 }
